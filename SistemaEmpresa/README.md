@@ -68,12 +68,25 @@ Agregar las siguientes librerías al proyecto (WEB-INF/lib/):
 - Jakarta Servlet API 5.0+
 - Jakarta JSP 3.0+
 
-### 3. Desplegar en Tomcat
+### 3. Configurar NetBeans y Desplegar
 
+#### Configuración Inicial:
+1. **Configurar Servidor Tomcat**:
+   - Tools → Servers → Add Server
+   - Seleccionar Apache Tomcat 10+ (NO Tomcat 9)
+   - Especificar ruta de instalación
+
+2. **Configurar Proyecto**:
+   - Click derecho en proyecto → Properties
+   - Run → Server: Seleccionar Tomcat 10+
+   - Context Path: `/SistemaEmpresa`
+
+#### Desplegar:
 1. Abrir el proyecto en NetBeans
-2. Hacer clic derecho en el proyecto → "Clean and Build"
-3. Hacer clic derecho en el proyecto → "Deploy"
-4. O copiar el archivo WAR generado a la carpeta `webapps` de Tomcat
+2. Clean and Build (Shift+F11)
+3. Run (F6) o Deploy
+
+**⚠️ Si hay error "module has not been deployed"**: Ver `SOLUCION_DEPLOY_ERROR.md`
 
 ## Uso del Sistema
 
