@@ -141,6 +141,16 @@
         <servlet-name>ProductoServlet</servlet-name>
         <url-pattern>/ProductoServlet</url-pattern>
     </servlet-mapping>
+
+    <!-- Servlet de Test -->
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>com.sistemaempresa.servlets.TestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
     
     <!-- Filtro de autenticación JWT -->
     <filter>

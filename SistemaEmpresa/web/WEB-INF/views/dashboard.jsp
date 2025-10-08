@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@page import="com.sistemaempresa.utils.JSTLAlternative"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -71,7 +71,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> ${sessionScope.nombreCompleto}
+                            <i class="fas fa-user"></i> <%= session.getAttribute("nombreCompleto") != null ? session.getAttribute("nombreCompleto") : "Usuario" %>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="LoginServlet?action=logout">
