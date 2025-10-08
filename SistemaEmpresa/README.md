@@ -26,9 +26,11 @@ Sistema web de gestión empresarial desarrollado en Java Web (JSP/Servlets) con 
 ## Requisitos del Sistema
 
 - Java JDK 17 o superior
-- Apache Tomcat 10 o superior
+- Apache Tomcat 10+ (REQUERIDO para Jakarta EE)
 - MySQL 8.0 o superior
 - NetBeans IDE (recomendado)
+
+**NOTA IMPORTANTE**: Este proyecto usa Jakarta EE, NO JavaEE. Requiere Tomcat 10+ o superior.
 
 ## Instalación
 
@@ -58,10 +60,13 @@ Sistema web de gestión empresarial desarrollado en Java Web (JSP/Servlets) con 
 Agregar las siguientes librerías al proyecto (WEB-INF/lib/):
 
 1. **MySQL Connector/J**: `mysql-connector-java-8.0.33.jar`
-2. **Jackson Core**: `jackson-core-2.15.2.jar`
-3. **Jackson Databind**: `jackson-databind-2.15.2.jar`
-4. **Jackson Annotations**: `jackson-annotations-2.15.2.jar`
-5. **JSTL**: `jstl-1.2.jar`
+2. **Jakarta JSTL**: `jakarta.servlet.jsp.jstl-3.0.1.jar`
+3. **Jakarta JSTL API**: `jakarta.servlet.jsp.jstl-api-3.0.0.jar`
+
+**IMPORTANTE**: Este proyecto usa Jakarta EE 9+ (no JavaEE), compatible con:
+- Tomcat 10+
+- Jakarta Servlet API 5.0+
+- Jakarta JSP 3.0+
 
 ### 3. Desplegar en Tomcat
 

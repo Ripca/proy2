@@ -26,10 +26,11 @@ echo 4. Para completar la instalacion:
 echo    a) Ejecute el script database/sistema_empresa.sql en MySQL
 echo    b) Descargue las siguientes librerias en web/WEB-INF/lib/:
 echo       - mysql-connector-java-8.0.33.jar
-echo       - jstl-1.2.jar
+echo       - jakarta.servlet.jsp.jstl-3.0.1.jar
+echo       - jakarta.servlet.jsp.jstl-api-3.0.0.jar
 echo    c) Abra el proyecto en NetBeans
 echo    d) Haga Clean and Build
-echo    e) Deploy en Tomcat
+echo    e) Deploy en Tomcat 10+ (IMPORTANTE: Tomcat 10 o superior)
 echo.
 
 echo 5. Acceso al sistema:
