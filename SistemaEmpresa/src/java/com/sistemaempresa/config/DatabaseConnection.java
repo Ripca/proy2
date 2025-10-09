@@ -11,7 +11,7 @@ public class DatabaseConnection {
     
     private static final String URL = "jdbc:mysql://localhost:3306/sistema_empresa";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "admin";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     
     static {
