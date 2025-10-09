@@ -112,49 +112,6 @@
         <url-pattern>/CompraServlet</url-pattern>
     </servlet-mapping>
 
-<<<<<<< HEAD
-    <!-- Servlet de Marcas -->
-    <servlet>
-        <servlet-name>MarcaServlet</servlet-name>
-        <servlet-class>com.sistemaempresa.servlets.MarcaServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MarcaServlet</servlet-name>
-        <url-pattern>/MarcaServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- Servlet de Puestos -->
-    <servlet>
-        <servlet-name>PuestoServlet</servlet-name>
-        <servlet-class>com.sistemaempresa.servlets.PuestoServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>PuestoServlet</servlet-name>
-        <url-pattern>/PuestoServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- Servlet de Productos -->
-    <servlet>
-        <servlet-name>ProductoServlet</servlet-name>
-        <servlet-class>com.sistemaempresa.servlets.ProductoServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ProductoServlet</servlet-name>
-        <url-pattern>/ProductoServlet</url-pattern>
-    </servlet-mapping>
-
-    <!-- Servlet de Test -->
-    <servlet>
-        <servlet-name>TestServlet</servlet-name>
-        <servlet-class>com.sistemaempresa.servlets.TestServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TestServlet</servlet-name>
-        <url-pattern>/test</url-pattern>
-    </servlet-mapping>
-    
-=======
->>>>>>> 646efc0cbe52d7897f380ab99d357556f4e9271a
     <!-- Filtro de autenticación JWT -->
     <filter>
         <filter-name>JWTAuthFilter</filter-name>
