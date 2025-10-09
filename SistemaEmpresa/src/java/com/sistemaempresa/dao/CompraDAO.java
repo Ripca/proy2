@@ -108,8 +108,9 @@ public class CompraDAO {
             // Insertar compra
             try (PreparedStatement stmt = conn.prepareStatement(sqlCompra, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, compra.getNoOrdenCompra());
-                stmt.setDate(2, Date.valueOf(compra.getFechaOrden()));
-                stmt.setDate(3, Date.valueOf(compra.getFechaIngreso()));
+            stmt.setDate(2, java.sql.Date.valueOf(compra.getFechaOrden()));
+            stmt.setDate(3, java.sql.Date.valueOf(compra.getFechaIngreso()));
+
                 stmt.setInt(4, compra.getIdProveedor());
                 
                 int filasAfectadas = stmt.executeUpdate();
@@ -174,7 +175,7 @@ public class CompraDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, compra.getNoOrdenCompra());
-            stmt.setDate(2, Date.valueOf(compra.getFechaOrden()));
+            stmt.setDate(2, java.sql.Date.valueOf(compra.getFechaOrden()));
             stmt.setInt(3, compra.getIdProveedor());
             stmt.setInt(4, compra.getIdCompra());
             

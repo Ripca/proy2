@@ -4,15 +4,15 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
          https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-    
+
     <display-name>Sistema Empresa</display-name>
-    
+
     <!-- Configuración de sesión -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    
-    <!-- Servlet de Login -->
+
+    <!-- Servlets -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.LoginServlet</servlet-class>
@@ -21,8 +21,7 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Dashboard -->
+
     <servlet>
         <servlet-name>DashboardServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.DashboardServlet</servlet-class>
@@ -31,8 +30,7 @@
         <servlet-name>DashboardServlet</servlet-name>
         <url-pattern>/DashboardServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Clientes -->
+
     <servlet>
         <servlet-name>ClienteServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.ClienteServlet</servlet-class>
@@ -41,8 +39,7 @@
         <servlet-name>ClienteServlet</servlet-name>
         <url-pattern>/ClienteServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Empleados -->
+
     <servlet>
         <servlet-name>EmpleadoServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.EmpleadoServlet</servlet-class>
@@ -51,8 +48,7 @@
         <servlet-name>EmpleadoServlet</servlet-name>
         <url-pattern>/EmpleadoServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Puestos -->
+
     <servlet>
         <servlet-name>PuestoServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.PuestoServlet</servlet-class>
@@ -61,8 +57,7 @@
         <servlet-name>PuestoServlet</servlet-name>
         <url-pattern>/PuestoServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Productos -->
+
     <servlet>
         <servlet-name>ProductoServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.ProductoServlet</servlet-class>
@@ -71,8 +66,7 @@
         <servlet-name>ProductoServlet</servlet-name>
         <url-pattern>/ProductoServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Marcas -->
+
     <servlet>
         <servlet-name>MarcaServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.MarcaServlet</servlet-class>
@@ -81,8 +75,7 @@
         <servlet-name>MarcaServlet</servlet-name>
         <url-pattern>/MarcaServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Proveedores -->
+
     <servlet>
         <servlet-name>ProveedorServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.ProveedorServlet</servlet-class>
@@ -91,8 +84,7 @@
         <servlet-name>ProveedorServlet</servlet-name>
         <url-pattern>/ProveedorServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Ventas -->
+
     <servlet>
         <servlet-name>VentaServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.VentaServlet</servlet-class>
@@ -101,8 +93,7 @@
         <servlet-name>VentaServlet</servlet-name>
         <url-pattern>/VentaServlet</url-pattern>
     </servlet-mapping>
-    
-    <!-- Servlet de Compras -->
+
     <servlet>
         <servlet-name>CompraServlet</servlet-name>
         <servlet-class>com.sistemaempresa.servlets.CompraServlet</servlet-class>
@@ -121,10 +112,10 @@
         <filter-name>JWTAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+
     <!-- Página de bienvenida -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-    
+
 </web-app>

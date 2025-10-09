@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 
-@WebServlet("/VentaServlet")
 public class VentaServlet extends HttpServlet {
     
     private VentaDAO ventaDAO = new VentaDAO();

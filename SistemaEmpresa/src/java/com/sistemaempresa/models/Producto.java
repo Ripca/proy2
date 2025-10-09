@@ -1,6 +1,7 @@
 package com.sistemaempresa.models;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 /**
@@ -124,12 +125,13 @@ public class Producto {
     public double getPorcentajeGanancia() {
         if (precioCosto != null && precioVenta != null && precioCosto.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal margen = getMargenGanancia();
-            return margen.divide(precioCosto, 4, BigDecimal.ROUND_HALF_UP)
+            return margen.divide(precioCosto, 4, RoundingMode.HALF_UP)
                          .multiply(new BigDecimal("100")).doubleValue();
         }
         return 0.0;
     }
     
+    @Override
     public String toString() {
         return "Producto{" +
                 "idProducto=" + idProducto +

@@ -119,11 +119,11 @@ public class VentaDAO {
             try (PreparedStatement stmt = conn.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, venta.getNoFactura());
                 stmt.setString(2, venta.getSerie());
-                stmt.setDate(3, Date.valueOf(venta.getFechaFactura()));
+                stmt.setDate(3, java.sql.Date.valueOf(venta.getFechaFactura()));
                 stmt.setInt(4, venta.getIdCliente());
                 stmt.setInt(5, venta.getIdEmpleado());
-                stmt.setDate(6, Date.valueOf(venta.getFechaIngreso()));
-                
+                stmt.setDate(6, java.sql.Date.valueOf(venta.getFechaIngreso()));
+
                 int filasAfectadas = stmt.executeUpdate();
                 
                 if (filasAfectadas > 0) {
@@ -187,7 +187,7 @@ public class VentaDAO {
             
             stmt.setInt(1, venta.getNoFactura());
             stmt.setString(2, venta.getSerie());
-            stmt.setDate(3, Date.valueOf(venta.getFechaFactura()));
+            stmt.setDate(3, java.sql.Date.valueOf(venta.getFechaFactura()));
             stmt.setInt(4, venta.getIdCliente());
             stmt.setInt(5, venta.getIdEmpleado());
             stmt.setInt(6, venta.getIdVenta());

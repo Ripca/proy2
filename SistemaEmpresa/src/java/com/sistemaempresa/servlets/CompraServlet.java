@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet("/CompraServlet")
+
 public class CompraServlet extends HttpServlet {
     
     private CompraDAO compraDAO = new CompraDAO();
