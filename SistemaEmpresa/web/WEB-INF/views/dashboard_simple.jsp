@@ -1,4 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="com.sistemaempresa.models.CarruselImagen"%>
+<%@page import="com.sistemaempresa.models.Menu"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,217 +11,341 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background: #343a40;
+            color: #fff;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        #sidebar.active {
+            margin-left: -250px;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: #495057;
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #sidebar ul li a {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        #sidebar ul li a:hover {
+            color: #343a40;
+            background: #fff;
+        }
+
+        #sidebar ul li.active > a {
+            color: #fff;
+            background: #6c757d;
+        }
+
+        #content {
+            width: 100%;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
         .card-stats {
             transition: transform 0.2s;
         }
         .card-stats:hover {
             transform: translateY(-5px);
         }
-        .navbar-brand {
-            font-weight: bold;
+
+        .carousel-item img {
+            height: 400px;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                margin-left: -250px;
+            }
+            #sidebar.active {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
-    <!-- Navegación Principal -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="DashboardServlet">
-                <i class="fas fa-building"></i> Sistema Empresa
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <!-- Menú Productos -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="productosDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-box"></i> Productos
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ProductoServlet">Productos</a></li>
-                            <li><a class="dropdown-item" href="MarcaServlet">Marcas</a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Menú Ventas -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="ventasDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-shopping-cart"></i> Ventas
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ClienteServlet">Clientes</a></li>
-                            <li><a class="dropdown-item" href="EmpleadoServlet">Empleados</a></li>
-                            <li><a class="dropdown-item" href="PuestoServlet">Puestos</a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Menú Compras -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="comprasDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-truck"></i> Compras
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ProveedorServlet">Proveedores</a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Menú Reportes -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="reportesDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-chart-bar"></i> Reportes
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="alert('Funcionalidad en desarrollo')">Reporte de Ventas</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="alert('Funcionalidad en desarrollo')">Reporte de Inventario</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <%= session.getAttribute("nombreCompleto") != null ? session.getAttribute("nombreCompleto") : "Usuario" %>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="alert('Funcionalidad en desarrollo')">
-                                <i class="fas fa-user-cog"></i> Perfil
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="LoginServlet?action=logout">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                            </a></li>
-                        </ul>
-                    </li>
-                </ul>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-building"></i> Sistema Empresa</h3>
+                <small>Bienvenido, <%= session.getAttribute("nombreCompleto") %></small>
             </div>
-        </div>
-    </nav>
 
-    <!-- Contenido Principal -->
-    <div class="container-fluid mt-4">
-        <!-- Encabezado -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h1 class="h3 mb-0">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </h1>
-                <p class="text-muted">Bienvenido al Sistema de Gestión Empresarial</p>
+            <ul class="list-unstyled components">
+                <%
+                    List<Menu> menusJerarquicos = (List<Menu>) request.getAttribute("menusJerarquicos");
+                    if (menusJerarquicos != null && !menusJerarquicos.isEmpty()) {
+                        for (Menu menu : menusJerarquicos) {
+                            if (menu.tieneSubmenus()) {
+                %>
+                <!-- Menú con submenús -->
+                <li>
+                    <a href="#<%= menu.getNombre().toLowerCase().replaceAll("\\s+", "") %>Submenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="<%= menu.getIcono() %>"></i> <%= menu.getNombre() %>
+                    </a>
+                    <ul class="collapse list-unstyled" id="<%= menu.getNombre().toLowerCase().replaceAll("\\s+", "") %>Submenu">
+                        <%
+                            for (Menu submenu : menu.getSubmenus()) {
+                        %>
+                        <li>
+                            <a href="<%= submenu.getUrl() %>">
+                                <i class="<%= submenu.getIcono() %>"></i> <%= submenu.getNombre() %>
+                            </a>
+                        </li>
+                        <%
+                            }
+                        %>
+                    </ul>
+                </li>
+                <%
+                            } else {
+                %>
+                <!-- Menú simple -->
+                <li>
+                    <a href="<%= menu.getUrl() %>">
+                        <i class="<%= menu.getIcono() %>"></i> <%= menu.getNombre() %>
+                    </a>
+                </li>
+                <%
+                            }
+                        }
+                    } else {
+                %>
+                <!-- Menús por defecto si no hay datos dinámicos -->
+                <li><a href="DashboardServlet"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="ClienteServlet"><i class="fas fa-users"></i> Clientes</a></li>
+                <li><a href="EmpleadoServlet"><i class="fas fa-user-tie"></i> Empleados</a></li>
+                <li><a href="PuestoServlet"><i class="fas fa-briefcase"></i> Puestos</a></li>
+                <li><a href="ProductoServlet"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a href="MarcaServlet"><i class="fas fa-tags"></i> Marcas</a></li>
+                <li><a href="ProveedorServlet"><i class="fas fa-truck"></i> Proveedores</a></li>
+                <%
+                    }
+                %>
+
+                <!-- Cerrar Sesión -->
+                <li>
+                    <a href="LoginServlet?action=logout" class="text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenido Principal -->
+        <div id="content">
+            <!-- Header con botón toggle -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                        <span>Toggle Sidebar</span>
+                    </button>
+
+                    <div class="ms-auto">
+                        <span class="navbar-text">
+                            <i class="fas fa-user"></i> <%= session.getAttribute("nombreCompleto") %>
+                        </span>
+                    </div>
+                </div>
+            </nav>
+            <!-- Carrusel de Imágenes -->
+            <%
+                List<CarruselImagen> imagenesCarrusel = (List<CarruselImagen>) request.getAttribute("imagenesCarrusel");
+                if (imagenesCarrusel != null && !imagenesCarrusel.isEmpty()) {
+            %>
+            <div id="carouselDashboard" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <%
+                        for (int i = 0; i < imagenesCarrusel.size(); i++) {
+                    %>
+                    <button type="button" data-bs-target="#carouselDashboard" data-bs-slide-to="<%= i %>"
+                            <%= i == 0 ? "class=\"active\"" : "" %>></button>
+                    <%
+                        }
+                    %>
+                </div>
+                <div class="carousel-inner">
+                    <%
+                        for (int i = 0; i < imagenesCarrusel.size(); i++) {
+                            CarruselImagen imagen = imagenesCarrusel.get(i);
+                    %>
+                    <div class="carousel-item <%= i == 0 ? "active" : "" %>">
+                        <img src="<%= imagen.getUrlImagen() %>" class="d-block w-100" alt="<%= imagen.getTitulo() %>">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5><%= imagen.getTitulo() %></h5>
+                            <% if (imagen.tieneDescripcion()) { %>
+                                <p><%= imagen.getDescripcion() %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                    <%
+                        }
+                    %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselDashboard" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselDashboard" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
             </div>
-        </div>
+            <%
+                }
+            %>
+            <!-- Encabezado -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </h1>
+                    <p class="text-muted">Bienvenido al Sistema de Gestión Empresarial</p>
+                </div>
+            </div>
 
-        <!-- Tarjetas de Resumen -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2 card-stats">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Clientes
+            <!-- Tarjetas de Resumen -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start border-primary border-4 shadow h-100 py-2 card-stats">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                        Clientes
+                                    </div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-muted"></i>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start border-success border-4 shadow h-100 py-2 card-stats">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                        Productos
+                                    </div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-box fa-2x text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start border-info border-4 shadow h-100 py-2 card-stats">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-info text-uppercase mb-1">
+                                        Empleados
+                                    </div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-tie fa-2x text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start border-warning border-4 shadow h-100 py-2 card-stats">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs fw-bold text-warning text-uppercase mb-1">
+                                        Proveedores
+                                    </div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-truck fa-2x text-muted"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2 card-stats">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Productos
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-box fa-2x text-gray-300"></i>
-                            </div>
+            <!-- Accesos Rápidos -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 fw-bold text-primary">
+                                <i class="fas fa-rocket"></i> Accesos Rápidos
+                            </h6>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2 card-stats">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Empleados
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="ClienteServlet?action=new" class="btn btn-outline-primary w-100 py-3">
+                                        <i class="fas fa-user-plus fa-2x d-block mb-2"></i>
+                                        Nuevo Cliente
+                                    </a>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-tie fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2 card-stats">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Proveedores
+                                <div class="col-md-3 mb-3">
+                                    <a href="ProductoServlet?action=new" class="btn btn-outline-success w-100 py-3">
+                                        <i class="fas fa-plus-square fa-2x d-block mb-2"></i>
+                                        Nuevo Producto
+                                    </a>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-truck fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Accesos Rápidos -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-rocket"></i> Accesos Rápidos
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <a href="ClienteServlet?action=new" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-user-plus"></i><br>
-                                    Nuevo Cliente
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="ProductoServlet?action=new" class="btn btn-outline-success w-100">
-                                    <i class="fas fa-plus-square"></i><br>
-                                    Nuevo Producto
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="EmpleadoServlet?action=new" class="btn btn-outline-info w-100">
-                                    <i class="fas fa-user-tie"></i><br>
-                                    Nuevo Empleado
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="ProveedorServlet?action=new" class="btn btn-outline-warning w-100">
-                                    <i class="fas fa-truck"></i><br>
-                                    Nuevo Proveedor
-                                </a>
+                                <div class="col-md-3 mb-3">
+                                    <a href="EmpleadoServlet?action=new" class="btn btn-outline-info w-100 py-3">
+                                        <i class="fas fa-user-tie fa-2x d-block mb-2"></i>
+                                        Nuevo Empleado
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="ProveedorServlet?action=new" class="btn btn-outline-warning w-100 py-3">
+                                        <i class="fas fa-truck fa-2x d-block mb-2"></i>
+                                        Nuevo Proveedor
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,5 +355,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Auto-start carousel
+        document.addEventListener('DOMContentLoaded', function() {
+            var carousel = document.getElementById('carouselDashboard');
+            if (carousel) {
+                var bsCarousel = new bootstrap.Carousel(carousel, {
+                    interval: 5000,
+                    wrap: true
+                });
+            }
+        });
+    </script>
 </body>
 </html>
