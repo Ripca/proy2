@@ -23,8 +23,8 @@ public class DashboardServlet extends HttpServlet {
             return;
         }
         
-        // Redirigir al dashboard JSP
-        request.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
+        // Redirigir al dashboard JSP simple (sin JSTL)
+        request.getRequestDispatcher("/WEB-INF/views/dashboard_simple.jsp").forward(request, response);
     }
     
     @Override
