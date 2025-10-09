@@ -18,16 +18,32 @@
         }
 
         #sidebar {
-            min-width: 250px;
+            min-width: 60px;
             max-width: 250px;
+            width: 250px;
             background: #343a40;
             color: #fff;
             transition: all 0.3s;
             min-height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            z-index: 1000;
         }
 
-        #sidebar.active {
-            margin-left: -250px;
+        #sidebar.collapsed {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        #sidebar.collapsed .sidebar-header h3,
+        #sidebar.collapsed .sidebar-header small,
+        #sidebar.collapsed ul li a span {
+            display: none;
+        }
+
+        #sidebar.collapsed ul li a {
+            text-align: center;
+            padding: 10px;
         }
 
         #sidebar .sidebar-header {
@@ -65,10 +81,32 @@
         }
 
         #content {
-            width: 100%;
-            padding: 20px;
+            margin-left: 250px;
+            padding: 0;
             min-height: 100vh;
             transition: all 0.3s;
+        }
+
+        #content.expanded {
+            margin-left: 60px;
+        }
+
+        .top-navbar {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .top-navbar {
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
         .card-stats {
@@ -87,7 +125,10 @@
             #sidebar {
                 margin-left: -250px;
             }
-            #sidebar.active {
+            #sidebar.mobile-show {
+                margin-left: 0;
+            }
+            #content {
                 margin-left: 0;
             }
         }
@@ -98,8 +139,10 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3><i class="fas fa-building"></i> Sistema Empresa</h3>
-                <small>Bienvenido, <%= session.getAttribute("nombreCompleto") %></small>
+                <button type="button" id="sidebarToggle" class="btn btn-link text-white p-2">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h3 class="d-inline-block ms-2"><i class="fas fa-building"></i> <span>Sistema Empresa</span></h3>
             </div>
 
             <ul class="list-unstyled components">
@@ -112,7 +155,7 @@
                 <!-- Menú con submenús -->
                 <li>
                     <a href="#<%= menu.getNombre().toLowerCase().replaceAll("\\s+", "") %>Submenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                        <i class="<%= menu.getIcono() %>"></i> <%= menu.getNombre() %>
+                        <i class="<%= menu.getIcono() %>"></i> <span><%= menu.getNombre() %></span>
                     </a>
                     <ul class="collapse list-unstyled" id="<%= menu.getNombre().toLowerCase().replaceAll("\\s+", "") %>Submenu">
                         <%
@@ -120,7 +163,7 @@
                         %>
                         <li>
                             <a href="<%= submenu.getUrl() %>">
-                                <i class="<%= submenu.getIcono() %>"></i> <%= submenu.getNombre() %>
+                                <i class="<%= submenu.getIcono() %>"></i> <span><%= submenu.getNombre() %></span>
                             </a>
                         </li>
                         <%
@@ -134,7 +177,7 @@
                 <!-- Menú simple -->
                 <li>
                     <a href="<%= menu.getUrl() %>">
-                        <i class="<%= menu.getIcono() %>"></i> <%= menu.getNombre() %>
+                        <i class="<%= menu.getIcono() %>"></i> <span><%= menu.getNombre() %></span>
                     </a>
                 </li>
                 <%
@@ -143,89 +186,42 @@
                     } else {
                 %>
                 <!-- Menús por defecto si no hay datos dinámicos -->
-                <li><a href="DashboardServlet"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="ClienteServlet"><i class="fas fa-users"></i> Clientes</a></li>
-                <li><a href="EmpleadoServlet"><i class="fas fa-user-tie"></i> Empleados</a></li>
-                <li><a href="PuestoServlet"><i class="fas fa-briefcase"></i> Puestos</a></li>
-                <li><a href="ProductoServlet"><i class="fas fa-box"></i> Productos</a></li>
-                <li><a href="MarcaServlet"><i class="fas fa-tags"></i> Marcas</a></li>
-                <li><a href="ProveedorServlet"><i class="fas fa-truck"></i> Proveedores</a></li>
+                <li><a href="DashboardServlet"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="ClienteServlet"><i class="fas fa-users"></i> <span>Clientes</span></a></li>
+                <li><a href="EmpleadoServlet"><i class="fas fa-user-tie"></i> <span>Empleados</span></a></li>
+                <li><a href="PuestoServlet"><i class="fas fa-briefcase"></i> <span>Puestos</span></a></li>
+                <li><a href="ProductoServlet"><i class="fas fa-box"></i> <span>Productos</span></a></li>
+                <li><a href="MarcaServlet"><i class="fas fa-tags"></i> <span>Marcas</span></a></li>
+                <li><a href="ProveedorServlet"><i class="fas fa-truck"></i> <span>Proveedores</span></a></li>
                 <%
                     }
                 %>
 
-                <!-- Cerrar Sesión -->
-                <li>
-                    <a href="LoginServlet?action=logout" class="text-danger">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </a>
-                </li>
             </ul>
         </nav>
 
         <!-- Contenido Principal -->
         <div id="content">
-            <!-- Header con botón toggle -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-info">
-                        <i class="fas fa-align-left"></i>
-                        <span>Toggle Sidebar</span>
-                    </button>
-
-                    <div class="ms-auto">
-                        <span class="navbar-text">
+            <!-- Header superior -->
+            <div class="top-navbar">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <!-- Espacio para breadcrumbs o título si es necesario -->
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">
                             <i class="fas fa-user"></i> <%= session.getAttribute("nombreCompleto") %>
                         </span>
+                        <a href="LoginServlet?action=logout" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
                     </div>
                 </div>
-            </nav>
-            <!-- Carrusel de Imágenes -->
-            <%
-                List<CarruselImagen> imagenesCarrusel = (List<CarruselImagen>) request.getAttribute("imagenesCarrusel");
-                if (imagenesCarrusel != null && !imagenesCarrusel.isEmpty()) {
-            %>
-            <div id="carouselDashboard" class="carousel slide mb-4" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <%
-                        for (int i = 0; i < imagenesCarrusel.size(); i++) {
-                    %>
-                    <button type="button" data-bs-target="#carouselDashboard" data-bs-slide-to="<%= i %>"
-                            <%= i == 0 ? "class=\"active\"" : "" %>></button>
-                    <%
-                        }
-                    %>
-                </div>
-                <div class="carousel-inner">
-                    <%
-                        for (int i = 0; i < imagenesCarrusel.size(); i++) {
-                            CarruselImagen imagen = imagenesCarrusel.get(i);
-                    %>
-                    <div class="carousel-item <%= i == 0 ? "active" : "" %>">
-                        <img src="<%= imagen.getUrlImagen() %>" class="d-block w-100" alt="<%= imagen.getTitulo() %>">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5><%= imagen.getTitulo() %></h5>
-                            <% if (imagen.tieneDescripcion()) { %>
-                                <p><%= imagen.getDescripcion() %></p>
-                            <% } %>
-                        </div>
-                    </div>
-                    <%
-                        }
-                    %>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselDashboard" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselDashboard" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
             </div>
-            <%
-                }
-            %>
+
+            <!-- Contenido de la página -->
+            <div class="p-4">
+
             <!-- Encabezado -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -246,7 +242,7 @@
                                     <div class="text-xs fw-bold text-primary text-uppercase mb-1">
                                         Clientes
                                     </div>
-                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800"><%= request.getAttribute("totalClientes") != null ? request.getAttribute("totalClientes") : 0 %></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-users fa-2x text-muted"></i>
@@ -264,7 +260,7 @@
                                     <div class="text-xs fw-bold text-success text-uppercase mb-1">
                                         Productos
                                     </div>
-                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800"><%= request.getAttribute("totalProductos") != null ? request.getAttribute("totalProductos") : 0 %></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-box fa-2x text-muted"></i>
@@ -282,7 +278,7 @@
                                     <div class="text-xs fw-bold text-info text-uppercase mb-1">
                                         Empleados
                                     </div>
-                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800"><%= request.getAttribute("totalEmpleados") != null ? request.getAttribute("totalEmpleados") : 0 %></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-user-tie fa-2x text-muted"></i>
@@ -300,7 +296,7 @@
                                     <div class="text-xs fw-bold text-warning text-uppercase mb-1">
                                         Proveedores
                                     </div>
-                                    <div class="h5 mb-0 fw-bold text-gray-800">0</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800"><%= request.getAttribute("totalProveedores") != null ? request.getAttribute("totalProveedores") : 0 %></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-truck fa-2x text-muted"></i>
@@ -351,14 +347,69 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Carrusel de Imágenes -->
+            <%
+                List<CarruselImagen> imagenesCarrusel = (List<CarruselImagen>) request.getAttribute("imagenesCarrusel");
+                if (imagenesCarrusel != null && !imagenesCarrusel.isEmpty()) {
+            %>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div id="carouselDashboard" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <%
+                                for (int i = 0; i < imagenesCarrusel.size(); i++) {
+                            %>
+                            <button type="button" data-bs-target="#carouselDashboard" data-bs-slide-to="<%= i %>"
+                                    <%= i == 0 ? "class=\"active\"" : "" %>></button>
+                            <%
+                                }
+                            %>
+                        </div>
+                        <div class="carousel-inner">
+                            <%
+                                for (int i = 0; i < imagenesCarrusel.size(); i++) {
+                                    CarruselImagen imagen = imagenesCarrusel.get(i);
+                            %>
+                            <div class="carousel-item <%= i == 0 ? "active" : "" %>">
+                                <img src="<%= imagen.getUrlImagen() %>" class="d-block w-100" alt="<%= imagen.getTitulo() %>">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5><%= imagen.getTitulo() %></h5>
+                                    <% if (imagen.tieneDescripcion()) { %>
+                                        <p><%= imagen.getDescripcion() %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <%
+                                }
+                            %>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselDashboard" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselDashboard" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <%
+                }
+            %>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Toggle sidebar
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
         });
 
         // Auto-start carousel

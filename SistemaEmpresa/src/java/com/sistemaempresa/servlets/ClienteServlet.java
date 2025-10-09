@@ -73,7 +73,7 @@ public class ClienteServlet extends HttpServlet {
         
         List<Cliente> clientes = clienteDAO.obtenerTodos();
         request.setAttribute("clientes", clientes);
-        request.getRequestDispatcher("/WEB-INF/views/clientes/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/clientes/list_simple.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
@@ -177,6 +177,6 @@ public class ClienteServlet extends HttpServlet {
         
         request.setAttribute("clientes", clientes);
         request.setAttribute("termino", termino);
-        request.getRequestDispatcher("/WEB-INF/views/clientes/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/clientes/list_simple.jsp").forward(request, response);
     }
 }

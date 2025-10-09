@@ -9,6 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import com.sistemaempresa.dao.CarruselDAO;
 import com.sistemaempresa.dao.MenuDAO;
+import com.sistemaempresa.dao.ClienteDAO;
+import com.sistemaempresa.dao.ProductoDAO;
+import com.sistemaempresa.dao.EmpleadoDAO;
+import com.sistemaempresa.dao.ProveedorDAO;
 import com.sistemaempresa.models.CarruselImagen;
 import com.sistemaempresa.models.Menu;
 
@@ -19,6 +23,10 @@ public class DashboardServlet extends HttpServlet {
 
     private CarruselDAO carruselDAO = new CarruselDAO();
     private MenuDAO menuDAO = new MenuDAO();
+    private ClienteDAO clienteDAO = new ClienteDAO();
+    private ProductoDAO productoDAO = new ProductoDAO();
+    private EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+    private ProveedorDAO proveedorDAO = new ProveedorDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,9 +49,24 @@ public class DashboardServlet extends HttpServlet {
             List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
             request.setAttribute("menusJerarquicos", menusJerarquicos);
 
+            // Cargar contadores para las tarjetas de resumen
+            int totalClientes = clienteDAO.obtenerTodos().size();
+            int totalProductos = productoDAO.obtenerTodos().size();
+            int totalEmpleados = empleadoDAO.obtenerTodos().size();
+            int totalProveedores = proveedorDAO.obtenerTodos().size();
+
+            request.setAttribute("totalClientes", totalClientes);
+            request.setAttribute("totalProductos", totalProductos);
+            request.setAttribute("totalEmpleados", totalEmpleados);
+            request.setAttribute("totalProveedores", totalProveedores);
+
         } catch (Exception e) {
             e.printStackTrace();
             // En caso de error, continuar sin datos dinámicos
+            request.setAttribute("totalClientes", 0);
+            request.setAttribute("totalProductos", 0);
+            request.setAttribute("totalEmpleados", 0);
+            request.setAttribute("totalProveedores", 0);
         }
 
         // Redirigir al dashboard JSP simple (sin JSTL)
