@@ -70,13 +70,13 @@ public class PuestoServlet extends HttpServlet {
         
         List<Puesto> puestos = puestoDAO.obtenerTodos();
         request.setAttribute("puestos", puestos);
-        request.getRequestDispatcher("/WEB-INF/views/puestos/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/puestos/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        request.getRequestDispatcher("/WEB-INF/views/puestos/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/puestos/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -87,7 +87,7 @@ public class PuestoServlet extends HttpServlet {
         
         if (puesto != null) {
             request.setAttribute("puesto", puesto);
-            request.getRequestDispatcher("/WEB-INF/views/puestos/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/puestos/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("PuestoServlet?action=list&error=Puesto no encontrado");
         }

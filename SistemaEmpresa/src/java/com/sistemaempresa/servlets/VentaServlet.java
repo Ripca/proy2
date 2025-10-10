@@ -78,7 +78,7 @@ public class VentaServlet extends HttpServlet {
         
         List<Venta> ventas = ventaDAO.obtenerTodos();
         request.setAttribute("ventas", ventas);
-        request.getRequestDispatcher("/WEB-INF/views/ventas/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/ventas/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
@@ -93,7 +93,7 @@ public class VentaServlet extends HttpServlet {
         request.setAttribute("empleados", empleados);
         request.setAttribute("productos", productos);
         
-        request.getRequestDispatcher("/WEB-INF/views/ventas/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/ventas/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -113,7 +113,7 @@ public class VentaServlet extends HttpServlet {
             request.setAttribute("empleados", empleados);
             request.setAttribute("productos", productos);
             
-            request.getRequestDispatcher("/WEB-INF/views/ventas/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/ventas/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("VentaServlet?error=Venta no encontrada");
         }
@@ -127,7 +127,7 @@ public class VentaServlet extends HttpServlet {
         
         if (venta != null) {
             request.setAttribute("venta", venta);
-            request.getRequestDispatcher("/WEB-INF/views/ventas/view.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/ventas/view_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("VentaServlet?error=Venta no encontrada");
         }

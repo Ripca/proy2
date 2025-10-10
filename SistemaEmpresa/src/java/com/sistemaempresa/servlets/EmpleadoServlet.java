@@ -75,7 +75,7 @@ public class EmpleadoServlet extends HttpServlet {
         
         List<Empleado> empleados = empleadoDAO.obtenerTodos();
         request.setAttribute("empleados", empleados);
-        request.getRequestDispatcher("/WEB-INF/views/empleados/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/empleados/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
@@ -83,7 +83,7 @@ public class EmpleadoServlet extends HttpServlet {
         
         List<Puesto> puestos = puestoDAO.obtenerTodos();
         request.setAttribute("puestos", puestos);
-        request.getRequestDispatcher("/WEB-INF/views/empleados/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/empleados/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -96,7 +96,7 @@ public class EmpleadoServlet extends HttpServlet {
         if (empleado != null) {
             request.setAttribute("empleado", empleado);
             request.setAttribute("puestos", puestos);
-            request.getRequestDispatcher("/WEB-INF/views/empleados/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/empleados/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("EmpleadoServlet?action=list&error=Empleado no encontrado");
         }

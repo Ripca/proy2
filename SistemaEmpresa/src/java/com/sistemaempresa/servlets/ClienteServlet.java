@@ -73,13 +73,13 @@ public class ClienteServlet extends HttpServlet {
         
         List<Cliente> clientes = clienteDAO.obtenerTodos();
         request.setAttribute("clientes", clientes);
-        request.getRequestDispatcher("/WEB-INF/views/clientes/list_simple.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/clientes/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        request.getRequestDispatcher("/WEB-INF/views/clientes/form.jsp").forward(request, response);
+
+        request.getRequestDispatcher("/WEB-INF/views/clientes/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -90,7 +90,7 @@ public class ClienteServlet extends HttpServlet {
         
         if (cliente != null) {
             request.setAttribute("cliente", cliente);
-            request.getRequestDispatcher("/WEB-INF/views/clientes/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/clientes/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("ClienteServlet?action=list&error=Cliente no encontrado");
         }
@@ -177,6 +177,6 @@ public class ClienteServlet extends HttpServlet {
         
         request.setAttribute("clientes", clientes);
         request.setAttribute("termino", termino);
-        request.getRequestDispatcher("/WEB-INF/views/clientes/list_simple.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/clientes/list_template.jsp").forward(request, response);
     }
 }

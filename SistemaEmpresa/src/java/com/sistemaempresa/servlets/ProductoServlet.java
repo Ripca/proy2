@@ -78,7 +78,7 @@ public class ProductoServlet extends HttpServlet {
         
         List<Producto> productos = productoDAO.obtenerTodos();
         request.setAttribute("productos", productos);
-        request.getRequestDispatcher("/WEB-INF/views/productos/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/productos/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
@@ -86,7 +86,7 @@ public class ProductoServlet extends HttpServlet {
         
         List<Marca> marcas = marcaDAO.obtenerTodos();
         request.setAttribute("marcas", marcas);
-        request.getRequestDispatcher("/WEB-INF/views/productos/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/productos/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -99,7 +99,7 @@ public class ProductoServlet extends HttpServlet {
         if (producto != null) {
             request.setAttribute("producto", producto);
             request.setAttribute("marcas", marcas);
-            request.getRequestDispatcher("/WEB-INF/views/productos/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/productos/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("ProductoServlet?action=list&error=Producto no encontrado");
         }
@@ -188,6 +188,6 @@ public class ProductoServlet extends HttpServlet {
         
         request.setAttribute("productos", productos);
         request.setAttribute("termino", termino);
-        request.getRequestDispatcher("/WEB-INF/views/productos/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/productos/list_template.jsp").forward(request, response);
     }
 }

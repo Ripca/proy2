@@ -73,13 +73,13 @@ public class ProveedorServlet extends HttpServlet {
         
         List<Proveedor> proveedores = proveedorDAO.obtenerTodos();
         request.setAttribute("proveedores", proveedores);
-        request.getRequestDispatcher("/WEB-INF/views/proveedores/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/proveedores/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        request.getRequestDispatcher("/WEB-INF/views/proveedores/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/proveedores/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -90,7 +90,7 @@ public class ProveedorServlet extends HttpServlet {
         
         if (proveedor != null) {
             request.setAttribute("proveedor", proveedor);
-            request.getRequestDispatcher("/WEB-INF/views/proveedores/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/proveedores/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("ProveedorServlet?action=list&error=Proveedor no encontrado");
         }
@@ -173,6 +173,6 @@ public class ProveedorServlet extends HttpServlet {
         
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("termino", termino);
-        request.getRequestDispatcher("/WEB-INF/views/proveedores/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/proveedores/list_template.jsp").forward(request, response);
     }
 }

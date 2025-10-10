@@ -70,13 +70,13 @@ public class MarcaServlet extends HttpServlet {
         
         List<Marca> marcas = marcaDAO.obtenerTodos();
         request.setAttribute("marcas", marcas);
-        request.getRequestDispatcher("/WEB-INF/views/marcas/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/marcas/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        request.getRequestDispatcher("/WEB-INF/views/marcas/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/marcas/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -87,7 +87,7 @@ public class MarcaServlet extends HttpServlet {
         
         if (marca != null) {
             request.setAttribute("marca", marca);
-            request.getRequestDispatcher("/WEB-INF/views/marcas/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/marcas/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("MarcaServlet?action=list&error=Marca no encontrada");
         }

@@ -75,7 +75,7 @@ public class CompraServlet extends HttpServlet {
         
         List<Compra> compras = compraDAO.obtenerTodos();
         request.setAttribute("compras", compras);
-        request.getRequestDispatcher("/WEB-INF/views/compras/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/compras/list_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioNuevo(HttpServletRequest request, HttpServletResponse response)
@@ -88,7 +88,7 @@ public class CompraServlet extends HttpServlet {
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("productos", productos);
         
-        request.getRequestDispatcher("/WEB-INF/views/compras/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/compras/form_template.jsp").forward(request, response);
     }
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
@@ -106,7 +106,7 @@ public class CompraServlet extends HttpServlet {
             request.setAttribute("proveedores", proveedores);
             request.setAttribute("productos", productos);
             
-            request.getRequestDispatcher("/WEB-INF/views/compras/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/compras/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("CompraServlet?error=Compra no encontrada");
         }
@@ -120,7 +120,7 @@ public class CompraServlet extends HttpServlet {
         
         if (compra != null) {
             request.setAttribute("compra", compra);
-            request.getRequestDispatcher("/WEB-INF/views/compras/view.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/compras/view_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("CompraServlet?error=Compra no encontrada");
         }
