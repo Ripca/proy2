@@ -42,13 +42,13 @@
                         <th>NIT</th>
                         <th>Teléfono</th>
                         <th>Dirección</th>
-                        <th>Fecha Ingreso</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <%
-                        for (Proveedor proveedor : proveedores) {
+                        if (proveedores != null && !proveedores.isEmpty()) {
+                            for (Proveedor proveedor : proveedores) {
                     %>
                     <tr>
                         <td><%= proveedor.getIdProveedor() %></td>
@@ -58,7 +58,6 @@
                         <td><%= proveedor.getNit() != null ? proveedor.getNit() : "N/A" %></td>
                         <td><%= proveedor.getTelefono() != null ? proveedor.getTelefono() : "N/A" %></td>
                         <td><%= proveedor.getDireccion() != null ? proveedor.getDireccion() : "N/A" %></td>
-                        <td><%= proveedor.getFechaIngreso() != null ? proveedor.getFechaIngreso().toString() : "N/A" %></td>
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="ProveedorServlet?action=edit&id=<%= proveedor.getIdProveedor() %>" 
@@ -75,6 +74,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>

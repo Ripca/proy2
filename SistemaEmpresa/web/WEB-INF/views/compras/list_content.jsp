@@ -47,7 +47,8 @@
                 </thead>
                 <tbody>
                     <%
-                        for (Compra compra : compras) {
+                        if (compras != null && !compras.isEmpty()) {
+                            for (Compra compra : compras) {
                     %>
                     <tr>
                         <td><%= compra.getIdCompra() %></td>
@@ -81,6 +82,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>

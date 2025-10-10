@@ -39,20 +39,19 @@
                     <tr>
                         <th>ID</th>
                         <th>Marca</th>
-                        <th>Fecha Creación</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <%
-                        for (Marca marca : marcas) {
+                        if (marcas != null && !marcas.isEmpty()) {
+                            for (Marca marca : marcas) {
                     %>
                     <tr>
                         <td><%= marca.getIdMarca() %></td>
                         <td>
                             <strong><%= marca.getMarca() %></strong>
                         </td>
-                        <td><%= marca.getFechaIngreso() != null ? marca.getFechaIngreso().toString() : "N/A" %></td>
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="MarcaServlet?action=edit&id=<%= marca.getIdMarca() %>" 
@@ -69,6 +68,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>

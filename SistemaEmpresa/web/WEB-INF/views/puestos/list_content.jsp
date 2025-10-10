@@ -39,20 +39,19 @@
                     <tr>
                         <th>ID</th>
                         <th>Puesto</th>
-                        <th>Fecha Creación</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <%
-                        for (Puesto puesto : puestos) {
+                        if (puestos != null && !puestos.isEmpty()) {
+                            for (Puesto puesto : puestos) {
                     %>
                     <tr>
                         <td><%= puesto.getIdPuesto() %></td>
                         <td>
                             <strong><%= puesto.getPuesto() %></strong>
                         </td>
-                        <td><%= puesto.getFechaIngreso() != null ? puesto.getFechaIngreso().toString() : "N/A" %></td>
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="PuestoServlet?action=edit&id=<%= puesto.getIdPuesto() %>" 
@@ -69,6 +68,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>

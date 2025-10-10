@@ -47,12 +47,13 @@
                 </thead>
                 <tbody>
                     <%
-                        for (Venta venta : ventas) {
+                        if (ventas != null && !ventas.isEmpty()) {
+                            for (Venta venta : ventas) {
                     %>
                     <tr>
                         <td><%= venta.getIdVenta() %></td>
                         <td>
-                            <strong><%= venta.getNoFactura() != null ? venta.getNoFactura() : "N/A" %></strong>
+                            <strong><%= venta.getNoFactura() %></strong>
                         </td>
                         <td><%= venta.getNombreCliente() != null ? venta.getNombreCliente() : "Cliente General" %></td>
                         <td><%= venta.getFechaFactura() != null ? venta.getFechaFactura().toString() : "N/A" %></td>
@@ -81,6 +82,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>

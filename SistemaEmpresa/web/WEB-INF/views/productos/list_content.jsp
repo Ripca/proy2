@@ -49,7 +49,8 @@
                 </thead>
                 <tbody>
                     <%
-                        for (Producto producto : productos) {
+                        if (productos != null && !productos.isEmpty()) {
+                            for (Producto producto : productos) {
                     %>
                     <tr>
                         <td><%= producto.getIdProducto() %></td>
@@ -58,11 +59,11 @@
                         </td>
                         <td><%= producto.getNombreMarca() != null ? producto.getNombreMarca() : "Sin marca" %></td>
                         <td><%= producto.getDescripcion() != null ? producto.getDescripcion() : "N/A" %></td>
-                        <td>Q. <%= String.format("%.2f", producto.getPrecioCosto() != null ? producto.getPrecioCosto() : 0.0) %></td>
-                        <td>Q. <%= String.format("%.2f", producto.getPrecioVenta() != null ? producto.getPrecioVenta() : 0.0) %></td>
+                        <td>Q. <%= String.format("%.2f", producto.getPrecioCosto() != null ? producto.getPrecioCosto().doubleValue() : 0.0) %></td>
+                        <td>Q. <%= String.format("%.2f", producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0) %></td>
                         <td>
-                            <span class="badge <%= producto.getExistencia() != null && producto.getExistencia() > 0 ? "bg-success" : "bg-danger" %>">
-                                <%= producto.getExistencia() != null ? producto.getExistencia() : 0 %>
+                            <span class="badge <%= producto.getExistencia() > 0 ? "bg-success" : "bg-danger" %>">
+                                <%= producto.getExistencia() %>
                             </span>
                         </td>
                         <td>
@@ -81,6 +82,7 @@
                         </td>
                     </tr>
                     <%
+                            }
                         }
                     %>
                 </tbody>
