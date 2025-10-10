@@ -45,9 +45,15 @@ public class DashboardServlet extends HttpServlet {
             List<CarruselImagen> imagenesCarrusel = carruselDAO.obtenerImagenesActivas();
             request.setAttribute("imagenesCarrusel", imagenesCarrusel);
 
-            // Cargar menús para el sidebar
-            List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
-            request.setAttribute("menusJerarquicos", menusJerarquicos);
+            // Cargar menús para el sidebar (con manejo de errores)
+            try {
+                List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
+                request.setAttribute("menusJerarquicos", menusJerarquicos);
+            } catch (Exception e) {
+                // Si hay error cargando menús, el template usará menús por defecto
+                System.err.println("Error cargando menús: " + e.getMessage());
+                request.setAttribute("menusJerarquicos", null);
+            }
 
             // Cargar contadores para las tarjetas de resumen
             int totalClientes = clienteDAO.obtenerTodos().size();

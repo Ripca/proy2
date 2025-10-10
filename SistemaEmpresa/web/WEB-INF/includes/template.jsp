@@ -200,22 +200,37 @@
         
         <ul class="list-unstyled">
             <%
-                if (menusJerarquicos != null && !menusJerarquicos.isEmpty()) {
-                    for (Menu menu : menusJerarquicos) {
-                        if (menu.getIdPadre() == 0) { // Menú principal
+                try {
+                    if (menusJerarquicos != null && !menusJerarquicos.isEmpty()) {
+                        for (Menu menu : menusJerarquicos) {
+                            if (menu.esMenuPrincipal()) { // Menú principal
             %>
             <li>
                 <a href="<%= menu.getUrl() %>">
-                    <i class="<%= menu.getIcono() %>"></i> 
+                    <i class="<%= menu.getIcono() %>"></i>
                     <span><%= menu.getNombre() %></span>
                 </a>
             </li>
             <%
+                            }
                         }
-                    }
-                } else {
+                    } else {
+                        // Menús por defecto si no hay en la base de datos
             %>
-            <!-- Menús por defecto -->
+            <li><a href="DashboardServlet"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="ClienteServlet"><i class="fas fa-users"></i> <span>Clientes</span></a></li>
+            <li><a href="EmpleadoServlet"><i class="fas fa-user-tie"></i> <span>Empleados</span></a></li>
+            <li><a href="PuestoServlet"><i class="fas fa-briefcase"></i> <span>Puestos</span></a></li>
+            <li><a href="ProductoServlet"><i class="fas fa-box"></i> <span>Productos</span></a></li>
+            <li><a href="MarcaServlet"><i class="fas fa-tags"></i> <span>Marcas</span></a></li>
+            <li><a href="ProveedorServlet"><i class="fas fa-truck"></i> <span>Proveedores</span></a></li>
+            <li><a href="VentaServlet"><i class="fas fa-shopping-cart"></i> <span>Ventas</span></a></li>
+            <li><a href="CompraServlet"><i class="fas fa-shopping-bag"></i> <span>Compras</span></a></li>
+            <%
+                    }
+                } catch (Exception e) {
+                    // En caso de error, mostrar menús por defecto
+            %>
             <li><a href="DashboardServlet"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
             <li><a href="ClienteServlet"><i class="fas fa-users"></i> <span>Clientes</span></a></li>
             <li><a href="EmpleadoServlet"><i class="fas fa-user-tie"></i> <span>Empleados</span></a></li>
