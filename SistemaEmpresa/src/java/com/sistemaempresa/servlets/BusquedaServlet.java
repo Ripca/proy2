@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import com.google.gson.Gson;
+
 
 /**
  * Servlet para búsquedas AJAX en tiempo real
@@ -25,7 +25,6 @@ public class BusquedaServlet extends HttpServlet {
     private ClienteDAO clienteDAO = new ClienteDAO();
     private ProductoDAO productoDAO = new ProductoDAO();
     private ProveedorDAO proveedorDAO = new ProveedorDAO();
-    private Gson gson = new Gson();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
