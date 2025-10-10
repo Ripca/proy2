@@ -57,8 +57,7 @@
                                     <%
                                         if (marcas != null) {
                                             for (Marca marca : marcas) {
-                                                boolean selected = esEdicion && producto.getIdMarca() != null && 
-                                                                 producto.getIdMarca().equals(marca.getIdMarca());
+                                                boolean selected = esEdicion && producto.getIdMarca() == marca.getIdMarca();
                                     %>
                                     <option value="<%= marca.getIdMarca() %>" <%= selected ? "selected" : "" %>>
                                         <%= marca.getMarca() %>
@@ -87,7 +86,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Q.</span>
                                     <input type="number" class="form-control" id="precioCosto" name="precioCosto" 
-                                           value="<%= esEdicion && producto.getPrecioCosto() != null ? producto.getPrecioCosto() : "" %>" 
+                                           value="<%= esEdicion && producto.getPrecioCosto() != null ? producto.getPrecioCosto().doubleValue() : "" %>"
                                            step="0.01" min="0" required>
                                 </div>
                             </div>
@@ -100,7 +99,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Q.</span>
                                     <input type="number" class="form-control" id="precioVenta" name="precioVenta" 
-                                           value="<%= esEdicion && producto.getPrecioVenta() != null ? producto.getPrecioVenta() : "" %>" 
+                                           value="<%= esEdicion && producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : "" %>"
                                            step="0.01" min="0" required>
                                 </div>
                             </div>
@@ -109,7 +108,7 @@
                             <div class="mb-3">
                                 <label for="existencia" class="form-label">Existencia</label>
                                 <input type="number" class="form-control" id="existencia" name="existencia" 
-                                       value="<%= esEdicion && producto.getExistencia() != null ? producto.getExistencia() : "0" %>" 
+                                       value="<%= esEdicion ? producto.getExistencia() : 0 %>"
                                        min="0">
                             </div>
                         </div>

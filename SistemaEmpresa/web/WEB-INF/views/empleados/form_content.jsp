@@ -97,8 +97,7 @@
                                     <%
                                         if (puestos != null) {
                                             for (Puesto puesto : puestos) {
-                                                boolean selected = esEdicion && empleado.getIdPuesto() != null && 
-                                                                 empleado.getIdPuesto().equals(puesto.getIdPuesto());
+                                                boolean selected = esEdicion && empleado.getIdPuesto() == puesto.getIdPuesto();
                                     %>
                                     <option value="<%= puesto.getIdPuesto() %>" <%= selected ? "selected" : "" %>>
                                         <%= puesto.getPuesto() %>

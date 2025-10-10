@@ -44,7 +44,16 @@
                 </div>
                 <div class="col-md-4">
                     <label for="idCliente" class="form-label">Cliente</label>
-                    <select class="form-select" id="idCliente" name="idCliente">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar cliente...">
+                        <button type="button" class="btn btn-outline-primary" onclick="buscarClientes()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="abrirModalNuevoCliente()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <select class="form-select mt-2" id="idCliente" name="idCliente">
                         <option value="">Cliente General</option>
                         <%
                             if (clientes != null) {
@@ -287,4 +296,139 @@
             agregarProducto();
         }
     });
+
+    // Búsqueda de clientes en tiempo real
+    function buscarClientes() {
+        const termino = document.getElementById('buscarCliente').value;
+        const selectCliente = document.getElementById('idCliente');
+
+        if (termino.length < 2) {
+            return;
+        }
+
+        fetch(`BusquedaServlet?tipo=clientes&termino=${encodeURIComponent(termino)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar opciones existentes excepto "Cliente General"
+                selectCliente.innerHTML = '<option value="">Cliente General</option>';
+
+                if (Array.isArray(data)) {
+                    data.forEach(cliente => {
+                        const option = document.createElement('option');
+                        option.value = cliente.id;
+                        option.textContent = `${cliente.nombre} - ${cliente.nit}`;
+                        selectCliente.appendChild(option);
+                    });
+                } else if (data.error) {
+                    showAlert('error', 'Error', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error en búsqueda:', error);
+                showAlert('error', 'Error', 'Error al buscar clientes');
+            });
+    }
+
+    // Búsqueda automática mientras escribe
+    document.getElementById('buscarCliente').addEventListener('input', function() {
+        const termino = this.value;
+        if (termino.length >= 2) {
+            setTimeout(() => {
+                if (this.value === termino) { // Solo buscar si no ha cambiado
+                    buscarClientes();
+                }
+            }, 500);
+        }
+    });
+
+    // Modal para nuevo cliente
+    function abrirModalNuevoCliente() {
+        const modal = `
+            <div class="modal fade" id="modalNuevoCliente" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nuevo Cliente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formNuevoCliente">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombres</label>
+                                    <input type="text" class="form-control" id="nuevosNombres" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="nuevosApellidos" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">NIT</label>
+                                    <input type="text" class="form-control" id="nuevoNit">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" id="nuevoTelefono">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="nuevoEmail">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Género</label>
+                                    <select class="form-select" id="nuevoGenero">
+                                        <option value="true">Masculino</option>
+                                        <option value="false">Femenino</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarNuevoCliente()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agregar modal al DOM si no existe
+        if (!document.getElementById('modalNuevoCliente')) {
+            document.body.insertAdjacentHTML('beforeend', modal);
+        }
+
+        // Mostrar modal
+        const modalElement = new bootstrap.Modal(document.getElementById('modalNuevoCliente'));
+        modalElement.show();
+    }
+
+    function guardarNuevoCliente() {
+        const formData = new FormData();
+        formData.append('action', 'save');
+        formData.append('nombres', document.getElementById('nuevosNombres').value);
+        formData.append('apellidos', document.getElementById('nuevosApellidos').value);
+        formData.append('nit', document.getElementById('nuevoNit').value);
+        formData.append('telefono', document.getElementById('nuevoTelefono').value);
+        formData.append('email', document.getElementById('nuevoEmail').value);
+        formData.append('genero', document.getElementById('nuevoGenero').value);
+
+        fetch('ClienteServlet', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Cerrar modal
+            bootstrap.Modal.getInstance(document.getElementById('modalNuevoCliente')).hide();
+
+            // Mostrar mensaje de éxito
+            showAlert('success', 'Éxito', 'Cliente creado correctamente');
+
+            // Recargar lista de clientes
+            buscarClientes();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('error', 'Error', 'Error al crear cliente');
+        });
+    }
 </script>

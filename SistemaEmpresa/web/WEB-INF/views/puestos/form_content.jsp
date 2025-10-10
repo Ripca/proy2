@@ -45,14 +45,7 @@
                         <div class="form-text">Ingrese el nombre del puesto de trabajo</div>
                     </div>
 
-                    <% if (esEdicion && puesto.getFechaIngreso() != null) { %>
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Creación</label>
-                        <input type="text" class="form-control" 
-                               value="<%= puesto.getFechaIngreso().toString() %>" readonly>
-                        <div class="form-text">Fecha en que se registró el puesto</div>
-                    </div>
-                    <% } %>
+
 
                     <!-- Botones -->
                     <div class="d-flex justify-content-end gap-2 mt-4">
