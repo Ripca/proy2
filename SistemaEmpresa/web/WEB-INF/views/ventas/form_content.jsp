@@ -98,23 +98,28 @@
                                 %>
                                 <tr>
                                     <td>
-                                        <select class="form-select producto-select" name="idProducto[]" required onchange="actualizarPrecio(this)">
-                                            <option value="">Seleccionar producto...</option>
-                                            <%
-                                                if (productos != null) {
-                                                    for (Producto producto : productos) {
-                                                        boolean selectedProd = detalle.getIdProducto() == producto.getIdProducto();
-                                            %>
-                                            <option value="<%= producto.getIdProducto() %>" 
-                                                    data-precio="<%= producto.getPrecioVenta() %>" 
-                                                    <%= selectedProd ? "selected" : "" %>>
-                                                <%= producto.getProducto() %> - Q.<%= String.format("%.2f", producto.getPrecioVenta()) %>
-                                            </option>
-                                            <%
+                                        <div class="input-group">
+                                            <select class="form-select producto-select" name="idProducto[]" required onchange="actualizarPrecio(this)">
+                                                <option value="">Seleccionar producto...</option>
+                                                <%
+                                                    if (productos != null) {
+                                                        for (Producto producto : productos) {
+                                                            boolean selectedProd = detalle.getIdProducto() == producto.getIdProducto();
+                                                %>
+                                                <option value="<%= producto.getIdProducto() %>"
+                                                        data-precio="<%= producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0 %>"
+                                                        <%= selectedProd ? "selected" : "" %>>
+                                                    <%= producto.getProducto() %> - Q.<%= String.format("%.2f", producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0) %>
+                                                </option>
+                                                <%
+                                                        }
                                                     }
-                                                }
-                                            %>
-                                        </select>
+                                                %>
+                                            </select>
+                                            <button type="button" class="btn btn-outline-primary" onclick="abrirModalProductos(this)">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                     <td>
                                         <input type="number" class="form-control cantidad-input" name="cantidad[]" 
@@ -180,20 +185,25 @@
 
         nuevaFila.innerHTML = `
             <td>
-                <select class="form-select producto-select" name="idProducto[]" required onchange="actualizarPrecio(this)">
-                    <option value="">Seleccionar producto...</option>
-                    <%
-                        if (productos != null) {
-                            for (Producto producto : productos) {
-                    %>
-                    <option value="<%= producto.getIdProducto() %>" data-precio="<%= producto.getPrecioVenta() %>">
-                        <%= producto.getProducto() %> - Q.<%= String.format("%.2f", producto.getPrecioVenta()) %>
-                    </option>
-                    <%
+                <div class="input-group">
+                    <select class="form-select producto-select" name="idProducto[]" required onchange="actualizarPrecio(this)">
+                        <option value="">Seleccionar producto...</option>
+                        <%
+                            if (productos != null) {
+                                for (Producto producto : productos) {
+                        %>
+                        <option value="<%= producto.getIdProducto() %>" data-precio="<%= producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0 %>">
+                            <%= producto.getProducto() %> - Q.<%= String.format("%.2f", producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0) %>
+                        </option>
+                        <%
+                                }
                             }
-                        }
-                    %>
-                </select>
+                        %>
+                    </select>
+                    <button type="button" class="btn btn-outline-primary" onclick="abrirModalProductos(this)">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </td>
             <td>
                 <input type="number" class="form-control cantidad-input" name="cantidad[]" value="1" min="1" required onchange="calcularSubtotal(this)">
@@ -431,4 +441,132 @@
             showAlert('error', 'Error', 'Error al crear cliente');
         });
     }
+
+    // Modal para seleccionar productos
+    let selectProductoActual = null;
+
+    function abrirModalProductos(button) {
+        // Guardar referencia al select que abrió el modal
+        selectProductoActual = button.parentElement.querySelector('.producto-select');
+
+        const modal = `
+            <div class="modal fade" id="modalProductos" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Seleccionar Producto</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="buscarProductoModal" placeholder="Buscar producto...">
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tablaProductos">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Marca</th>
+                                            <th>Precio</th>
+                                            <th>Existencia</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyProductos">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agregar modal al DOM si no existe
+        if (!document.getElementById('modalProductos')) {
+            document.body.insertAdjacentHTML('beforeend', modal);
+        }
+
+        // Cargar productos
+        cargarProductosModal();
+
+        // Mostrar modal
+        const modalElement = new bootstrap.Modal(document.getElementById('modalProductos'));
+        modalElement.show();
+    }
+
+    function cargarProductosModal(termino = '') {
+        const tbody = document.getElementById('bodyProductos');
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Cargando...</td></tr>';
+
+        fetch(`BusquedaServlet?tipo=productos&termino=${encodeURIComponent(termino)}`)
+            .then(response => response.json())
+            .then(data => {
+                tbody.innerHTML = '';
+
+                if (Array.isArray(data)) {
+                    data.forEach(producto => {
+                        const fila = `
+                            <tr>
+                                <td>${producto.nombre}</td>
+                                <td>${producto.marca || 'Sin marca'}</td>
+                                <td>Q. ${producto.precio.toFixed(2)}</td>
+                                <td>${producto.existencia}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                            onclick="seleccionarProducto(${producto.id}, '${producto.nombre}', ${producto.precio})">
+                                        Seleccionar
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', fila);
+                    });
+                } else if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${data.error}</td></tr>`;
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No se encontraron productos</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error al cargar productos</td></tr>';
+            });
+    }
+
+    function seleccionarProducto(id, nombre, precio) {
+        if (selectProductoActual) {
+            // Limpiar opciones existentes
+            selectProductoActual.innerHTML = '<option value="">Seleccionar producto...</option>';
+
+            // Agregar el producto seleccionado
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = `${nombre} - Q.${precio.toFixed(2)}`;
+            option.setAttribute('data-precio', precio);
+            option.selected = true;
+            selectProductoActual.appendChild(option);
+
+            // Actualizar precio
+            actualizarPrecio(selectProductoActual);
+        }
+
+        // Cerrar modal
+        bootstrap.Modal.getInstance(document.getElementById('modalProductos')).hide();
+    }
+
+    // Búsqueda en modal de productos
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.id === 'buscarProductoModal') {
+                const termino = e.target.value;
+                setTimeout(() => {
+                    if (e.target.value === termino) {
+                        cargarProductosModal(termino);
+                    }
+                }, 500);
+            }
+        });
+    });
 </script>

@@ -106,6 +106,7 @@ public class BusquedaServlet extends HttpServlet {
                     .append("\"nombre\":\"").append(escapeJson(producto.getProducto())).append("\",")
                     .append("\"marca\":\"").append(escapeJson(producto.getNombreMarca() != null ? producto.getNombreMarca() : "")).append("\",")
                     .append("\"precio\":").append(producto.getPrecioVenta() != null ? producto.getPrecioVenta().doubleValue() : 0.0).append(",")
+                    .append("\"precioCosto\":").append(producto.getPrecioCosto() != null ? producto.getPrecioCosto().doubleValue() : 0.0).append(",")
                     .append("\"existencia\":").append(producto.getExistencia())
                     .append("}");
             }
