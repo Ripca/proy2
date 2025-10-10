@@ -26,7 +26,8 @@ INSERT INTO menus (nombre, icono, url, id_padre, orden, estado) VALUES
 ('Marcas', 'fas fa-tags', 'MarcaServlet', NULL, 6, TRUE),
 ('Proveedores', 'fas fa-truck', 'ProveedorServlet', NULL, 7, TRUE),
 ('Ventas', 'fas fa-shopping-cart', 'VentaServlet', NULL, 8, TRUE),
-('Compras', 'fas fa-shopping-bag', 'CompraServlet', NULL, 9, TRUE);
+('Compras', 'fas fa-shopping-bag', 'CompraServlet', NULL, 9, TRUE),
+('Usuarios', 'fas fa-users-cog', 'UsuarioServlet', NULL, 10, TRUE);
 
 -- Verificar que los menús se insertaron correctamente
 SELECT * FROM menus ORDER BY orden;

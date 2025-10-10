@@ -83,10 +83,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       value="<%= esEdicion && empleado.getEmail() != null ? empleado.getEmail() : "" %>" 
-                                       maxlength="100">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="telefono" name="telefono"
+                                       value="<%= esEdicion && empleado.getTelefono() != null ? empleado.getTelefono() : "" %>"
+                                       maxlength="20">
                             </div>
                         </div>
                         <div class="col-md-6">

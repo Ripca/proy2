@@ -44,6 +44,13 @@
                 </div>
                 <div class="col-md-4">
                     <label for="idProveedor" class="form-label">Proveedor</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="buscarProveedor"
+                               placeholder="Buscar proveedor..." onkeyup="buscarProveedores()">
+                        <button type="button" class="btn btn-outline-success" onclick="abrirModalNuevoProveedor()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                     <select class="form-select" id="idProveedor" name="idProveedor">
                         <option value="">Proveedor General</option>
                         <%
@@ -420,4 +427,38 @@
             }, 500);
         }
     });
+
+    // Búsqueda de proveedores
+    let timeoutProveedores;
+    function buscarProveedores() {
+        clearTimeout(timeoutProveedores);
+        timeoutProveedores = setTimeout(() => {
+            const termino = document.getElementById('buscarProveedor').value;
+            const select = document.getElementById('idProveedor');
+
+            if (termino.length < 2) {
+                return;
+            }
+
+            fetch(`BusquedaServlet?tipo=proveedores&termino=${encodeURIComponent(termino)}`)
+                .then(response => response.json())
+                .then(proveedores => {
+                    select.innerHTML = '<option value="">Seleccionar proveedor...</option>';
+                    proveedores.forEach(proveedor => {
+                        const option = document.createElement('option');
+                        option.value = proveedor.id;
+                        option.textContent = `${proveedor.nombre} - ${proveedor.nit}`;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al buscar proveedores:', error);
+                });
+        }, 500);
+    }
+
+    function abrirModalNuevoProveedor() {
+        // Implementar modal para nuevo proveedor si es necesario
+        showAlert('info', 'Información', 'Funcionalidad de nuevo proveedor pendiente de implementar.');
+    }
 </script>

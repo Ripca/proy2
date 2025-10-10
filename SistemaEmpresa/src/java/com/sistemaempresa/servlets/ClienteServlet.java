@@ -106,7 +106,7 @@ public class ClienteServlet extends HttpServlet {
             cliente.setNit(request.getParameter("nit"));
             cliente.setGenero("M".equals(request.getParameter("genero")));
             cliente.setTelefono(request.getParameter("telefono"));
-            cliente.setCorreoElectronico(request.getParameter("correoElectronico"));
+            cliente.setCorreoElectronico(request.getParameter("email"));
             
             if (clienteDAO.insertar(cliente)) {
                 response.sendRedirect("ClienteServlet?action=list&success=Cliente guardado correctamente");
@@ -131,7 +131,7 @@ public class ClienteServlet extends HttpServlet {
             cliente.setNit(request.getParameter("nit"));
             cliente.setGenero("M".equals(request.getParameter("genero")));
             cliente.setTelefono(request.getParameter("telefono"));
-            cliente.setCorreoElectronico(request.getParameter("correoElectronico"));
+            cliente.setCorreoElectronico(request.getParameter("email"));
             
             if (clienteDAO.actualizar(cliente)) {
                 response.sendRedirect("ClienteServlet?action=list&success=Cliente actualizado correctamente");

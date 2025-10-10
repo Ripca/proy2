@@ -3,9 +3,11 @@ package com.sistemaempresa.servlets;
 import com.sistemaempresa.dao.ClienteDAO;
 import com.sistemaempresa.dao.ProductoDAO;
 import com.sistemaempresa.dao.ProveedorDAO;
+import com.sistemaempresa.dao.UsuarioDAO;
 import com.sistemaempresa.models.Cliente;
 import com.sistemaempresa.models.Producto;
 import com.sistemaempresa.models.Proveedor;
+import com.sistemaempresa.models.Usuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,6 +27,7 @@ public class BusquedaServlet extends HttpServlet {
     private ClienteDAO clienteDAO = new ClienteDAO();
     private ProductoDAO productoDAO = new ProductoDAO();
     private ProveedorDAO proveedorDAO = new ProveedorDAO();
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -48,6 +51,9 @@ public class BusquedaServlet extends HttpServlet {
                     break;
                 case "proveedores":
                     buscarProveedores(termino, out);
+                    break;
+                case "usuarios":
+                    buscarUsuarios(termino, out);
                     break;
                 default:
                     out.print("{\"error\": \"Tipo de búsqueda no válido\"}");
@@ -147,6 +153,37 @@ public class BusquedaServlet extends HttpServlet {
         }
     }
     
+    private void buscarUsuarios(String termino, PrintWriter out) {
+        try {
+            List<Usuario> usuarios;
+            if (termino == null || termino.trim().isEmpty()) {
+                usuarios = usuarioDAO.obtenerTodos();
+            } else {
+                usuarios = usuarioDAO.buscar(termino);
+            }
+
+            StringBuilder json = new StringBuilder();
+            json.append("[");
+            for (int i = 0; i < usuarios.size(); i++) {
+                Usuario usuario = usuarios.get(i);
+                if (i > 0) json.append(",");
+                json.append("{")
+                    .append("\"id\":").append(usuario.getIdUsuario()).append(",")
+                    .append("\"usuario\":\"").append(escapeJson(usuario.getUsuario())).append("\",")
+                    .append("\"nombre\":\"").append(escapeJson(usuario.getNombreCompleto())).append("\",")
+                    .append("\"email\":\"").append(escapeJson(usuario.getEmail() != null ? usuario.getEmail() : "")).append("\",")
+                    .append("\"rol\":\"").append(escapeJson(usuario.getRol())).append("\",")
+                    .append("\"activo\":").append(usuario.isActivo())
+                    .append("}");
+            }
+            json.append("]");
+
+            out.print(json.toString());
+        } catch (Exception e) {
+            out.print("{\"error\": \"Error al buscar usuarios: " + e.getMessage() + "\"}");
+        }
+    }
+
     /**
      * Escapa caracteres especiales para JSON
      */
