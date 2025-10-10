@@ -50,7 +50,7 @@
                         <td><strong>Total:</strong></td>
                         <td>
                             <span class="badge bg-warning text-dark fs-6">
-                                Q. <%= String.format("%.2f", compra.getTotal() != null ? compra.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", compra.getTotal()) %>
                             </span>
                         </td>
                     </tr>
@@ -137,7 +137,7 @@
                         <th colspan="3" class="text-end">TOTAL:</th>
                         <th>
                             <span class="text-warning">
-                                Q. <%= String.format("%.2f", compra.getTotal() != null ? compra.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", compra.getTotal()) %>
                             </span>
                         </th>
                     </tr>

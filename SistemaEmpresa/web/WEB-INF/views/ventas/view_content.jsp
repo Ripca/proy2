@@ -50,7 +50,7 @@
                         <td><strong>Total:</strong></td>
                         <td>
                             <span class="badge bg-success fs-6">
-                                Q. <%= String.format("%.2f", venta.getTotal() != null ? venta.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", venta.getTotal()) %>
                             </span>
                         </td>
                     </tr>
@@ -137,7 +137,7 @@
                         <th colspan="3" class="text-end">TOTAL:</th>
                         <th>
                             <span class="text-success">
-                                Q. <%= String.format("%.2f", venta.getTotal() != null ? venta.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", venta.getTotal()) %>
                             </span>
                         </th>
                     </tr>

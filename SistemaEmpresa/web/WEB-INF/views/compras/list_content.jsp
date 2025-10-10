@@ -59,7 +59,7 @@
                         <td><%= compra.getFechaOrden() != null ? compra.getFechaOrden().toString() : "N/A" %></td>
                         <td>
                             <span class="badge bg-warning text-dark">
-                                Q. <%= String.format("%.2f", compra.getTotal() != null ? compra.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", compra.getTotal()) %>
                             </span>
                         </td>
                         <td>
@@ -74,7 +74,7 @@
                                 </a>
                                 <button type="button" class="btn btn-danger btn-sm" 
                                         onclick="confirmDelete('CompraServlet?action=delete&id=<%= compra.getIdCompra() %>', 
-                                        '¿Está seguro que desea eliminar la compra No. <%= compra.getNoFactura() %>?')" 
+                                        '¿Está seguro que desea eliminar la compra No. <%= compra.getNoOrdenCompra() %>?')"
                                         title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>

@@ -59,7 +59,7 @@
                         <td><%= venta.getFechaFactura() != null ? venta.getFechaFactura().toString() : "N/A" %></td>
                         <td>
                             <span class="badge bg-success">
-                                Q. <%= String.format("%.2f", venta.getTotal() != null ? venta.getTotal() : 0.0) %>
+                                Q. <%= String.format("%.2f", venta.getTotal()) %>
                             </span>
                         </td>
                         <td>
