@@ -1,0 +1,120 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+/F2 6 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 687
+>>
+stream
+BT
+/F2 18 Tf
+50 750 Td
+(FACTURA DE COMPRA) Tj
+ET
+BT
+/F1 12 Tf
+50 720 Td
+(No Factura: 20) Tj
+0 -20 Td
+(Fecha: 2000-02-02) Tj
+0 -20 Td
+(NIT Proveedor: 12345678) Tj
+0 -20 Td
+(Proveedor: Distribuidora Tecnológica) Tj
+0 -20 Td
+(Direccion: Zona 10, Ciudad de Guatemala) Tj
+ET
+BT
+/F2 12 Tf
+50 580 Td
+(PRODUCTOS) Tj
+ET
+BT
+/F1 10 Tf
+50 560 Td
+(Cant.  Producto                    Marca           P.Unit.      Subtotal) Tj
+ET
+BT
+/F1 10 Tf
+50 540 Td
+(3     Televisor 50"     Coca     Q 20.00     Q 60.00) Tj
+ET
+BT
+/F1 10 Tf
+50 520 Td
+(10     Televisor 50"     Coca     Q 10.00     Q 100.00) Tj
+ET
+BT
+/F2 12 Tf
+50 480 Td
+(Total: Q 160.00) Tj
+ET
+BT
+/F1 10 Tf
+50 440 Td
+(Gracias por su compra.) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+6 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica-Bold
+>>
+endobj
+
+xref
+0 7
+0000000000 65535 f 
+0000000009 65535 n 
+0000000074 65535 n 
+0000000120 65535 n 
+0000000274 65535 n 
+0000000000 65535 n 
+0000000000 65535 n 
+trailer
+<<
+/Size 7
+/Root 1 0 R
+>>
+startxref
+1139
+%%EOF

@@ -1,0 +1,10 @@
+﻿  Marca.cpp
+  Proveedor.cpp
+  main.cpp
+C:\Users\VELA\Desktop\SEMESTRE3\PROGRA\PROYECTOFINAL\vista\main.cpp(33,10): warning C4101: 'buffer': variable local sin referencia
+  Generando código
+  4 of 395 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    46 functions had inline decision re-evaluated but remain unchanged
+  Generación de código finalizada
+  vista.vcxproj -> C:\Users\VELA\Desktop\SEMESTRE3\PROGRA\PROYECTOFINAL\x64\Release\vista.exe

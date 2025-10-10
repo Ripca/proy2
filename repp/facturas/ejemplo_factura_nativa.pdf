@@ -1,0 +1,270 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+/F2 6 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 1800
+>>
+stream
+BT
+/F2 20 Tf
+180 750 Td
+(FACTURA DE COMPRA) Tj
+ET
+50 735 m
+550 735 l
+S
+BT
+/F2 12 Tf
+50 710 Td
+(No Factura: 24120101) Tj
+300 0 Td
+(Fecha: 2024-12-01) Tj
+ET
+BT
+/F1 11 Tf
+50 690 Td
+(NIT Proveedor: 42124840) Tj
+ET
+BT
+/F1 11 Tf
+50 670 Td
+(Proveedor: Distribuidora Alimentaria S.A.) Tj
+ET
+BT
+/F1 11 Tf
+50 650 Td
+(Direccion: Zona 10, Ciudad de Guatemala) Tj
+ET
+BT
+/F1 11 Tf
+50 630 Td
+(Fecha Ingreso: 2024-12-01 14:30:00) Tj
+ET
+BT
+/F2 14 Tf
+50 600 Td
+(PRODUCTOS) Tj
+ET
+50 590 m
+550 590 l
+S
+50 570 m
+550 570 l
+50 545 m
+550 545 l
+S
+50 570 m
+50 545 l
+100 570 m
+100 545 l
+320 570 m
+320 545 l
+420 570 m
+420 545 l
+500 570 m
+500 545 l
+550 570 m
+550 545 l
+S
+BT
+/F2 10 Tf
+65 555 Td
+(Cant.) Tj
+ET
+BT
+/F2 10 Tf
+180 555 Td
+(Producto) Tj
+ET
+BT
+/F2 10 Tf
+345 555 Td
+(Marca) Tj
+ET
+BT
+/F2 10 Tf
+430 555 Td
+(P. Unit.) Tj
+ET
+BT
+/F2 10 Tf
+510 555 Td
+(Subtotal) Tj
+ET
+50 545 m
+550 545 l
+50 525 m
+550 525 l
+S
+50 545 m
+50 525 l
+100 545 m
+100 525 l
+320 545 m
+320 525 l
+420 545 m
+420 525 l
+500 545 m
+500 525 l
+550 545 m
+550 525 l
+S
+BT
+/F1 9 Tf
+70 533 Td
+(10) Tj
+ET
+BT
+/F1 9 Tf
+105 533 Td
+(Sopa Instantanea) Tj
+ET
+BT
+/F1 9 Tf
+325 533 Td
+(Laky) Tj
+ET
+BT
+/F1 8 Tf
+425 533 Td
+(Q 2.50) Tj
+ET
+BT
+/F1 8 Tf
+505 533 Td
+(Q 25.00) Tj
+ET
+50 525 m
+550 525 l
+50 505 m
+550 505 l
+S
+50 525 m
+50 505 l
+100 525 m
+100 505 l
+320 525 m
+320 505 l
+420 525 m
+420 505 l
+500 525 m
+500 505 l
+550 525 m
+550 505 l
+S
+BT
+/F1 9 Tf
+70 513 Td
+(5) Tj
+ET
+BT
+/F1 9 Tf
+105 513 Td
+(Corn Flakes) Tj
+ET
+BT
+/F1 9 Tf
+325 513 Td
+(Kelloggs) Tj
+ET
+BT
+/F1 8 Tf
+425 513 Td
+(Q 25,000.00) Tj
+ET
+BT
+/F1 8 Tf
+505 513 Td
+(Q 125,000.00) Tj
+ET
+50 505 m
+550 505 l
+50 480 m
+550 480 l
+420 505 m
+420 480 l
+500 505 m
+500 480 l
+550 505 m
+550 480 l
+S
+BT
+/F2 12 Tf
+435 490 Td
+(TOTAL:) Tj
+ET
+BT
+/F2 12 Tf
+505 490 Td
+(Q 125,025.00) Tj
+ET
+BT
+/F1 10 Tf
+50 420 Td
+(Gracias por su compra.) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+6 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica-Bold
+>>
+endobj
+
+xref
+0 7
+0000000000 65535 f
+0000000009 00000 n
+0000000074 00000 n
+0000000120 00000 n
+0000000274 00000 n
+0000001520 00000 n
+0000001597 00000 n
+trailer
+<<
+/Size 7
+/Root 1 0 R
+>>
+startxref
+1680
+%%EOF
