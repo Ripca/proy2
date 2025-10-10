@@ -17,27 +17,7 @@
     </a>
 </div>
 
-<!-- Formulario de búsqueda -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" action="ClienteServlet" class="row g-3">
-            <input type="hidden" name="action" value="search">
-            <div class="col-md-8">
-                <input type="text" class="form-control" name="termino" 
-                       placeholder="Buscar por nombre, NIT, teléfono..." 
-                       value="<%= request.getAttribute("termino") != null ? request.getAttribute("termino") : "" %>">
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="ClienteServlet" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Tabla de clientes -->
 <div class="card">
@@ -61,7 +41,7 @@
                         <th>Cliente</th>
                         <th>NIT</th>
                         <th>Teléfono</th>
-                        <th>Dirección</th>
+                        <th>Email</th>
                         <th>Fecha Ingreso</th>
                         <th>Acciones</th>
                     </tr>
@@ -73,11 +53,11 @@
                     <tr>
                         <td><%= cliente.getIdCliente() %></td>
                         <td>
-                            <strong><%= cliente.getCliente() %></strong>
+                            <strong><%= cliente.getNombreCompleto() %></strong>
                         </td>
                         <td><%= cliente.getNit() != null ? cliente.getNit() : "N/A" %></td>
                         <td><%= cliente.getTelefono() != null ? cliente.getTelefono() : "N/A" %></td>
-                        <td><%= cliente.getDireccion() != null ? cliente.getDireccion() : "N/A" %></td>
+                        <td><%= cliente.getCorreoElectronico() != null ? cliente.getCorreoElectronico() : "N/A" %></td>
                         <td><%= cliente.getFechaIngreso() != null ? cliente.getFechaIngreso().toString() : "N/A" %></td>
                         <td>
                             <div class="btn-group" role="group">
@@ -87,7 +67,7 @@
                                 </a>
                                 <button type="button" class="btn btn-danger btn-sm" 
                                         onclick="confirmDelete('ClienteServlet?action=delete&id=<%= cliente.getIdCliente() %>', 
-                                        '¿Está seguro que desea eliminar el cliente <%= cliente.getCliente() %>?')" 
+                                        '¿Está seguro que desea eliminar el cliente <%= cliente.getNombreCompleto() %>?')"
                                         title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>

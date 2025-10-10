@@ -17,27 +17,7 @@
     </a>
 </div>
 
-<!-- Formulario de búsqueda -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" action="CompraServlet" class="row g-3">
-            <input type="hidden" name="action" value="search">
-            <div class="col-md-8">
-                <input type="text" class="form-control" name="termino" 
-                       placeholder="Buscar por proveedor, número de factura..." 
-                       value="<%= request.getAttribute("termino") != null ? request.getAttribute("termino") : "" %>">
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="CompraServlet" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Tabla de compras -->
 <div class="card">
@@ -72,10 +52,10 @@
                     <tr>
                         <td><%= compra.getIdCompra() %></td>
                         <td>
-                            <strong><%= compra.getNoFactura() != null ? compra.getNoFactura() : "N/A" %></strong>
+                            <strong><%= String.valueOf(compra.getNoOrdenCompra()) %></strong>
                         </td>
                         <td><%= compra.getNombreProveedor() != null ? compra.getNombreProveedor() : "Proveedor General" %></td>
-                        <td><%= compra.getFecha() != null ? compra.getFecha().toString() : "N/A" %></td>
+                        <td><%= compra.getFechaOrden() != null ? compra.getFechaOrden().toString() : "N/A" %></td>
                         <td>
                             <span class="badge bg-warning text-dark">
                                 Q. <%= String.format("%.2f", compra.getTotal() != null ? compra.getTotal() : 0.0) %>

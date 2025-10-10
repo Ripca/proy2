@@ -39,8 +39,8 @@
                 </div>
                 <div class="col-md-4">
                     <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" id="fecha" name="fecha" 
-                           value="<%= esEdicion && venta.getFecha() != null ? venta.getFecha().toString() : "" %>" required>
+                    <input type="date" class="form-control" id="fecha" name="fecha"
+                           value="<%= esEdicion && venta.getFechaFactura() != null ? venta.getFechaFactura().toString() : "" %>" required>
                 </div>
                 <div class="col-md-4">
                     <label for="idCliente" class="form-label">Cliente</label>
@@ -49,11 +49,10 @@
                         <%
                             if (clientes != null) {
                                 for (Cliente cliente : clientes) {
-                                    boolean selected = esEdicion && venta.getIdCliente() != null && 
-                                                     venta.getIdCliente().equals(cliente.getIdCliente());
+                                    boolean selected = esEdicion && venta.getIdCliente() == cliente.getIdCliente();
                         %>
                         <option value="<%= cliente.getIdCliente() %>" <%= selected ? "selected" : "" %>>
-                            <%= cliente.getCliente() %>
+                            <%= cliente.getNombreCompleto() %>
                         </option>
                         <%
                                 }
@@ -95,7 +94,7 @@
                                             <%
                                                 if (productos != null) {
                                                     for (Producto producto : productos) {
-                                                        boolean selectedProd = detalle.getIdProducto().equals(producto.getIdProducto());
+                                                        boolean selectedProd = detalle.getIdProducto() == producto.getIdProducto();
                                             %>
                                             <option value="<%= producto.getIdProducto() %>" 
                                                     data-precio="<%= producto.getPrecioVenta() %>" 
@@ -113,8 +112,8 @@
                                                value="<%= detalle.getCantidad() %>" min="1" required onchange="calcularSubtotal(this)">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control precio-input" name="precio[]" 
-                                               value="<%= detalle.getPrecio() %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
+                                        <input type="number" class="form-control precio-input" name="precio[]"
+                                               value="<%= detalle.getPrecioUnitario() %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
                                     </td>
                                     <td>
                                         <input type="number" class="form-control subtotal-input" readonly 

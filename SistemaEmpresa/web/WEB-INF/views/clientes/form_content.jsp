@@ -41,8 +41,8 @@
                                 <label for="cliente" class="form-label">
                                     Nombre del Cliente <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="cliente" name="cliente" 
-                                       value="<%= esEdicion ? cliente.getCliente() : "" %>" 
+                                <input type="text" class="form-control" id="cliente" name="cliente"
+                                       value="<%= esEdicion ? cliente.getNombreCompleto() : "" %>"
                                        required maxlength="100">
                                 <div class="form-text">Ingrese el nombre completo del cliente</div>
                             </div>
@@ -71,20 +71,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       value="<%= esEdicion && cliente.getEmail() != null ? cliente.getEmail() : "" %>" 
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="<%= esEdicion && cliente.getCorreoElectronico() != null ? cliente.getCorreoElectronico() : "" %>"
                                        maxlength="100">
                                 <div class="form-text">Correo electrónico del cliente</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="direccion" class="form-label">Dirección</label>
-                        <textarea class="form-control" id="direccion" name="direccion" rows="3" 
-                                  maxlength="200"><%= esEdicion && cliente.getDireccion() != null ? cliente.getDireccion() : "" %></textarea>
-                        <div class="form-text">Dirección completa del cliente</div>
-                    </div>
+
 
                     <% if (esEdicion && cliente.getFechaIngreso() != null) { %>
                     <div class="mb-3">

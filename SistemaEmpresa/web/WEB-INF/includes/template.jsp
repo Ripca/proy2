@@ -53,10 +53,14 @@
             min-width: 60px;
         }
         
-        #sidebar.collapsed .sidebar-header h3,
+        #sidebar.collapsed .sidebar-header h3 span,
         #sidebar.collapsed .sidebar-header small,
         #sidebar.collapsed ul li a span {
             display: none;
+        }
+
+        #sidebar.collapsed .sidebar-header h3 i {
+            margin: 0;
         }
         
         .sidebar-header {

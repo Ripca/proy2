@@ -17,27 +17,7 @@
     </a>
 </div>
 
-<!-- Formulario de búsqueda -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" action="VentaServlet" class="row g-3">
-            <input type="hidden" name="action" value="search">
-            <div class="col-md-8">
-                <input type="text" class="form-control" name="termino" 
-                       placeholder="Buscar por cliente, número de factura..." 
-                       value="<%= request.getAttribute("termino") != null ? request.getAttribute("termino") : "" %>">
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="VentaServlet" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Tabla de ventas -->
 <div class="card">
@@ -75,7 +55,7 @@
                             <strong><%= venta.getNoFactura() != null ? venta.getNoFactura() : "N/A" %></strong>
                         </td>
                         <td><%= venta.getNombreCliente() != null ? venta.getNombreCliente() : "Cliente General" %></td>
-                        <td><%= venta.getFecha() != null ? venta.getFecha().toString() : "N/A" %></td>
+                        <td><%= venta.getFechaFactura() != null ? venta.getFechaFactura().toString() : "N/A" %></td>
                         <td>
                             <span class="badge bg-success">
                                 Q. <%= String.format("%.2f", venta.getTotal() != null ? venta.getTotal() : 0.0) %>

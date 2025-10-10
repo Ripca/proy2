@@ -17,27 +17,7 @@
     </a>
 </div>
 
-<!-- Formulario de búsqueda -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" action="PuestoServlet" class="row g-3">
-            <input type="hidden" name="action" value="search">
-            <div class="col-md-8">
-                <input type="text" class="form-control" name="termino" 
-                       placeholder="Buscar por nombre del puesto..." 
-                       value="<%= request.getAttribute("termino") != null ? request.getAttribute("termino") : "" %>">
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="PuestoServlet" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Tabla de puestos -->
 <div class="card">

@@ -34,13 +34,13 @@
             <div class="row mb-4">
                 <div class="col-md-4">
                     <label for="noFactura" class="form-label">No. Factura <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="noFactura" name="noFactura" 
-                           value="<%= esEdicion ? compra.getNoFactura() : "" %>" required>
+                    <input type="text" class="form-control" id="noFactura" name="noFactura"
+                           value="<%= esEdicion ? String.valueOf(compra.getNoOrdenCompra()) : "" %>" required>
                 </div>
                 <div class="col-md-4">
                     <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" id="fecha" name="fecha" 
-                           value="<%= esEdicion && compra.getFecha() != null ? compra.getFecha().toString() : "" %>" required>
+                    <input type="date" class="form-control" id="fecha" name="fecha"
+                           value="<%= esEdicion && compra.getFechaOrden() != null ? compra.getFechaOrden().toString() : "" %>" required>
                 </div>
                 <div class="col-md-4">
                     <label for="idProveedor" class="form-label">Proveedor</label>
@@ -49,8 +49,7 @@
                         <%
                             if (proveedores != null) {
                                 for (Proveedor proveedor : proveedores) {
-                                    boolean selected = esEdicion && compra.getIdProveedor() != null && 
-                                                     compra.getIdProveedor().equals(proveedor.getIdProveedor());
+                                    boolean selected = esEdicion && compra.getIdProveedor() == proveedor.getIdProveedor();
                         %>
                         <option value="<%= proveedor.getIdProveedor() %>" <%= selected ? "selected" : "" %>>
                             <%= proveedor.getProveedor() %>
@@ -95,7 +94,7 @@
                                             <%
                                                 if (productos != null) {
                                                     for (Producto producto : productos) {
-                                                        boolean selectedProd = detalle.getIdProducto().equals(producto.getIdProducto());
+                                                        boolean selectedProd = detalle.getIdProducto() == producto.getIdProducto();
                                             %>
                                             <option value="<%= producto.getIdProducto() %>" 
                                                     data-precio="<%= producto.getPrecioCosto() %>" 
@@ -113,8 +112,8 @@
                                                value="<%= detalle.getCantidad() %>" min="1" required onchange="calcularSubtotal(this)">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control precio-input" name="precio[]" 
-                                               value="<%= detalle.getPrecio() %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
+                                        <input type="number" class="form-control precio-input" name="precio[]"
+                                               value="<%= detalle.getPrecioCostoUnitario() %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
                                     </td>
                                     <td>
                                         <input type="number" class="form-control subtotal-input" readonly 

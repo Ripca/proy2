@@ -36,11 +36,11 @@
                     </tr>
                     <tr>
                         <td><strong>No. Factura:</strong></td>
-                        <td><%= compra.getNoFactura() != null ? compra.getNoFactura() : "N/A" %></td>
+                        <td><%= String.valueOf(compra.getNoOrdenCompra()) %></td>
                     </tr>
                     <tr>
                         <td><strong>Fecha:</strong></td>
-                        <td><%= compra.getFecha() != null ? compra.getFecha().toString() : "N/A" %></td>
+                        <td><%= compra.getFechaOrden() != null ? compra.getFechaOrden().toString() : "N/A" %></td>
                     </tr>
                     <tr>
                         <td><strong>Proveedor:</strong></td>

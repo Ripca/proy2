@@ -40,7 +40,7 @@
                     </tr>
                     <tr>
                         <td><strong>Fecha:</strong></td>
-                        <td><%= venta.getFecha() != null ? venta.getFecha().toString() : "N/A" %></td>
+                        <td><%= venta.getFechaFactura() != null ? venta.getFechaFactura().toString() : "N/A" %></td>
                     </tr>
                     <tr>
                         <td><strong>Cliente:</strong></td>
