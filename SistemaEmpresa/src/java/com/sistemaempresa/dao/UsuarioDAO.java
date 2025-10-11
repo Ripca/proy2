@@ -97,7 +97,8 @@ public class UsuarioDAO {
             stmt.setString(5, usuario.getEmail());
             stmt.setString(6, usuario.getRol());
             stmt.setBoolean(7, usuario.isActivo());
-            stmt.setDate(8, Date.valueOf(usuario.getFechaCreacion()));
+            stmt.setDate(8, java.sql.Date.valueOf(usuario.getFechaCreacion()));
+
             
             return stmt.executeUpdate() > 0;
             
@@ -271,12 +272,13 @@ public class UsuarioDAO {
         usuario.setRol(rs.getString("rol"));
         usuario.setActivo(rs.getBoolean("activo"));
         
-        Date fechaCreacion = rs.getDate("fecha_creacion");
+java.sql.Date fechaCreacion = rs.getDate("fecha_creacion");
+
         if (fechaCreacion != null) {
             usuario.setFechaCreacion(fechaCreacion.toLocalDate());
         }
         
-        Date fechaUltimoAcceso = rs.getDate("fecha_ultimo_acceso");
+java.sql.Date fechaUltimoAcceso = rs.getDate("fecha_ultimo_acceso");
         if (fechaUltimoAcceso != null) {
             usuario.setFechaUltimoAcceso(fechaUltimoAcceso.toLocalDate());
         }

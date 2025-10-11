@@ -86,14 +86,7 @@
                         <div class="form-text">Dirección completa del proveedor</div>
                     </div>
 
-                    <% if (esEdicion && proveedor.getFechaIngreso() != null) { %>
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Ingreso</label>
-                        <input type="text" class="form-control" 
-                               value="<%= proveedor.getFechaIngreso().toString() %>" readonly>
-                        <div class="form-text">Fecha en que se registró el proveedor</div>
-                    </div>
-                    <% } %>
+
 
                     <!-- Botones -->
                     <div class="d-flex justify-content-end gap-2 mt-4">

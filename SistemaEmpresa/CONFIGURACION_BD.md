@@ -6,38 +6,27 @@ El sistema utiliza las siguientes variables de entorno para la configuración de
 
 ### Variables Disponibles:
 
-1. **DB_HOST** - Servidor de base de datos
-   - Default: `localhost`
+1. **DB_URL** - URL completa de conexión a MySQL
+   - Formato: `jdbc:mysql://[host]:[puerto]/[nombre_bd]`
+   - Default: `jdbc:mysql://localhost:3306/sistema_empresa`
 
-2. **DB_PORT** - Puerto de MySQL
-   - Default: `3306`
-
-3. **DB_NAME** - Nombre de la base de datos
-   - Default: `sistema_empresa`
-
-4. **DB_USERNAME** - Usuario de la base de datos
+2. **DB_USERNAME** - Usuario de la base de datos
    - Default: `root`
 
-5. **DB_PASSWORD** - Contraseña de la base de datos
+3. **DB_PASSWORD** - Contraseña de la base de datos
    - Default: `admin`
-
-**Nota:** La URL se construye automáticamente como: `jdbc:mysql://[DB_HOST]:[DB_PORT]/[DB_NAME]`
 
 ## Configuración por Sistema Operativo
 
 ### Windows (PowerShell)
 ```powershell
 # Configurar variables de entorno temporalmente (solo para la sesión actual)
-$env:DB_HOST = "localhost"
-$env:DB_PORT = "3306"
-$env:DB_NAME = "sistema_empresa"
+$env:DB_URL = "jdbc:mysql://localhost:3306/sistema_empresa"
 $env:DB_USERNAME = "root"
 $env:DB_PASSWORD = "tu_password_aqui"
 
 # Configurar variables de entorno permanentemente
-[Environment]::SetEnvironmentVariable("DB_HOST", "localhost", "User")
-[Environment]::SetEnvironmentVariable("DB_PORT", "3306", "User")
-[Environment]::SetEnvironmentVariable("DB_NAME", "sistema_empresa", "User")
+[Environment]::SetEnvironmentVariable("DB_URL", "jdbc:mysql://localhost:3306/sistema_empresa", "User")
 [Environment]::SetEnvironmentVariable("DB_USERNAME", "root", "User")
 [Environment]::SetEnvironmentVariable("DB_PASSWORD", "tu_password_aqui", "User")
 ```

@@ -45,14 +45,7 @@
                         <div class="form-text">Ingrese el nombre de la marca</div>
                     </div>
 
-                    <% if (esEdicion && marca.getFechaIngreso() != null) { %>
-                    <div class="mb-3">
-                        <label class="form-label">Fecha de Creación</label>
-                        <input type="text" class="form-control" 
-                               value="<%= marca.getFechaIngreso().toString() %>" readonly>
-                        <div class="form-text">Fecha en que se registró la marca</div>
-                    </div>
-                    <% } %>
+
 
                     <!-- Botones -->
                     <div class="d-flex justify-content-end gap-2 mt-4">
