@@ -1,7 +1,7 @@
 package com.sistemaempresa.dao;
 
 import com.sistemaempresa.models.MenuItem;
-import com.sistemaempresa.utils.DatabaseConnection;
+import com.sistemaempresa.config.DatabaseConnection;
 
 import java.sql.*;
 import java.util.*;
