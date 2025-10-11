@@ -120,11 +120,11 @@
                                     </td>
                                     <td>
                                         <input type="number" class="form-control precio-input" name="precio[]"
-                                               value="<%= detalle.getPrecioCostoUnitario() != null ? detalle.getPrecioCostoUnitario().doubleValue() : 0.0 %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
+                                               value="<%= detalle.getPrecioCostoUnitario() %>" step="0.01" min="0" required onchange="calcularSubtotal(this)">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control subtotal-input" readonly 
-                                               value="<%= detalle.getSubtotal() != null ? detalle.getSubtotal().doubleValue() : 0.0 %>">
+                                        <input type="number" class="form-control subtotal-input" readonly
+                                               value="<%= detalle.getSubtotal() %>">
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)">

@@ -2,7 +2,6 @@ package com.sistemaempresa.servlets;
 
 import com.sistemaempresa.dao.MenuItemDAO;
 import com.sistemaempresa.models.MenuItem;
-import com.google.gson.Gson;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -68,21 +67,68 @@ public class MenuServlet extends HttpServlet {
     }
     
     /**
-     * Devuelve el menú en formato JSON para AJAX
+     * Devuelve el menú en formato JSON para AJAX (implementación manual sin Gson)
      */
     private void obtenerMenuJson(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         List<MenuItem> menuEstructurado = menuItemDAO.obtenerMenuEstructurado();
-        
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
-        Gson gson = new Gson();
-        String jsonMenu = gson.toJson(menuEstructurado);
-        
+
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("[");
+
+        for (int i = 0; i < menuEstructurado.size(); i++) {
+            MenuItem item = menuEstructurado.get(i);
+            if (i > 0) jsonBuilder.append(",");
+            jsonBuilder.append(menuItemToJson(item));
+        }
+
+        jsonBuilder.append("]");
+
         PrintWriter out = response.getWriter();
-        out.print(jsonMenu);
+        out.print(jsonBuilder.toString());
         out.flush();
+    }
+
+    /**
+     * Convierte un MenuItem a JSON manualmente
+     */
+    private String menuItemToJson(MenuItem item) {
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"idMenuItem\":").append(item.getIdMenuItem()).append(",");
+        json.append("\"titulo\":\"").append(escapeJson(item.getTitulo())).append("\",");
+        json.append("\"url\":\"").append(item.getUrl() != null ? escapeJson(item.getUrl()) : "").append("\",");
+        json.append("\"icono\":\"").append(item.getIcono() != null ? escapeJson(item.getIcono()) : "").append("\",");
+        json.append("\"orden\":").append(item.getOrden()).append(",");
+        json.append("\"activo\":").append(item.isActivo()).append(",");
+
+        // Agregar hijos si existen
+        json.append("\"hijos\":[");
+        if (item.tieneHijos()) {
+            for (int i = 0; i < item.getHijos().size(); i++) {
+                if (i > 0) json.append(",");
+                json.append(menuItemToJson(item.getHijos().get(i)));
+            }
+        }
+        json.append("]");
+
+        json.append("}");
+        return json.toString();
+    }
+
+    /**
+     * Escapa caracteres especiales para JSON
+     */
+    private String escapeJson(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
     }
 }
