@@ -39,10 +39,12 @@ public class PuestoServlet extends HttpServlet {
                 mostrarFormularioNuevo(request, response);
                 break;
             case "edit":
-                mostrarFormularioEditar(request, response);
+                // Operación no permitida - información sensible
+                response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden editar.");
                 break;
             case "delete":
-                eliminarPuesto(request, response);
+                // Operación no permitida - información sensible
+                response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden eliminar.");
                 break;
             default:
                 listarPuestos(request, response);
@@ -59,7 +61,8 @@ public class PuestoServlet extends HttpServlet {
         if ("save".equals(action)) {
             guardarPuesto(request, response);
         } else if ("update".equals(action)) {
-            actualizarPuesto(request, response);
+            // Operación no permitida - información sensible
+            response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden actualizar.");
         } else {
             doGet(request, response);
         }

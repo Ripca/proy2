@@ -41,18 +41,18 @@
                                 <label for="proveedor" class="form-label">
                                     Nombre del Proveedor <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="proveedor" name="proveedor" 
-                                       value="<%= esEdicion ? proveedor.getProveedor() : "" %>" 
-                                       required maxlength="100">
+                                <input type="text" class="form-control" id="proveedor" name="proveedor"
+                                       value="<%= esEdicion ? proveedor.getProveedor() : "" %>"
+                                       required maxlength="60">
                                 <div class="form-text">Ingrese el nombre completo del proveedor</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nit" class="form-label">NIT</label>
-                                <input type="text" class="form-control" id="nit" name="nit" 
-                                       value="<%= esEdicion && proveedor.getNit() != null ? proveedor.getNit() : "" %>" 
-                                       maxlength="20">
+                                <input type="text" class="form-control" id="nit" name="nit"
+                                       value="<%= esEdicion && proveedor.getNit() != null ? proveedor.getNit() : "" %>"
+                                       maxlength="12">
                                 <div class="form-text">Número de Identificación Tributaria</div>
                             </div>
                         </div>
@@ -62,9 +62,9 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" name="telefono" 
-                                       value="<%= esEdicion && proveedor.getTelefono() != null ? proveedor.getTelefono() : "" %>" 
-                                       maxlength="15">
+                                <input type="tel" class="form-control" id="telefono" name="telefono"
+                                       value="<%= esEdicion && proveedor.getTelefono() != null ? proveedor.getTelefono() : "" %>"
+                                       maxlength="25">
                                 <div class="form-text">Número de teléfono de contacto</div>
                             </div>
                         </div>
@@ -81,8 +81,8 @@
 
                     <div class="mb-3">
                         <label for="direccion" class="form-label">Dirección</label>
-                        <textarea class="form-control" id="direccion" name="direccion" rows="3" 
-                                  maxlength="200"><%= esEdicion && proveedor.getDireccion() != null ? proveedor.getDireccion() : "" %></textarea>
+                        <textarea class="form-control" id="direccion" name="direccion" rows="3"
+                                  maxlength="80"><%= esEdicion && proveedor.getDireccion() != null ? proveedor.getDireccion() : "" %></textarea>
                         <div class="form-text">Dirección completa del proveedor</div>
                     </div>
 

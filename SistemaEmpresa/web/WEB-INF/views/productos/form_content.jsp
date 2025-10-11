@@ -107,11 +107,20 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="existencia" class="form-label">Existencia</label>
-                                <input type="number" class="form-control" id="existencia" name="existencia" 
+                                <input type="number" class="form-control" id="existencia" name="existencia"
                                        value="<%= esEdicion ? producto.getExistencia() : 0 %>"
                                        min="0">
                             </div>
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">URL de Imagen</label>
+                        <input type="url" class="form-control" id="imagen" name="imagen"
+                               value="<%= esEdicion && producto.getImagen() != null ? producto.getImagen() : "" %>"
+                               maxlength="200"
+                               placeholder="https://ejemplo.com/imagen.jpg">
+                        <div class="form-text">URL de la imagen del producto (opcional)</div>
                     </div>
 
                     <!-- Botones -->

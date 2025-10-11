@@ -103,6 +103,15 @@
         <url-pattern>/CompraServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MenuServlet</servlet-name>
+        <servlet-class>com.sistemaempresa.servlets.MenuServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MenuServlet</servlet-name>
+        <url-pattern>/MenuServlet</url-pattern>
+    </servlet-mapping>
+
     <!-- Filtro de autenticación JWT -->
     <filter>
         <filter-name>JWTAuthFilter</filter-name>

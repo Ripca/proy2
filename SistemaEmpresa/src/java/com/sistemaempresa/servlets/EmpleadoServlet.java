@@ -112,15 +112,15 @@ public class EmpleadoServlet extends HttpServlet {
             empleado.setDireccion(request.getParameter("direccion"));
             empleado.setTelefono(request.getParameter("telefono"));
             empleado.setDpi(request.getParameter("dpi"));
-            empleado.setGenero("M".equals(request.getParameter("genero")));
+            empleado.setGenero("true".equals(request.getParameter("genero")));
             empleado.setIdPuesto(Integer.parseInt(request.getParameter("idPuesto")));
             
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            if (request.getParameter("fechaNacimiento") != null && !request.getParameter("fechaNacimiento").isEmpty()) {
-                empleado.setFechaNacimiento(sdf.parse(request.getParameter("fechaNacimiento")));
+            if (request.getParameter("fecha_nacimiento") != null && !request.getParameter("fecha_nacimiento").isEmpty()) {
+                empleado.setFechaNacimiento(sdf.parse(request.getParameter("fecha_nacimiento")));
             }
-            if (request.getParameter("fechaInicioLabores") != null && !request.getParameter("fechaInicioLabores").isEmpty()) {
-                empleado.setFechaInicioLabores(sdf.parse(request.getParameter("fechaInicioLabores")));
+            if (request.getParameter("fecha_inicio_labores") != null && !request.getParameter("fecha_inicio_labores").isEmpty()) {
+                empleado.setFechaInicioLabores(sdf.parse(request.getParameter("fecha_inicio_labores")));
             }
             
             if (empleadoDAO.insertar(empleado)) {
@@ -146,15 +146,15 @@ public class EmpleadoServlet extends HttpServlet {
             empleado.setDireccion(request.getParameter("direccion"));
             empleado.setTelefono(request.getParameter("telefono"));
             empleado.setDpi(request.getParameter("dpi"));
-            empleado.setGenero("M".equals(request.getParameter("genero")));
+            empleado.setGenero("true".equals(request.getParameter("genero")));
             empleado.setIdPuesto(Integer.parseInt(request.getParameter("idPuesto")));
             
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            if (request.getParameter("fechaNacimiento") != null && !request.getParameter("fechaNacimiento").isEmpty()) {
-                empleado.setFechaNacimiento(sdf.parse(request.getParameter("fechaNacimiento")));
+            if (request.getParameter("fecha_nacimiento") != null && !request.getParameter("fecha_nacimiento").isEmpty()) {
+                empleado.setFechaNacimiento(sdf.parse(request.getParameter("fecha_nacimiento")));
             }
-            if (request.getParameter("fechaInicioLabores") != null && !request.getParameter("fechaInicioLabores").isEmpty()) {
-                empleado.setFechaInicioLabores(sdf.parse(request.getParameter("fechaInicioLabores")));
+            if (request.getParameter("fecha_inicio_labores") != null && !request.getParameter("fecha_inicio_labores").isEmpty()) {
+                empleado.setFechaInicioLabores(sdf.parse(request.getParameter("fecha_inicio_labores")));
             }
             
             if (empleadoDAO.actualizar(empleado)) {

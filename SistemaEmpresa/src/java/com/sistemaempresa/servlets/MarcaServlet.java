@@ -39,10 +39,12 @@ public class MarcaServlet extends HttpServlet {
                 mostrarFormularioNuevo(request, response);
                 break;
             case "edit":
-                mostrarFormularioEditar(request, response);
+                // Operación no permitida - información sensible
+                response.sendRedirect("MarcaServlet?action=list&error=Operación no permitida. Las marcas no se pueden editar.");
                 break;
             case "delete":
-                eliminarMarca(request, response);
+                // Operación no permitida - información sensible
+                response.sendRedirect("MarcaServlet?action=list&error=Operación no permitida. Las marcas no se pueden eliminar.");
                 break;
             default:
                 listarMarcas(request, response);
@@ -59,7 +61,8 @@ public class MarcaServlet extends HttpServlet {
         if ("save".equals(action)) {
             guardarMarca(request, response);
         } else if ("update".equals(action)) {
-            actualizarMarca(request, response);
+            // Operación no permitida - información sensible
+            response.sendRedirect("MarcaServlet?action=list&error=Operación no permitida. Las marcas no se pueden actualizar.");
         } else {
             doGet(request, response);
         }
