@@ -39,7 +39,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Puesto</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,21 +51,7 @@
                         <td>
                             <strong><%= puesto.getPuesto() %></strong>
                         </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="PuestoServlet?action=edit&id=<%= puesto.getIdPuesto() %>" 
-                                   class="btn btn-warning btn-sm" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm" 
-                                        onclick="confirmDelete('PuestoServlet?action=delete&id=<%= puesto.getIdPuesto() %>', 
-                                        '¿Está seguro que desea eliminar el puesto <%= puesto.getPuesto() %>?')" 
-                                        title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                                         </tr>
                     <%
                             }
                         }

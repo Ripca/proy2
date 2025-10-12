@@ -39,7 +39,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Marca</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,20 +50,6 @@
                         <td><%= marca.getIdMarca() %></td>
                         <td>
                             <strong><%= marca.getMarca() %></strong>
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="MarcaServlet?action=edit&id=<%= marca.getIdMarca() %>" 
-                                   class="btn btn-warning btn-sm" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm" 
-                                        onclick="confirmDelete('MarcaServlet?action=delete&id=<%= marca.getIdMarca() %>', 
-                                        '¿Está seguro que desea eliminar la marca <%= marca.getMarca() %>?')" 
-                                        title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
                         </td>
                     </tr>
                     <%

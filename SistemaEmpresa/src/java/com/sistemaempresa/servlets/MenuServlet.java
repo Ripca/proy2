@@ -16,7 +16,6 @@ import java.util.List;
 /**
  * Servlet para manejar el menú dinámico
  */
-@WebServlet("/MenuServlet")
 public class MenuServlet extends HttpServlet {
     
     private MenuItemDAO menuItemDAO;

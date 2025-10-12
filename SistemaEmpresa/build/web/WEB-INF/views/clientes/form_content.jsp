@@ -38,22 +38,49 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="cliente" class="form-label">
-                                    Nombre del Cliente <span class="text-danger">*</span>
+                                <label for="nombres" class="form-label">
+                                    Nombres <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="cliente" name="cliente"
-                                       value="<%= esEdicion ? cliente.getNombreCompleto() : "" %>"
-                                       required maxlength="100">
-                                <div class="form-text">Ingrese el nombre completo del cliente</div>
+                                <input type="text" class="form-control" id="nombres" name="nombres"
+                                       value="<%= esEdicion ? cliente.getNombres() : "" %>"
+                                       required maxlength="60">
+                                <div class="form-text">Nombres del cliente</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="apellidos" class="form-label">
+                                    Apellidos <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="apellidos" name="apellidos"
+                                       value="<%= esEdicion ? cliente.getApellidos() : "" %>"
+                                       required maxlength="60">
+                                <div class="form-text">Apellidos del cliente</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="nit" class="form-label">NIT</label>
-                                <input type="text" class="form-control" id="nit" name="nit" 
-                                       value="<%= esEdicion && cliente.getNit() != null ? cliente.getNit() : "" %>" 
-                                       maxlength="20">
+                                <input type="text" class="form-control" id="nit" name="nit"
+                                       value="<%= esEdicion && cliente.getNit() != null ? cliente.getNit() : "" %>"
+                                       maxlength="12">
                                 <div class="form-text">Número de Identificación Tributaria</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="genero" class="form-label">
+                                    Género <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="genero" name="genero" required>
+                                    <option value="">Seleccionar género...</option>
+                                    <option value="true" <%= esEdicion && cliente.isGenero() ? "selected" : "" %>>Masculino</option>
+                                    <option value="false" <%= esEdicion && !cliente.isGenero() ? "selected" : "" %>>Femenino</option>
+                                </select>
+                                <div class="form-text">Género del cliente</div>
                             </div>
                         </div>
                     </div>
@@ -62,18 +89,18 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" name="telefono" 
-                                       value="<%= esEdicion && cliente.getTelefono() != null ? cliente.getTelefono() : "" %>" 
-                                       maxlength="15">
+                                <input type="tel" class="form-control" id="telefono" name="telefono"
+                                       value="<%= esEdicion && cliente.getTelefono() != null ? cliente.getTelefono() : "" %>"
+                                       maxlength="25">
                                 <div class="form-text">Número de teléfono de contacto</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email"
+                                <label for="correo_electronico" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="correo_electronico" name="correo_electronico"
                                        value="<%= esEdicion && cliente.getCorreoElectronico() != null ? cliente.getCorreoElectronico() : "" %>"
-                                       maxlength="100">
+                                       maxlength="45">
                                 <div class="form-text">Correo electrónico del cliente</div>
                             </div>
                         </div>

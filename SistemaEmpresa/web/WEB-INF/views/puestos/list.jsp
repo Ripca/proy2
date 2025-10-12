@@ -70,7 +70,6 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Puesto</th>
-                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,20 +79,7 @@
                                     <tr>
                                         <td><%= puesto.getIdPuesto() %></td>
                                         <td><%= puesto.getPuesto() %></td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="PuestoServlet?action=edit&id=<%= puesto.getIdPuesto() %>" 
-                                                   class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                        onclick="confirmarEliminacion(<%= puesto.getIdPuesto() %>, '<%= puesto.getPuesto() %>')" 
-                                                        title="Eliminar">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                                           </tr>
                                     <%
                                         }
                                     %>

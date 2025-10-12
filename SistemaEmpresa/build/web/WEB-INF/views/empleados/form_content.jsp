@@ -65,17 +65,21 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dpi" class="form-label">DPI</label>
-                                <input type="text" class="form-control" id="dpi" name="dpi" 
-                                       value="<%= esEdicion && empleado.getDpi() != null ? empleado.getDpi() : "" %>" 
-                                       maxlength="20">
+                                <input type="text" class="form-control" id="dpi" name="dpi"
+                                       value="<%= esEdicion && empleado.getDpi() != null ? empleado.getDpi() : "" %>"
+                                       maxlength="15">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="telefono" name="telefono" 
-                                       value="<%= esEdicion && empleado.getTelefono() != null ? empleado.getTelefono() : "" %>" 
-                                       maxlength="15">
+                                <label for="genero" class="form-label">
+                                    Género <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="genero" name="genero" required>
+                                    <option value="">Seleccionar género...</option>
+                                    <option value="true" <%= esEdicion && empleado.isGenero() ? "selected" : "" %>>Masculino</option>
+                                    <option value="false" <%= esEdicion && !empleado.isGenero() ? "selected" : "" %>>Femenino</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -84,15 +88,30 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="text" class="form-control" id="telefono" name="telefono"
+                                <input type="tel" class="form-control" id="telefono" name="telefono"
                                        value="<%= esEdicion && empleado.getTelefono() != null ? empleado.getTelefono() : "" %>"
-                                       maxlength="20">
+                                       maxlength="25">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="idPuesto" class="form-label">Puesto</label>
-                                <select class="form-select" id="idPuesto" name="idPuesto">
+                                <label for="fecha_nacimiento" class="form-label">
+                                    Fecha de Nacimiento <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento"
+                                       value="<%= esEdicion && empleado.getFechaNacimiento() != null ? empleado.getFechaNacimiento().toString() : "" %>"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="idPuesto" class="form-label">
+                                    Puesto <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="idPuesto" name="idPuesto" required>
                                     <option value="">Seleccionar puesto...</option>
                                     <%
                                         if (puestos != null) {
@@ -107,6 +126,16 @@
                                         }
                                     %>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fecha_inicio_labores" class="form-label">
+                                    Fecha de Inicio de Labores <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="fecha_inicio_labores" name="fecha_inicio_labores"
+                                       value="<%= esEdicion && empleado.getFechaInicioLabores() != null ? empleado.getFechaInicioLabores().toString() : "" %>"
+                                       required>
                             </div>
                         </div>
                     </div>
