@@ -1,0 +1,1839 @@
+<%@ Page Title="Módulo de venta" Language="C#" MasterPageFile="~/Master/MasterPrincipal.Master" AutoEventWireup="true" CodeBehind="nueva.aspx.cs" Inherits="SIFAFEL_APP.Modulos.Ventas.nueva" %>
+
+<%@ Register Src="~/WebUserControls/WUC_InfoProduct.ascx" TagPrefix="uc1" TagName="WUC_InfoProduct" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cph_head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cph_body" runat="server">
+    <uc1:WUC_InfoProduct runat="server" ID="WUC_InfoProduct" />
+
+    <%-- MODAL CLIENTES --%>
+    <div class="modal fade effect-scale" id="modalClientes">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i data-feather="user" class="feather-16"></i>&nbsp;Consultas de clientes</h4>
+                    <button type="button" aria-label="Close" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-start">
+
+                    <table id="grvClientes" class="table table-bordered table-striped table-condensed table-sm">
+                        <thead class="table-head">
+                            <tr>
+                                <th>Código</th>
+                                <th>NIT</th>
+                                <th>Cliente</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Direccion</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL PRODUCTOS --%>
+    <div class="modal fade effect-scale" id="modalProductos">
+        <div class="modal-dialog modal-fullscreen" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h4 class="modal-title">Productos</h4>
+                    <button type="button" aria-label="Close" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <table id="grvProductosConsulta" class="table table-bordered table-hover table-striped table-condensed table-sm">
+                        <thead class="table-head">
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Precio unitario</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                                <th>Descripción</th>
+                                <th>Existencia</th>
+                                <th>En canasta</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL MEDIOS DE PAGO --%>
+    <div class="modal fade effect-slide-in-right" id="modalMedioPago">
+        <div class="modal-dialog modal-dialog-centered text-center modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h4 class="modal-title">Medios de pago</h4>
+                    <button type="button" aria-label="Close" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <div class="table-responsive mb-3">
+                        <table id="tbl_medio_pago" class="table-sm">
+                            <thead style="display: none;">
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Monto</th>
+                                    <th>Referencia</th>
+                                    <th>Autorización</th>
+                                    <th>Banco</th>
+                                    <th>Fecha</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><b>Total</b></span>
+                                            <span class="input-group-text lbl-info-moneda"></span>
+                                            <input id="lbl_info_saldo_ingresado" class="form-control amount total" disabled="disabled" type="number" value="" />
+                                        </div>
+                                    </td>
+                                    <td colspan="2">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><b>Total a pagar</b></span>
+                                            <span class="input-group-text lbl-info-moneda"></span>
+                                            <input id="lbl_info_saldo_pagar" class="form-control amount total" disabled="disabled" type="number" value="" />
+                                        </div>
+                                    </td>
+                                    <td colspan="2">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><b>Pendiente</b></span>
+                                            <span class="input-group-text lbl-info-moneda"></span>
+                                            <input id="lbl_info_saldo_pendiente" class="form-control amount" disabled="disabled" type="number" placeholder="0.00" value="0.00" />
+                                            <span class="input-group-text" id="span_info_saldo_pendiente" style="min-width: 42px; min-height: 34px;">
+                                                <i data-feather="alert-triangle" class="text-warning"></i>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div id="alerta-saldo-a-favor" class="alert alert-warning d-flex align-items-center d-none mb-1" role="alert">
+                        <span><i class="fas fa-exclamation-circle me-2"></i></span>
+                        <div>
+                            El monto ingresado excede el total a pagar. El saldo restante de <strong id="lbl_info_saldo_a_favor"></strong>&nbsp;quedará a favor para futuras compras.
+                        </div>
+                    </div>
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <span><i class="fas fa-bullhorn me-2"></i></span>
+                        <div>
+                            ¡Próximamente! Cuentas por cobrar y financiamiento estarán disponibles.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button id="btnGuardarMediosPago" type="button" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- HEADER --%>
+    <div class="page-header">
+        <div class="add-item d-flex">
+            <div class="page-title">
+                <h4><i data-feather="shopping-cart" class="me-2"></i>Nueva venta</h4>
+                <h6>Nueva venta</h6>
+            </div>
+        </div>
+        <div class="page-btn">
+            <a href="./" class="btn btn-added color">
+                <i data-feather="inbox" class="me-2"></i>Listado de ventas
+            </a>
+        </div>
+
+    </div>
+
+    <%-- FACTURACION --%>
+    <div class="row ventas">
+        <div class="col-md-12">
+            <div class="card">
+                <%--<div class="card-header">
+                    <span class="card-title"><i data-feather="shopping-cart" class="me-2"></i>Nueva venta</span>
+                </div>--%>
+                <div class="card-body">
+
+                    <%--<h4 class="card-title" style="float: left"><i class="fas fa-boxes"></i>&nbsp;Detalle</h4>--%>
+
+                    <div class="row">
+                        <!-- SECCION DE CLIENTE -->
+                        <div class="col-md-8">
+                            <div class="form-horizontal">
+
+                                <!-- NIT CLIENTE -->
+                                <div class="mb-1 row">
+                                    <div class="add-newplus">
+                                        <span id="lblIdCliente" hidden=""></span>
+                                        <label for="txtNitCliente" class="form-label">Cliente:</label>
+
+                                        <a href="#!" id="btnBuscarCliente">
+                                            <i data-feather="search" class="plus-down-add"></i>
+                                            <span>Buscar</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row g-0">
+                                            <div class="col-4 input-h-control">
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">
+                                                        <i data-feather="user" class="feather-16"></i>
+                                                    </span>
+                                                    <input id="txtNitCliente" name="txtNitCliente" type="text" aria-label="NIT" placeholder="NIT" class="form-control no-right-border">
+                                                </div>
+                                            </div>
+                                            <div class="col-8">
+                                                <input id="txtNombreCliente" type="text" aria-label="Nombre completo" placeholder="Nombre completo" class="form-control no-left-border input-h-control" disabled="disabled">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- SECCION DE FACTURA -->
+                        <div class="col-md-4">
+                            <div class="form-horizontal">
+
+                                <%-- FECHA DE FACTURA --%>
+                                <%--<div class="mb-1 row">
+                                    <label for="txtFechaFactura" class="col-sm-5 col-form-label form-label-right">Fecha:</label>
+                                    <div class="col-sm-7">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">
+                                                <i data-feather="calendar" class="feather-16"></i>
+                                            </span>
+                                            <input class="form-control" id="txtFechaFactura" name="txtFechaFactura" type="date" placeholder="Fecha Factura" />
+                                        </div>
+                                    </div>
+                                </div>--%>
+
+                                <%-- CAJAS DISPONIBLES --%>
+                                <div class="mb-1 row">
+                                    <div class="col-sm-12">
+                                        <label class="form-label">Caja:</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">
+                                                <i data-feather="airplay" class="feather-16"></i>
+                                            </span>
+                                            <select id="ddlNoCaja" class="form-select" disabled="disabled"></select>
+                                            <span id="btnValidaCajasAbiertas" class="input-group-text">
+                                                <i data-feather="refresh-ccw" class="feather-16"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <span class="card-title" style="float: left; width: auto !important;">
+                            <i data-feather="package" class="feather-16"></i>&nbsp;Conceptos
+                        </span>
+
+                        <%-- CODIGO DE BARRA --%>
+                        <div class="col-lg-4 col-sm-12 ms-auto">
+                            <div class="add-newplus">
+                                <label class="form-label" for="txtCodigoBarraProducto">&nbsp;</label>
+                                <a href="#!" id="btnBuscarProducto">
+                                    <i data-feather="search" class="plus-down-add"></i>
+                                    <span>Consultar</span>
+                                </a>
+                            </div>
+                            <div class="input-blocks">
+                                <div class="input-groupicon select-code">
+                                    <input id="txtCodigoBarraProducto" name="txtCodigoBarraProducto" class="barcode-search" type="text" placeholder="Código de producto" style="padding: 10px;">
+                                    <div class="addonset">
+                                        <img src="<%=ConfigurationManager.AppSettings["url_cdn"]%>img/barcode-scanner.gif" alt="img" style="height: 38px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <%-- PRODUCTOS COMPRA --%>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="grvProductosCompra" class="table table-striped table-bordered table-sm">
+                                <thead class="table-head">
+                                    <tr>
+                                        <th>Id Producto</th>
+                                        <th>Código</th>
+                                        <th>Artículo</th>
+                                        <th>Cantidad</th>
+                                        <th>P. venta</th>
+                                        <th>Descuento</th>
+                                        <th width="200">Subtotal</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-4 ms-md-auto mt-2">
+                            <div class="total-order w-100 max-widthauto m-auto mb-1">
+                                <ul>
+                                    <li>
+                                        <h4>SubTotal</h4>
+                                        <h5><span class="lbl-info-moneda"></span>&nbsp;<span class="lbl-info-subtotal"></span></h5>
+                                    </li>
+                                    <%--<li>
+                                        <h4>IVA</h4>
+                                        <h5><span class="lbl-info-moneda"></span>&nbsp;<span class="lbl-info-iva"></span></h5>
+                                    </li>--%>
+                                    <li>
+                                        <h4>Descuento</h4>
+                                        <h5><span class="lbl-info-moneda"></span>&nbsp;<span class="lbl-info-descuento"></span></h5>
+                                    </li>
+                                    <%--<li>
+                                        <h4>Recargo</h4>
+                                        <h5><span class="lbl-info-moneda"></span>&nbsp;<span class="lbl-info-recargo"></span></h5>
+                                    </li>--%>
+                                    <li class="total">
+                                        <h4>Total a pagar</h4>
+                                        <h4><span class="lbl-info-moneda"></span>&nbsp;<span class="lbl-info-total"></span></h4>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="d-grid btn-block mt-1 mb-2">
+                                <a href="#!"><b>Medio de pago:</b></a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rb_forma_pago" id="rb_mp_efectivo" checked="">
+                                    <label class="form-check-label" for="rb_mp_efectivo">
+                                        Efectivo
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rb_forma_pago" id="rb_mp_otros" data-modal="1">
+                                    <label class="form-check-label" for="rb_mp_otros">
+                                        Otros
+                                    </label>
+                                </div>
+                                <div id="div-progress-medio-pago" class="progress progress-xs">
+                                    <div id="progress-medio-pago" class="progress-bar bg-primary" role="progressbar" style="width: 52%" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <a id="btnMedioPago" class="btn btn-secondary mt-2">Medios de pagos</a>
+                            </div>
+
+                            <div class="btn-row d-sm-flex align-items-center justify-content-between  mb-4">
+                                <a id="btnEmitirVenta" data-type="<%=SIFAFEL_MODEL.Utils.TipoTransaccion.FACTURACION %>" class="btn btn-success btn-icon flex-fill">
+                                    <span class="me-1 d-flex align-items-center">
+                                        <i data-feather="check" class="feather-16"></i>
+                                    </span>
+                                    Emitir
+                                </a>
+                                <a id="btnGuardarVenta" data-type="<%=SIFAFEL_MODEL.Utils.TipoTransaccion.COTIZACION %>" class="btn btn-info btn-icon flex-fill">
+                                    <span class="me-1 d-flex align-items-center">
+                                        <i data-feather="save" class="feather-16"></i>
+                                    </span>
+                                    Guardar Cotización
+                                </a>
+                                <a id="btnCancelarVenta" class="btn btn-danger btn-icon flex-fill">
+                                    <span class="me-1 d-flex align-items-center">
+                                        <i data-feather="trash-2" class="feather-16"></i>
+                                    </span>
+                                    Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        var tbl_medio_pago,
+            g_info_factura = {
+                id_referencia: null,
+                medios_pago: [],
+                id_moneda: null,
+                moneda: null
+            },
+            g_k_lists = {
+                bancos: []
+            };
+
+        function getIconAndClass(diferencia) {
+            let iconName, colorClass;
+            if (diferencia === 0) {
+                iconName = 'check-circle';
+                colorClass = 'text-success';
+            } else if (diferencia > 0) {
+                iconName = 'alert-triangle';
+                colorClass = 'text-warning';
+            } else {
+                iconName = 'alert-circle';
+                colorClass = 'text-danger';
+            }
+            return { iconName, colorClass };
+        }
+
+        function fnAgregarProductoCompra(p_producto, p_cantidad = 1) {
+            const table = $('#grvProductosCompra').DataTable();
+            const info_producto = fnBuscarProductoCompra(p_producto.id_producto);
+            const producto = info_producto.producto;
+            const stock_actual = p_producto.stock_actual ?? p_producto.existencia;
+            let _stock_insuficiente = false;
+
+            if (producto) {
+
+                if (stock_actual >= (producto.cantidad + p_cantidad)) {
+                    if (info_producto.index !== -1) {
+
+                        const descuento = producto.precio_venta < producto.precio_unitario
+                            ? producto.precio_unitario - producto.precio_venta
+                            : 0;
+                        producto.cantidad += p_cantidad;
+                        producto.precio_total = producto.cantidad * producto.precio_venta;
+                        producto.descuento = producto.cantidad * descuento;
+
+                        table.row(info_producto.index).data(producto).draw();
+                    }
+                } else {
+                    _stock_insuficiente = true;
+                }
+            } else {
+                if (p_cantidad <= stock_actual) {
+                    table.row.add({
+                        id_producto: p_producto.id_producto,
+                        id_moneda: p_producto.id_moneda,
+                        codigo: p_producto.codigo,
+                        nombre: p_producto.nombre,
+                        cantidad: p_cantidad,
+                        moneda: p_producto.moneda,
+                        precio_venta: p_producto.precio_unitario,
+                        precio_total: p_cantidad * p_producto.precio_unitario,
+                        descripcion: p_producto.descripcion,
+                        categoria: p_producto.categoria,
+                        estado: p_producto.estado,
+                        existencia: stock_actual,
+                        precio_unitario: p_producto.precio_unitario,
+                        precio_minimo: p_producto.min_descuento,
+                        descuento: 0,
+                        img_producto: p_producto.img_producto
+                    }).draw();
+                } else {
+                    _stock_insuficiente = true;
+                }
+            }
+
+            if (_stock_insuficiente) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock insuficiente',
+                    text: 'No hay suficiente stock para agregar el producto.'
+                });
+            }
+
+            fnUpdateTotales();
+
+            setTimeout(function () {
+                feather.replace();
+                table.columns.adjust().draw();
+            }, 50);
+        }
+
+        function fnBuscarProductoCompra(p_id_producto, p_tipo_busqueda = "id") {
+            const table = $('#grvProductosCompra').DataTable().rows().data().toArray();
+            const index = table.findIndex(row => {
+                if (p_tipo_busqueda === "id") {
+                    return row.id_producto === p_id_producto;
+                } else if (p_tipo_busqueda === "codigo") {
+                    return row.codigo === p_id_producto;
+                }
+            });
+
+            return { producto: index !== -1 ? table[index] : null, index };
+        }
+
+        function fnGetProductByID(_codigoProducto) {
+            var data;
+            if (_codigoProducto != "") {
+                __Progress(`Agregando producto...`);
+                $.ajax({
+                    url: `${_url_redirect}Controllers/venta.ashx?mth=${mtdEnc("get/product/by/id")}&productCode=${mtdEnc(_codigoProducto)}`,
+                    data: null,
+                    type: "GET",
+                    async: false,
+                    contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                    dataType: "json",
+                    beforeSend: function () {
+                        //Holdon_Open("Buscando...");
+                    },
+                    success: function (result) {
+                        if (result.type == "success") {
+                            data = result.data[0];
+                        }
+                        else {
+                            Swal.fire({ icon: result.type, text: result.text });
+                        }
+                    },
+                    error: function (result) {
+                        console.error('error:', result);
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'Ocurrio un error al iniciar el proceso de búsqueda.'
+                        });
+                    },
+                    complete: function () {
+                        __ProgressOff();
+                    }
+                });
+            }
+            else {
+                Swal.fire({ icon: "warning", text: "Por favor ingrese el codigo del producto." });
+            }
+
+            return data;
+        }
+
+        function fnResumenCompra() {
+            const table = $('#grvProductosCompra').DataTable();
+            let moneda = '',
+                id_moneda = 1,
+                iva = "<%=MONTO_IVA%>",
+                mto_subtotal = 0,
+                mto_recargo = 0,
+                mto_descuento = 0,
+                mto_total = 0;
+            let productos = [];
+
+            table.rows().every(function () {
+                const data = this.data();
+
+                mto_subtotal += parseFloat(data.precio_total) || 0;
+                mto_recargo += parseFloat(data.recargo || 0) || 0;
+                mto_descuento += parseFloat(data.descuento || 0) || 0;
+
+                if (!moneda) {
+                    moneda = data.moneda;
+                    id_moneda = data.id_moneda;
+                }
+                productos.push(data);
+            });
+
+            mto_total = mto_subtotal - mto_recargo + mto_descuento;
+
+            return {
+                moneda,
+                mto_subtotal,
+                mto_recargo,
+                mto_descuento,
+                mto_total,
+                id_moneda,
+                productos
+            };
+        }
+
+        function fnUpdateTotales() {
+            let data = fnResumenCompra();
+
+            $(".lbl-info-moneda").html(`${data.moneda}.`);
+            $(".lbl-info-subtotal").html(PriceNumberFormat(data.mto_subtotal));
+            $(".lbl-info-recargo").html(PriceNumberFormat(data.mto_recargo));
+            $(".lbl-info-descuento").html(PriceNumberFormat(data.mto_descuento));
+            $(".lbl-info-total").html(PriceNumberFormat(data.mto_total));
+
+            g_info_factura.id_moneda = data.id_moneda;
+            g_info_factura.moneda = data.moneda;
+
+            const totalMediosPago = g_info_factura.medios_pago.reduce((sum, medio) => sum + medio.monto, 0);
+            validaPorcentajeMedioPago(totalMediosPago, data.mto_total)
+        }
+
+        function fnValidaCodigoBarra() {
+            let codigo_producto = $("#txtCodigoBarraProducto").val().trim();
+            let cantidad = 1;
+
+            if (codigo_producto.includes('*')) {
+                let partes = codigo_producto.split('*');
+                if (partes.length === 2 && !isNaN(partes[0]) && !isNaN(partes[1])) {
+                    cantidad = parseInt(partes[0]);
+                    codigo_producto = partes[1];
+                }
+            }
+
+            if (codigo_producto) {
+                let info_producto = fnBuscarProductoCompra(codigo_producto, "codigo");
+                let producto = info_producto.producto;
+
+                if (!producto) {
+                    producto = fnGetProductByID(codigo_producto);
+                }
+
+                if (producto) {
+                    fnAgregarProductoCompra(producto, cantidad);
+                }
+                $("#txtCodigoBarraProducto").val("");
+            }
+        }
+
+        function fnActualizarDatosCantidad(row, data, cantidad) {
+            let descuento = 0;
+            if (data.precio_venta < data.precio_unitario) {
+                descuento = data.precio_unitario - data.precio_venta;
+            }
+
+            data.cantidad = cantidad;
+            data.precio_total = data.cantidad * data.precio_venta;
+            data.descuento = data.cantidad * descuento;
+
+            $(row).find(".tbl_lbl_precio_total").html(MoneyFormat(data.moneda, data.precio_total));
+            $(row).find(".tbl_lbl_descuento").html(MoneyFormat(data.moneda, data.descuento));
+
+            fnUpdateTotales();
+        }
+
+        function fnLimpiarCamposCliente() {
+            $("#lblIdCliente").html("");
+            $("#txtNitCliente").val("");
+            $("#txtNombreCliente").val("");
+        }
+
+        function fnLimpiarCamposFacturacion() {
+            $("#txtCodigoBarraProducto").val("");
+            $('#grvProductosCompra').dataTable().fnClearTable();
+            $("#rb_mp_efectivo").click();
+
+            fnLimpiarCamposCliente();
+            fnUpdateTotales();
+
+            const urlSinParametros = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, urlSinParametros);
+        }
+
+        function seleccionarCliente(data, enableFields = false) {
+            fnLimpiarCamposCliente();
+
+            $("#lblIdCliente").html(mtdEnc(data.id_cliente));
+            $("#txtNitCliente").val(data.nit);
+            $("#txtNombreCliente").val([data.nombres, data.apellidos].filter(Boolean).join(' '));
+
+            $("#txtNombreCliente").attr("disabled", !enableFields);
+        }
+
+        function fnBuscarCliente(pNumeroNIT) {
+            fnLimpiarCamposCliente();
+
+            if (pNumeroNIT != "") {
+                pNumeroNIT = pNumeroNIT.toUpperCase();
+
+                if (pNumeroNIT != "C/F" && pNumeroNIT != "CF") {
+                    __Progress(`Consultando...`);
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: `${_url_redirect}Controllers/venta.ashx?mth=${mtdEnc("get/customer/by/nit")}&nit=${mtdEnc(pNumeroNIT)}`,
+                            data: null,
+                            type: "GET",
+                            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                            dataType: "json",
+                            beforeSend: function () {
+                                //Holdon_Open("Buscando...");
+                            },
+                            success: function (result) {
+                                if (result.type == "success") {
+                                    seleccionarCliente(result.data);
+                                    $("#txtCodigoBarraProducto").focus();
+                                }
+                                else if (result.type == "warning") {
+                                    Swal.fire({
+                                        title: result.title,
+                                        text: result.text,
+                                        icon: 'question',
+                                        showDenyButton: true,
+                                        showCancelButton: false,
+                                        confirmButtonText: 'Si',
+                                        denyButtonText: 'No'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            //$("#nit").val(nit);
+                                            //$("#mdlNuevoCliente").modal("show");
+                                            //Holdon_Close();
+                                        }
+                                    });
+                                }
+                                else {
+                                    Swal.fire({ icon: result.type, text: result.text });
+                                }
+                            },
+                            error: function (result) {
+                                console.log('error:', result);
+                                Swal.fire({
+                                    icon: 'error',
+                                    text: 'Ocurrio un error al iniciar el proceso de búsqueda.',
+                                });
+                            },
+                            complete: function () {
+                                __ProgressOff();
+                            }
+                        });
+                    }, 300);
+                } else {
+                    seleccionarCliente({
+                        id_cliente: -1,
+                        nit: "C/F",
+                        nombres: 'CONSUMIDOR',
+                        apellidos: 'FINAL',
+                        direccion: 'Ciudad'
+                    });
+
+                    $("#txtCodigoBarraProducto").focus();
+                }
+            }
+            else {
+                Swal.fire({ icon: "warning", text: "Por favor ingrese el número de NIT del cliente" });
+            }
+        }
+
+        function validaPorcentajeMedioPago(saldo_ingresado, saldo_a_pagar) {
+            let porcentaje_progreso = Math.max(0, (saldo_ingresado / saldo_a_pagar) * 100);
+            porcentaje_progreso = porcentaje_progreso.toFixed(2);
+
+            $("#progress-medio-pago").attr({
+                "style": `width: ${porcentaje_progreso}%`,
+                "aria-valuenow": porcentaje_progreso
+            });
+        }
+
+        function sumSubTotalesMedioPago() {
+            const info_producto = fnResumenCompra();
+            const data_medios_pago = tbl_medio_pago.rows().data();
+
+            let saldo_ingresado = 0;
+            const saldo_a_pagar = info_producto.mto_total;
+            let saldo_pendiente = 0;
+            let diferencia_pago = 0;
+
+            data_medios_pago.each(row => {
+                saldo_ingresado += parseFloat(row.monto) || 0;
+            });
+
+            saldo_pendiente = saldo_a_pagar - saldo_ingresado;
+            diferencia_pago = saldo_ingresado - saldo_a_pagar;
+
+            console.log(`mto_total: ${saldo_a_pagar}`);
+            console.log(`saldo_ingresado: ${saldo_ingresado}`);
+            console.log(`saldo_pendiente: ${saldo_pendiente}`);
+
+            const { iconName, colorClass } = getIconAndClass(diferencia_pago);
+
+            $("#span_info_saldo_pendiente").html(`<i data-feather="${iconName}" class="${colorClass}"></i>`);
+
+            if (saldo_ingresado > saldo_a_pagar) {
+                $("#alerta-saldo-a-favor").removeClass("d-none");
+                $("#lbl_info_saldo_a_favor").html(`${info_producto.moneda} ${(__formatMoney(saldo_ingresado - saldo_a_pagar, 2, '.', ','))}`);
+            } else {
+                $("#alerta-saldo-a-favor").addClass("d-none");
+                $("#lbl_info_saldo_a_favor").html("");
+            }
+
+            $("#lbl_info_saldo_ingresado").val(__formatMoney(saldo_ingresado, 2, '.', ','));
+            $("#lbl_info_saldo_pendiente").val(__formatMoney(saldo_pendiente, 2, '.', ','));
+
+            validaPorcentajeMedioPago(saldo_ingresado, saldo_a_pagar);
+
+            feather.replace();
+        }
+
+        function toggleMedioPago() {
+            const isEfectivoChecked = $("#rb_mp_efectivo").is(":checked");
+            let status_medios = $("#rb_mp_otros").data("modal");
+
+            $("#btnMedioPago").toggle(!isEfectivoChecked);
+
+            if (!isEfectivoChecked) {
+                if (status_medios === "1") {
+                    $("#btnMedioPago").click();
+                }
+                $("#rb_mp_otros").data("modal", "1");
+                $("#div-progress-medio-pago").show();
+                sumSubTotalesMedioPago();
+            } else {
+                g_info_factura.medios_pago = [{
+                    "id_medio_pago": "1",//PENDIENTE
+                    "codigo": "EFE",
+                    "descripcion": "Efectivo",
+                    "monto": 0
+                }];
+
+                $("#div-progress-medio-pago").hide();
+                $("#progress-medio-pago").attr({
+                    "style": "width: 100%",
+                    "aria-valuenow": "100"
+                });
+            }
+        }
+
+        function agregarCliente($btn, data) {
+            $btn.html('<span class="fas fa-spinner fa-spin"></span>');
+            seleccionarCliente(data);
+
+            setTimeout(function () {
+                $btn.html('<i class="fas fa-user-check"></i>');
+                $("#modalClientes").modal("hide");
+            }, 200);
+        }
+
+        function fnValidarCajasAbiertas() {
+            let fechaSeleccionada = __GetDateToday();
+
+            if (fechaSeleccionada) {
+                var frmDatos = new FormData();
+                frmDatos.append("mth", mtdEnc("get/cajas/abiertas"));
+                frmDatos.append("fecha", mtdEnc(fechaSeleccionada));
+
+                $.ajax({
+                    url: _url_redirect + "Controllers/caja.ashx",
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    data: frmDatos,
+                    async: true,
+                    beforeSend: function () {
+                        $('#ddlNoCaja').empty().prop('disabled', true);
+                        $("#btnValidaCajasAbiertas").show();
+                    },
+                    success: function (response) {
+                        if (response && response.data_tables && response.data_tables.length > 0 && response.data_tables[0].length > 0) {
+                            $('#ddlNoCaja').prop('disabled', false);
+                            $('#ddlNoCaja').empty();
+                            $("#btnValidaCajasAbiertas").hide();
+
+                            response.data_tables[0].forEach(function (caja) {
+                                $('#ddlNoCaja').append($('<option>', {
+                                    value: caja.id_caja,
+                                    text: caja.nombre
+                                }));
+                            });
+                        } else {
+                            $('#ddlNoCaja').prop('disabled', true).empty().append('<option value="">No hay cajas abiertas</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en la solicitud AJAX: ", error);
+                    }
+                });
+            } else {
+                $('#ddlNoCaja').prop('disabled', true).empty().append('<option value="">No hay cajas abiertas</option>');
+            }
+        }
+
+        //$('#txtFechaFactura').val(new Date().toDateInputValue());
+        //$('#txtFechaFactura').change();
+
+        $(document).ready(function () {
+
+            //let productos = ["00079", "00044"/*, "00010", "0007", "0008", "0009", "00010", "00011", "00012", "00013", "00014"*/];
+            //let delay = 100;
+
+            //productos.forEach((codigo, index) => {
+            //    setTimeout(() => {
+            //        $("#txtCodigoBarraProducto").val(codigo);
+            //        fnValidaCodigoBarra();
+            //    }, delay * index);
+            //});
+
+            //__setMaxDateToToday("#txtFechaFactura", 5);
+
+
+            $("#grvProductosCompra").DataTable({
+                "language": {
+                    "emptyTable": "No hay datos disponibles en la tabla",
+                    "zeroRecords": "No se encontraron registros coincidentes",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": ' ',
+                    "searchPlaceholder": "Search",
+                    "info": " ",
+                    "paginate": {
+                        next: ' <i class="fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i> '
+                    },
+                },
+                searching: false,
+                ordering: false,
+                info: false,
+                paging: false,
+                columnDefs: [
+                    {
+                        targets: [0],
+                        visible: false
+                    },
+                    {
+                        targets: [1, 3],
+                        className: 'text-center'
+                    },
+                    {
+                        targets: [2],
+                        className: 'productimgname'
+                    },
+                    {
+                        targets: [3, 4, 5, 6],
+                        className: 'ammounts'
+                    },
+                    {
+                        targets: [7],
+                        className: 'text-center options-tables'
+                    }
+                ],
+                columns: [
+                    { data: "id_producto" },
+                    { data: "codigo" },
+                    {
+                        data: function (item) {
+                            let img_producto = '';
+                            if (!item.img_producto) {
+                                img_producto = `${_url_cdn}img/products/icon.png`;
+                            } else {
+                                img_producto = item.img_producto;
+                            }
+                            return `<div class="view-product me-2">
+                                        <a href="#!">
+                                            <img src="${img_producto}" alt="">
+                                        </a>
+                                    </div>
+                                    <a href="#!" class="view-info-product">${item.nombre}</a>`;
+                        }
+                    },
+                    {
+                        data: function (item) {
+                            return `<div class="product-quantity">
+                                        <span class="quantity-btn"><i data-feather="minus-circle" class="feather-search"></i></span>
+                                        <input type="text" class="quntity-input tbl_txt_cantidad" value="${item.cantidad}" data-val="true" type="number" min="1" data-previous-value="${item.cantidad}">
+                                        <span class="quantity-btn">+<i data-feather="plus-circle" class="plus-circle"></i></span>
+                                    </div>`;
+                        }
+                    },
+                    {
+                        data: "precio_venta",
+                        render: function (data, type, row, meta) {
+                            return `<span class="tbl_txt_precio">${MoneyFormat(row.moneda, data)}</span>`;
+                        }
+                    },
+                    {
+                        data: "descuento",
+                        render: function (data, type, row, meta) {
+                            return `<span class="tbl_lbl_descuento">${MoneyFormat(row.moneda, data)}</span>`;
+                        }
+                    },
+                    {
+                        data: "precio_total",
+                        render: function (data, type, row, meta) {
+                            return `<span class="tbl_lbl_precio_total">${MoneyFormat(row.moneda, data)}</span>`;
+                        }
+                    },
+                    {
+                        data: function (item) {
+                            return '<button class="btn btn-danger btn-sm tbl_btn_delete" type="button" role="button" title="Eliminar"><span class="fa fa-trash"></span></button>';
+                        }
+                    }
+                ],
+                rowCallback: function (row, data) {
+                    var isManualChange = false;
+
+                    $(row).find(".quantity-btn").off("click").on("click", function () {
+                        var $button = $(this);
+                        var $inputCantidad = $button.closest('.product-quantity').find("input.quntity-input");
+
+                        var cantidadActual = parseInt($inputCantidad.val()) || 0;
+                        var nuevaCantidad = cantidadActual;
+
+                        if ($button.text() === "+") {
+                            if (cantidadActual < data.existencia) {
+                                nuevaCantidad = cantidadActual + 1;
+                            }
+                        } else {
+                            if (cantidadActual > 1) {
+                                nuevaCantidad = cantidadActual - 1;
+                            }
+                        }
+
+                        isManualChange = true;
+                        $inputCantidad.val(nuevaCantidad);
+                        isManualChange = false;
+
+                        fnActualizarDatosCantidad(row, data, nuevaCantidad);
+                    });
+
+                    $(row).find('.tbl_txt_cantidad').off('blur').on('blur', function () {
+                        var cantidad_ingresada = parseInt($(this).val()) || 0;
+                        var valor_anterior = $(this).data('previous-value') || 1;
+
+                        if (isNaN(cantidad_ingresada) || cantidad_ingresada <= 0) {
+                            $(this).val(1);
+                            data.cantidad = 1;
+                        } else if (cantidad_ingresada > data.existencia) {
+                            $(this).val(valor_anterior);
+                            data.cantidad = valor_anterior;
+                        } else {
+                            data.cantidad = cantidad_ingresada;
+                        }
+
+                        fnActualizarDatosCantidad(row, data, data.cantidad);
+
+                        $(this).data('previous-value', data.cantidad);
+                    });
+
+                    $(row).find('.tbl_txt_cantidad').off('keydown').on('keydown', function (e) {
+                        var cantidadActual = parseInt($(this).val()) || 1;
+                        console.log(`ON keydown, keydown`);
+                        console.log(`e.key==`, e.key);
+                        console.log(cantidadActual);
+
+                        if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            if (cantidadActual < data.existencia) {
+                                cantidadActual += 1;
+                            } else {
+                                cantidadActual = data.existencia;
+                            }
+                        }
+
+                        if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            if (cantidadActual > 1) {
+                                cantidadActual -= 1;
+                            }
+                        }
+
+                        $(this).val(cantidadActual);
+
+                        fnActualizarDatosCantidad(row, data, cantidadActual);
+
+                        $(this).data('previous-value', cantidadActual);
+                    });
+
+                    $(row).find(".tbl_btn_delete").on("click", function () {
+                        var table = $("#grvProductosCompra").DataTable();
+                        table.row($(this).parents('tr')).remove().draw();
+
+                        fnUpdateTotales();
+                    });
+
+                    $(row).find(".view-info-product").on("click", function () {
+                        console.log("Datos del producto para modal:");
+                        console.log(data);
+                        __InfoProduct(data);
+                    });
+
+                    // tbl_txt_precio - validar permiso de usuario para cambiar de precio, tomar en cuenta el costo minimo
+                },
+                createdRow: function (row, data, indexRow) {
+                    //if (indexRow === 2) {
+                    //    $(row).addClass('productimgname');
+                    //}
+                }
+            });
+
+            $("#grvProductosConsulta").DataTable({
+                "language": {
+                    "lengthMenu": "_MENU_",
+                    "sSearch": "",
+                    "searchPlaceholder": "Buscar producto",
+                    "sLoadingRecords": "Cargando registros...",
+                    "info": " ",
+                    paginate: {
+                        next: ' <i class="fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i> '
+                    },
+                },
+                info: true,
+                paging: true,
+                autoWidth: true,
+                columnDefs: [
+                    {
+                        targets: 1,
+                        //width: '60%'
+                        className: 'productimgname'
+                    },
+                    {
+                        targets: [2, 3, 4, 5, 6, 7, 8, 9],
+                        className: 'text-center'
+                    },
+                    {
+                        targets: [3],
+                        className: 'text-right'
+                    },
+                    {
+                        targets: [4, 5, 6],
+                        visible: false
+                    }
+                ],
+                columns: [
+                    { data: "codigo" },
+                    {
+                        data: function (item) {
+                            let img_producto = '';
+                            if (!item.img_producto) {
+                                img_producto = `${_url_cdn}img/products/icon.png`;
+                            } else {
+                                img_producto = item.img_producto;
+                            }
+                            return `<div class="view-product me-2">
+                                        <a href="#!">
+                                            <img src="${img_producto}" alt="" onerror="this.onerror=null;this.src='${_url_cdn}img/products/icon.png';">
+                                        </a>
+                                    </div>
+                                    <a href="#!" class="view-info-product">${item.nombre}</a>`;
+                        }
+                    },
+                    {
+                        data: function (item) {
+                            return `<span class="currency">${item.moneda}</span>
+                                    <span class="price">${__formatMoney(item.precio_unitario, 2, '.', ',')}</span>`;
+                        }
+                    },
+                    { data: "marca" },
+                    { data: "modelo" },
+                    { data: "anio" },
+                    { data: "descripcion" },
+                    { data: "stock_actual" },
+                    {
+                        data: function (item) {
+                            return `<span class="tbl_lbl_canasta"></span>`;
+                        }
+                    },
+                    {
+                        data: function (item) {
+                            if ((item.stock_actual || 0) > 0) {
+                                return '<button class="btn btn-success btn-sm add-product" type="button" role="button" style="cursor: pointer;" title="Agregar producto"><span class="fa fa-plus"></span></button>';
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                ],
+                rowCallback: function (row, data) {
+                    let info_producto = fnBuscarProductoCompra(data.id_producto);
+                    let cantidad_canasta = info_producto.producto ? info_producto.producto.cantidad : 0;
+
+                    data.cantidad_canasta = cantidad_canasta;
+                    $(row).find(".tbl_lbl_canasta").html(data.cantidad_canasta);
+
+                    if (data.stock_actual < 1 || data.cantidad_canasta >= data.stock_actual) {
+                        $(row).addClass("no_stock").find(".add-product").hide();
+                    }
+
+                    $(row).find(".add-product").on("click", function () {
+                        let info_producto = fnBuscarProductoCompra(data.id_producto);
+                        let cantidad_canasta = info_producto.producto ? info_producto.producto.cantidad : 0;
+
+                        if (cantidad_canasta > 0 && data.cantidad_canasta >= data.stock_actual) {
+                            console.error("No hay suficiente stock.");
+                            return;
+                        }
+
+                        cantidad_canasta++;
+                        let $btnAddProduct = $(this);
+                        $btnAddProduct.html('<span class="fas fa-spinner fa-spin"></span>');
+                        fnAgregarProductoCompra(data);
+
+                        setTimeout(function () {
+                            $btnAddProduct.html('<span class="fa fa-plus"></span>');
+                        }, 200);
+
+                        data.cantidad_canasta = cantidad_canasta;
+                        $(row).find(".tbl_lbl_canasta").html(data.cantidad_canasta);
+
+                        if (data.cantidad_canasta == data.stock_actual) {
+                            $(row).addClass("no_stock").find(".add-product").hide();
+                        }
+                    });
+                },
+                createdRow: function (row, data, indexRow) {
+                    $(row).find(".view-info-product").on("click", function () {
+                        console.log("Datos del producto para modal:");
+                        console.log( data);
+                        __InfoProduct(data);
+                    });
+                }
+            });
+
+            tbl_medio_pago = $('#tbl_medio_pago').DataTable({
+                "bFilter": false,
+                "ordering": false,
+                "bLengthChange": false,
+                "bInfo": false,
+                "paging": false,
+                "language": {
+                    search: ' ',
+                    searchPlaceholder: "Buscar",
+                    paginate: {
+                        next: ' <i class=" fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i>'
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "descripcion",
+                        "render": function (data, type, row) {
+                            const iconSrc = row.url_logo ? _url_cdn + row.url_logo : 'https://via.placeholder.com/50';
+                            return `<label for="txtMonto_${row.id_medio_pago}"><img class="medio-icon" src="${iconSrc}" alt="">&nbsp;${data}</label>`;
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            return `<div class="input-group input-group-sm">
+                                        <label class="input-group-text" for="txtMonto_${item.id_medio_pago}">${g_info_factura.moneda || ''}</label>
+                                        <input id="txtMonto_${item.id_medio_pago}" name="txtMonto_${item.id_medio_pago}" class="form-control amount txt-mto-pago" type="number" min="0" placeholder="Monto" />
+                                    </div>`;
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            if (item.mca_referencia === "S") {
+                                return `<div class="input-group input-group-sm">
+                                            <input class="form-control amount txt-referencia" type="number" value="" placeholder="No. Referencia" />
+                                        </div>`;
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            if (item.mca_autorizacion === "S") {
+                                return `<div class="input-group input-group-sm">
+                                            <input class="form-control amount txt-autorizacion" type="number" value="" placeholder="No. Autorización" />
+                                        </div>`;
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            if (item.mca_banco === "S") {
+                                return `<div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="fa-solid fa-building-columns"></i></span>
+                                            <select class="form-control ddl-banco"></select>
+                                        </div>`;
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            if (item.mca_fecha === "S") {
+                                return `<div class="input-group input-group-sm">
+                                            <input class="form-control amount txt-fecha" type="date" value="" placeholder="Fecha" />
+                                        </div>`;
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        "data": function (item) {
+                            return `<div class="hstack gap-2 fs-15">
+                                        <a href="#!" style="display: none;" class="btn btn-icon btn-sm btn-soft-danger rounded-pill eliminar-medio" ><i class="fas fa-trash"></i></a>
+                                        ${(item.mca_archivo == 'S' ? `<a href="#!" style="display: none;" class="btn btn-icon btn-sm btn-soft-success rounded-pill subir-archivo"><i class="fas fa-upload"></i></a>` : ``)}
+									</div>`;
+                        }
+                    }
+                ],
+                createdRow: function (row, data, dataIndex) {
+
+                    function updateDataMedios(field) {
+                        return function () {
+                            try {
+                                const value = inputs[field].val() || 0;
+                                data[field] = value;
+                                return value;
+                            } catch (e) {
+                                //console.error(e);
+                            } finally { }
+                        };
+                    }
+
+                    function fillDataBancos(field) {
+                        console.log(field);
+                    }
+
+                    const inputs = {
+                        monto: $(row).find(".txt-mto-pago"),
+                        num_referencia: $(row).find(".txt-referencia"),
+                        num_autorizacion: $(row).find(".txt-autorizacion"),
+                        fecha_referencia: $(row).find(".txt-fecha"),
+                        id_banco: $(row).find(".ddl-banco")
+                    };
+
+                    const mediosPago = (g_info_factura && Array.isArray(g_info_factura.medios_pago)) ? g_info_factura.medios_pago : [];
+                    const medioPago = mediosPago.find(mp => mp.codigo === data.codigo) || { monto: 0, num_referencia: '', num_autorizacion: '', id_banco: '', fecha_referencia: '' };
+
+                    inputs.monto.val(medioPago.monto.toFixed(2));
+                    inputs.num_referencia.val(medioPago.num_referencia);
+                    inputs.num_autorizacion.val(medioPago.num_autorizacion);
+                    inputs.id_banco.val(medioPago.id_banco);
+                    inputs.fecha_referencia.val(medioPago.fecha_referencia);
+
+                    inputs.monto.on("input", function () {
+                        let monto = parseFloat(inputs.monto.val()) || 0;
+                        const dependentFields = $(row).find(".txt-referencia, .txt-autorizacion, .ddl-banco, .txt-fecha");
+
+                        if (monto <= 0) {
+                            dependentFields.prop("disabled", true).val("").trigger("input");
+                            $(row).find(".eliminar-medio").hide();
+                            $(row).find(".subir-archivo").hide();
+                        } else {
+                            dependentFields.prop("disabled", false);
+                            fillDataBancos(inputs.banco);
+                            $(row).find(".eliminar-medio").show();
+                            $(row).find(".subir-archivo").show();
+                        }
+
+                        data.monto = monto;
+                        sumSubTotalesMedioPago();
+                    });
+
+                    inputs.num_referencia.on("input", updateDataMedios("num_referencia"));
+                    inputs.num_autorizacion.on("input", updateDataMedios("num_autorizacion"));
+                    inputs.fecha_referencia.on("input", updateDataMedios("fecha_referencia"));
+                    inputs.id_banco.on("change", updateDataMedios("id_banco"));
+
+                    Object.values(inputs).forEach(input => input.trigger(input.is("select") ? "change" : "input"));
+                }
+            });
+
+            $("#rb_mp_efectivo, #rb_mp_otros").on("click", toggleMedioPago);
+
+            toggleMedioPago();
+            fnValidarCajasAbiertas();
+
+            $("#grvClientes").DataTable({
+                "language": {
+                    "lengthMenu": "_MENU_",
+                    "sSearch": "",
+                    "searchPlaceholder": "Buscar cliente",
+                    "sLoadingRecords": "Cargando registros...",
+                    "info": " ",
+                    paginate: {
+                        next: ' <i class="fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i> '
+                    },
+                },
+                info: false,
+                paging: true,
+                autoWidth: false,
+                columnDefs: [
+                    {
+                        targets: [0, 3, 4],
+                        visible: false
+                    }
+                ],
+                columns: [
+                    { data: "id_cliente" },
+                    { data: "nit" },
+                    {
+                        data: function (item) {
+                            return `${item.nombres} ${item.apellidos || ''}`;
+                        }
+                    },
+                    { data: "telefono" },
+                    { data: "email" },
+                    { data: "direccion" },
+                    {
+                        data: function (item) {
+                            return `<td>
+										<div class="hstack gap-2 fs-15">
+											<a href="#!" class="btn btn-icon btn-sm btn-soft-success rounded-pill add-cliente"><i class="fas fa-user-check"></i></a>
+										</div>
+									</td>`;
+                        }
+                    },
+                ],
+                createdRow: function (row, data, dataIndex) {
+                    let $row = $(row);
+
+                    // Evento de clic en el botón para agregar cliente
+                    $row.find(".add-cliente").on("click", function () {
+                        agregarCliente($(this), data);
+                    });
+
+                    // Evento de doble clic en la fila
+                    $row.on("dblclick", function () {
+                        agregarCliente($row.find(".add-cliente"), data);
+                    });
+
+                    // Evento de tecla "Enter" cuando la fila está seleccionada
+                    $row.on("keydown", function (e) {
+                        if (e.key === "Enter") {
+                            agregarCliente($row.find(".add-cliente"), data);
+                        }
+                    });
+
+                    // Evento para resaltar la fila seleccionada
+                    $row.on("click", function () {
+                        $(".selected-row").removeClass("selected-row"); // Quita la selección de otras filas
+                        $row.addClass("selected-row"); // Agrega la clase a la fila seleccionada
+                    });
+                }
+            });
+
+            $("#btnValidaCajasAbiertas").on("click", function () {
+                fnValidarCajasAbiertas();
+            });
+
+            $("#btnMedioPago").on("click", function () {
+                __Progress(`Cargando medios de pago...`);
+
+                setTimeout(function () {
+                    let info_producto = fnResumenCompra();
+
+                    console.log(`info_producto: `, info_producto);
+
+                    $("#lbl_info_saldo_pagar").val(__formatMoney(info_producto.mto_total, 2, '.', ','));
+
+                    var frmMedioPago = new FormData();
+                    frmMedioPago.append("mth", mtdEnc("get/medio/pago/sucursal"));
+
+                    $.ajax({
+                        url: _url_redirect + "Controllers/venta.ashx",
+                        type: "post",
+                        contentType: false,
+                        processData: false,
+                        ContentType: "text/html;charset=utf-8",
+                        dataType: "json",
+                        data: frmMedioPago,
+                        async: true,
+                        beforeSend: function () {
+                            tbl_medio_pago.clear();
+                            tbl_medio_pago.draw();
+                            $('#tbl_medio_pago').hide();
+                        },
+                        success: function (response) {
+                            if (response) {
+                                if (response.data_tables.length > 0) {
+                                    $('#tbl_medio_pago').show();
+
+                                    tbl_medio_pago.rows.add(response.data_tables[0]);
+                                    tbl_medio_pago.draw();
+
+                                    __ProgressOff();
+
+                                    setTimeout(function () {
+                                        __setMaxDateToToday(".txt-fecha", 15);
+                                        $("#modalMedioPago").modal("show");
+                                        tbl_medio_pago.columns.adjust().draw();
+                                    }, 50);
+                                }
+                            }
+                        },
+                        complete: function () {
+                            __ProgressOff();
+                        }
+                    });
+                }, 50);
+
+            });
+
+            $("#btnBuscarProducto").on("click", function () {
+                __Progress(`Consultando productos...`);
+
+                setTimeout(function () {
+                    $.ajax({
+                        url: _url_redirect + "Controllers/venta.ashx?mth=" + mtdEnc("get/products"),
+                        data: null,
+                        type: "GET",
+                        contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                        dataType: "json",
+                        beforeSend: function () {
+
+                        },
+                        success: function (result) {
+                            if (result.type == "success") {
+                                $('#grvProductosConsulta').dataTable().fnClearTable();
+                                $('#grvProductosConsulta').DataTable().search("").draw();
+                                $('#grvProductosConsulta').dataTable().fnAddData(result.data);
+
+                                $("#modalProductos").modal("show");
+                            }
+                            else {
+                                Swal.fire({ icon: result.type, text: result.text });
+                            }
+                        },
+                        error: function (result) {
+                            console.log('error:', result);
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'Ocurrio un error al listar los productos.',
+                            });
+                        },
+                        complete: function () {
+                            __ProgressOff();
+                        }
+                    });
+                }, 300);
+            });
+
+            $("#btnBuscarCliente").on("click", function () {
+                __Progress(`Consultando...`);
+
+                setTimeout(function () {
+                    $.ajax({
+                        url: _url_redirect + "Controllers/venta.ashx?mth=" + mtdEnc("get/customers"),
+                        data: null,
+                        type: "GET",
+                        contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                        dataType: "json",
+                        beforeSend: function () {
+
+                        },
+                        success: function (result) {
+                            if (result.type == "success") {
+                                $('#grvClientes').dataTable().fnClearTable();
+                                $('#grvClientes').DataTable().search("").draw();
+                                $('#grvClientes').dataTable().fnAddData(result.data);
+
+                                $("#modalClientes").modal("show")
+                            }
+                            else if (result.type == "warning") {
+                                Swal.fire({ icon: result.type, text: result.text });
+                            }
+                            else {
+                                Swal.fire({ icon: result.type, text: result.text });
+                            }
+                        },
+                        error: function (result) {
+                            console.log('error:', result);
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'Ocurrio un error al obtener la lista de clientes.',
+                            });
+                        },
+                        complete: function () {
+                            __ProgressOff();
+                        }
+                    });
+                }, 300);
+
+            });
+
+            $("#txtCodigoBarraProducto").on("click keydown", function (e) {
+                if (e.type === "click" || (e.type === "keydown" && (e.which === 13 || e.which === 9))) {
+                    e.preventDefault();
+                    if ($("#txtCodigoBarraProducto").val().trim() !== "") {
+                        fnValidaCodigoBarra();
+                    }
+                }
+            });
+
+            $("#txtCodigoBarraProducto").on("keydown", function (event) {
+                if (event.key === "F1") {
+                    event.preventDefault();
+                    $("#btnBuscarProducto").click();
+                }
+            });
+
+            $("#txtNitCliente").on('keydown', function (e) {
+                if (e.which == 13 || e.which == 9) {
+                    e.preventDefault();
+                    if ($(this).val().trim() != "") {
+                        fnBuscarCliente($("#txtNitCliente").val());
+                    }
+                }
+            });
+
+            $("#txtNitCliente").on("keydown", function (event) {
+                if (event.key === "F1") {
+                    event.preventDefault();
+                    $("#btnBuscarCliente").click();
+                }
+            });
+
+            $("#btnGuardarMediosPago").on("click", function () {
+                var data_medios_pago = tbl_medio_pago.rows().data();
+                let _procede = true,
+                    _saldo_ingresado = 0,
+                    _medios_pago = [];
+
+                data_medios_pago.each(function (row) {
+                    _saldo_ingresado += parseFloat(row.monto) || 0;
+
+                    if (row.monto > 0) {
+                        if (row.mca_referencia == "S" && !row.num_referencia) {
+                            Swal.fire({ icon: 'error', text: `Por favor ingrese la referencia de ${row.descripcion}` });
+                            _procede = false;
+                            return false;
+                        }
+                        if (row.mca_autorizacion == "S" && !row.num_autorizacion) {
+                            Swal.fire({ icon: 'error', text: `Por favor ingrese la autorización de ${row.descripcion}` });
+                            _procede = false;
+                            return false;
+                        }
+                        if (row.mca_banco == "S" && !row.id_banco) {
+                            Swal.fire({ icon: 'error', text: `Por favor indique el banco para el medio de ${row.descripcion}` });
+                            _procede = false;
+                            return false;
+                        }
+                        if (row.mca_fecha == "S" && !row.fecha_referencia) {
+                            Swal.fire({ icon: 'error', text: `Por favor ingrese la fecha para el medio de ${row.descripcion}` });
+                            _procede = false;
+                            return false;
+                        }
+
+                        _medios_pago.push({
+                            "id_medio_pago": row.id_medio_pago,
+                            "codigo": row.codigo,
+                            "descripcion": row.descripcion,
+                            "moneda": row.moneda,
+                            "id_moneda": row.id_moneda || '',
+                            "num_referencia": row.num_referencia,
+                            "num_autorizacion": row.num_autorizacion,
+                            "id_banco": row.id_banco,
+                            "fecha_referencia": row.fecha_referencia,
+                            "monto": row.monto
+                        });
+                    }
+                });
+
+                console.log(_medios_pago);
+
+                if (_procede) {
+                    g_info_factura.medios_pago = _medios_pago;
+                    $("#modalMedioPago").modal("hide");
+                }
+            });
+
+            $("#btnGuardarVenta, #btnEmitirVenta").on("click", function () {
+                console.log(`Clicked!!!`);
+
+                const transactionType = $(this).data("type");
+                const conceptos = fnResumenCompra();
+                let facturacion = conceptos;
+
+                const caja = $("#ddlNoCaja").val();
+                const id_cliente = mtdValue($("#lblIdCliente").html());
+                const productos = facturacion.productos;
+
+                if (transactionType !== "<%=SIFAFEL_MODEL.Utils.TipoTransaccion.COTIZACION%>" && !caja) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: 'Por favor, seleccione la caja.'
+                    });
+                    return;
+                }
+
+                if (!id_cliente) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: 'Por favor, ingrese el cliente.'
+                    });
+                    return;
+                }
+
+                if (!productos || productos.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: 'Por favor, agregue al menos un producto.'
+                    });
+                    return;
+                }
+
+                const totalProductos = productos.reduce((sum, producto) => sum + producto.precio_total, 0);
+                const totalMediosPago = g_info_factura.medios_pago.reduce((sum, medio) => sum + medio.monto, 0);
+
+                if (transactionType !== "<%=SIFAFEL_MODEL.Utils.TipoTransaccion.COTIZACION%>") {
+                    if (totalProductos !== totalMediosPago) {
+                        const soloEfectivo = g_info_factura.medios_pago.length === 1 && g_info_factura.medios_pago[0].codigo === 'EFE';
+                        if (!soloEfectivo) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Advertencia',
+                                text: 'La suma de los medios de pago no coincide con el total de los productos.'
+                            });
+                            return;
+                        } else {
+                            g_info_factura.medios_pago[0].monto = conceptos.mto_total;
+                        }
+                    }
+                }
+
+                facturacion.medios_pago = g_info_factura.medios_pago;
+                facturacion.encabezado = {
+                    id_referencia: g_info_factura.id_referencia,
+                    tipo_transaccion: transactionType,
+                    id_caja: caja || null,
+                    id_cliente: id_cliente
+                };
+
+                console.log(facturacion);
+
+                var frmFacturacion = new FormData();
+                frmFacturacion.append("mth", mtdEnc("save/sale"));
+                frmFacturacion.append("data", mtdEnc(JSON.stringify(facturacion)));
+
+                $.ajax({
+                    url: `${_url_redirect}Controllers/venta.ashx?mtd=${mtdEnc("save/sale")}`,
+                    data: frmFacturacion,
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    ContentType: "text/html;charset=utf-8",
+                    dataType: "json",
+                    beforeSend: function () {
+                        __Progress("Procesando...");
+                    },
+                    success: function (response, arg, xhr) {
+                        if (response.type === "success") {
+                            fnLimpiarCamposFacturacion();
+
+                            Swal.fire({
+                                title: response.title || 'Operación completada',
+                                text: response.text || 'La transacción se realizó exitosamente.',
+                                icon: 'success',
+                                showDenyButton: true,
+                                showCancelButton: true,
+                                confirmButtonText: 'Nueva venta',
+                                denyButtonText: 'imprimir comprobante',
+                                cancelButtonText: 'Cerrar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+
+                                } else if (result.isDenied && response.base64File) {
+
+                                    base64_file(response.base64File, xhr);
+                                }
+                            });
+
+                        } else {
+                            Swal.fire({
+                                icon: response.type,
+                                text: response.text
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'Ocurrió un error al iniciar el proceso de guardar la venta.'
+                        });
+                    },
+                    complete: function () {
+                        __ProgressOff();
+                    }
+                });
+            });
+
+            $("#btnCancelarVenta").on("click", function () {
+                Swal.fire({
+                    title: 'Confirmar cancelación',
+                    text: '¿Está seguro de que desea cancelar la venta? Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonText: 'Sí, cancelar',
+                    denyButtonText: 'No, continuar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fnLimpiarCamposFacturacion();
+                        Swal.fire('Venta cancelada', 'La venta ha sido cancelada.', 'info');
+                    } else {
+
+                    }
+                });
+            });
+
+            <%if (EDIT_FACTURA)
+        { %>
+            __Progress("Cargando datos...");
+            setTimeout(function () {
+
+                let secretKeyFactura = getParameterByName("id");
+
+                if (secretKeyFactura) {
+                    $.ajax({
+                        url: `${_url_redirect}Controllers/venta.ashx?id=${secretKeyFactura}`,
+                        type: 'GET',
+                        success: function (response) {
+                            if (response.data_tables) {
+
+                                const data_encabezado = response.data_tables[0][0];
+                                const data_detalle = response.data_tables[1];
+                                const data_medio_pago = response.data_tables[2];
+
+                                g_info_factura.id_referencia = data_encabezado.id_factura;
+                                g_info_factura.medios_pago = data_medio_pago;
+
+                                //CLIENTE
+                                seleccionarCliente({
+                                    id_cliente: data_encabezado.id_cliente,
+                                    nit: data_encabezado.nit_cliente,
+                                    nombres: data_encabezado.nombre_cliente,
+                                    apellidos: null,//pendiente
+                                    direccion: null//pendiente
+                                });
+
+                                $("#rb_mp_otros").data("modal", "0");
+
+                                //PENDIENTE ELEGIR CAJA
+
+                                //PRODUCTOS
+                                for (var i = 0; i < data_detalle.length; i++) {
+                                    fnAgregarProductoCompra(p_producto = data_detalle[i], p_cantidad = data_detalle[i].cantidad);
+                                }
+
+                                //PENDIENTE VALIDAR ANTICIPOS (MEDIOS DE PAGO)
+                                //MEDIOS DE PAGO
+                                if (data_medio_pago.length > 0) {
+                                    $("#rb_mp_otros").click();
+                                }
+
+                                fnUpdateTotales();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error en la solicitud:', error);
+                        },
+                        complete: function () {
+                            __ProgressOff();
+                        }
+                    });
+                }
+            }, 100);
+           <%}%>
+        });
+
+        window.addEventListener('beforeunload', function (event) {
+            const conceptos = fnResumenCompra();
+            if (conceptos.productos.length > 0) {
+                event.preventDefault();
+                event.returnValue = 'Tienes productos en la venta. Si sales, perderás los datos.';
+            }
+        });
+
+    </script>
+</asp:Content>
