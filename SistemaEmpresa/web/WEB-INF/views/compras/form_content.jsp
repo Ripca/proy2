@@ -508,16 +508,19 @@
                                 </div>`;
                     }
                 },
-                {
-                    "data": "cantidad",
-                    "render": function(data, type, row) {
-                        return `<div class="product-quantity">
-                                    <span class="quantity-btn" onclick="fnActualizarDatosCantidad(this.closest('tr'), ${JSON.stringify(row).replace(/"/g, '&quot;')}, ${data - 1})">-</span>
-                                    <input type="text" class="qty" value="${data}" readonly>
-                                    <span class="quantity-btn" onclick="fnActualizarDatosCantidad(this.closest('tr'), ${JSON.stringify(row).replace(/"/g, '&quot;')}, ${data + 1})">+</span>
-                                </div>`;
-                    }
-                },
+              {
+    "data": "cantidad",
+    "render": function (data, type, row, meta) {
+        return `
+            <div class="product-quantity">
+                <span class="quantity-btn" onclick="fnCambiarCantidad(${meta.row}, -1)">-</span>
+                <input type="text" class="qty" value="${data}" readonly>
+                <span class="quantity-btn" onclick="fnCambiarCantidad(${meta.row}, 1)">+</span>
+            </div>
+        `;
+    }
+},
+
                 {
                     "data": "precio_costo",
                     "render": function(data, type, row) {
