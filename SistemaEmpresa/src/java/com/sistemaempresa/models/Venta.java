@@ -137,9 +137,15 @@ public class Venta {
         if (detalles == null || detalles.isEmpty()) {
             return 0.0;
         }
-        
+
         return detalles.stream()
-                .mapToDouble(detalle -> detalle.getCantidad() * detalle.getPrecioUnitario())
+                .mapToDouble(detalle -> {
+                    try {
+                        return Integer.parseInt(detalle.getCantidad()) * detalle.getPrecioUnitario();
+                    } catch (NumberFormatException e) {
+                        return 0.0;
+                    }
+                })
                 .sum();
     }
     

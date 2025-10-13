@@ -154,10 +154,12 @@ public class CompraServlet extends HttpServlet {
                 }
             }
             
-            if (compraDAO.insertar(compra)) {
-                response.sendRedirect("CompraServlet?success=Compra guardada exitosamente");
+            // Usar el método crear() que implementa la lógica del C#
+            int idCompra = compraDAO.crear(compra);
+            if (idCompra > 0) {
+                response.sendRedirect("CompraServlet?success=Compra creada exitosamente con ID: " + idCompra);
             } else {
-                response.sendRedirect("CompraServlet?error=Error al guardar la compra");
+                response.sendRedirect("CompraServlet?error=Error al crear la compra");
             }
             
         } catch (Exception e) {

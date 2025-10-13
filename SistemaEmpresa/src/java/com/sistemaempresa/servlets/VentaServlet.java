@@ -156,17 +156,19 @@ public class VentaServlet extends HttpServlet {
                     if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
                         VentaDetalle detalle = new VentaDetalle();
                         detalle.setIdProducto(Integer.parseInt(productosIds[i]));
-                        detalle.setCantidad(Integer.parseInt(cantidades[i]));
+                        detalle.setCantidad(cantidades[i]); // VARCHAR(45) como en C#
                         detalle.setPrecioUnitario(Double.parseDouble(precios[i]));
                         venta.agregarDetalle(detalle);
                     }
                 }
             }
             
-            if (ventaDAO.insertar(venta)) {
-                response.sendRedirect("VentaServlet?success=Venta guardada exitosamente");
+            // Usar el método crearVenta() que implementa la lógica del C#
+            int idVenta = ventaDAO.crearVenta(venta);
+            if (idVenta > 0) {
+                response.sendRedirect("VentaServlet?success=Venta creada exitosamente con ID: " + idVenta);
             } else {
-                response.sendRedirect("VentaServlet?error=Error al guardar la venta");
+                response.sendRedirect("VentaServlet?error=Error al crear la venta");
             }
             
         } catch (Exception e) {

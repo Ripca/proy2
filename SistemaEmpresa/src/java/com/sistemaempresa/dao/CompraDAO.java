@@ -92,7 +92,90 @@ public class CompraDAO {
     }
     
     /**
-     * Inserta una nueva compra con sus detalles
+     * Crea una nueva compra con sus detalles
+     * Implementa exactamente la lógica del método crear() del C# repp/vista/Compra.h
+     * @param compra objeto Compra con sus detalles
+     * @return ID de la compra creada, 0 si hay error
+     */
+    public int crear(Compra compra) {
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Iniciar transacción
+
+            // 1. Insertar la compra maestro (igual que en C#)
+            String sqlCompra = "INSERT INTO compras(no_orden_compra, id_proveedor, fecha_orden, fecha_ingreso) " +
+                              "VALUES (?, ?, ?, ?)";
+
+            int idCompraCreada = 0;
+            try (PreparedStatement stmtCompra = conn.prepareStatement(sqlCompra, Statement.RETURN_GENERATED_KEYS)) {
+                stmtCompra.setInt(1, compra.getNoOrdenCompra());
+                stmtCompra.setInt(2, compra.getIdProveedor());
+                stmtCompra.setDate(3, java.sql.Date.valueOf(compra.getFechaOrden()));
+                stmtCompra.setDate(4, java.sql.Date.valueOf(compra.getFechaIngreso()));
+
+                int filasAfectadas = stmtCompra.executeUpdate();
+
+                if (filasAfectadas > 0) {
+                    // Obtener el ID de la compra recién insertada (LAST_INSERT_ID como en C#)
+                    try (ResultSet generatedKeys = stmtCompra.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            idCompraCreada = generatedKeys.getInt(1);
+                        }
+                    }
+                }
+            }
+
+            if (idCompraCreada == 0) {
+                throw new SQLException("Error al crear la compra, no se obtuvo el ID");
+            }
+
+            // 2. Insertar los detalles de compra (igual que en C#)
+            if (compra.tieneDetalles()) {
+                String sqlDetalle = "INSERT INTO compras_detalle(id_compra, id_producto, cantidad, precio_costo_unitario) " +
+                                   "VALUES (?, ?, ?, ?)";
+
+                try (PreparedStatement stmtDetalle = conn.prepareStatement(sqlDetalle)) {
+                    for (CompraDetalle detalle : compra.getDetalles()) {
+                        stmtDetalle.setInt(1, idCompraCreada);
+                        stmtDetalle.setInt(2, detalle.getIdProducto());
+                        stmtDetalle.setInt(3, detalle.getCantidad());
+                        stmtDetalle.setDouble(4, detalle.getPrecioCostoUnitario());
+
+                        int detalleAfectado = stmtDetalle.executeUpdate();
+                        if (detalleAfectado == 0) {
+                            throw new SQLException("Error al insertar detalle de compra");
+                        }
+                    }
+                }
+            }
+
+            conn.commit();
+            compra.setIdCompra(idCompraCreada);
+            return idCompraCreada;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return 0;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Inserta una nueva compra con sus detalles (método original)
      */
     public boolean insertar(Compra compra) {
         String sqlCompra = """

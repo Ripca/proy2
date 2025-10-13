@@ -4,7 +4,7 @@ public class VentaDetalle {
     private int idVentaDetalle;
     private int idVenta;
     private int idProducto;
-    private int cantidad;
+    private String cantidad; // VARCHAR(45) como en C# - NO INT!
     private double precioUnitario;
     
     // Campos adicionales para mostrar información relacionada
@@ -16,7 +16,7 @@ public class VentaDetalle {
     public VentaDetalle() {
     }
     
-    public VentaDetalle(int idVenta, int idProducto, int cantidad, double precioUnitario) {
+    public VentaDetalle(int idVenta, int idProducto, String cantidad, double precioUnitario) {
         this.idVenta = idVenta;
         this.idProducto = idProducto;
         this.cantidad = cantidad;
@@ -48,11 +48,11 @@ public class VentaDetalle {
         this.idProducto = idProducto;
     }
     
-    public int getCantidad() {
+    public String getCantidad() {
         return cantidad;
     }
-    
-    public void setCantidad(int cantidad) {
+
+    public void setCantidad(String cantidad) {
         this.cantidad = cantidad;
     }
     
@@ -90,7 +90,11 @@ public class VentaDetalle {
     
     // Métodos de utilidad
     public double calcularSubtotal() {
-        return cantidad * precioUnitario;
+        try {
+            return Integer.parseInt(cantidad) * precioUnitario;
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
     
     @Override
