@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+         https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+        <param-name>ignore</param-name>
+        <param-value>false</param-value>
+    </init-param>
+</filter>
+
+<filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+    <display-name>Punto de Venta Web Completo</display-name>
+
+    <!-- Configuración de sesión -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- Servlets -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.DashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/DashboardServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClienteServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.ClienteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClienteServlet</servlet-name>
+        <url-pattern>/ClienteServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EmpleadoServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.EmpleadoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EmpleadoServlet</servlet-name>
+        <url-pattern>/EmpleadoServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PuestoServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.PuestoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PuestoServlet</servlet-name>
+        <url-pattern>/PuestoServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductoServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.ProductoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductoServlet</servlet-name>
+        <url-pattern>/ProductoServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MarcaServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.MarcaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MarcaServlet</servlet-name>
+        <url-pattern>/MarcaServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProveedorServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.ProveedorServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProveedorServlet</servlet-name>
+        <url-pattern>/ProveedorServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>VentaServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.VentaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VentaServlet</servlet-name>
+        <url-pattern>/VentaServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CompraServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.CompraServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CompraServlet</servlet-name>
+        <url-pattern>/CompraServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MenuServlet</servlet-name>
+        <servlet-class>com.puntoventa.servlets.MenuServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MenuServlet</servlet-name>
+        <url-pattern>/MenuServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Filtro de autenticación JWT -->
+    <filter>
+        <filter-name>JWTAuthFilter</filter-name>
+        <filter-class>com.puntoventa.filters.JWTAuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JWTAuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Página de bienvenida -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>
