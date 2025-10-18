@@ -1,0 +1,387 @@
+/* Estilos para formularios de compras y ventas */
+
+/* Clases para inputs y controles */
+.add-newplus {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.add-newplus a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.add-newplus a:hover {
+    color: #0056b3;
+}
+
+.plus-down-add {
+    margin-right: 5px;
+}
+
+.input-h-control {
+    height: 38px;
+}
+
+.no-right-border {
+    border-right: none !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.no-left-border {
+    border-left: none !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+/* Estilos para código de barras */
+.input-blocks {
+    position: relative;
+}
+
+.input-groupicon {
+    position: relative;
+}
+
+.barcode-search {
+    padding-right: 50px !important;
+}
+
+.addonset {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.select-code {
+    position: relative;
+}
+
+/* Estilos para totales */
+.total-order {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.total-order ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.total-order ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.total-order ul li:last-child {
+    border-bottom: none;
+}
+
+.total-order ul li.total {
+    background: #e7f3ff;
+    margin: 10px -15px -15px -15px;
+    padding: 15px;
+    border-radius: 0 0 8px 8px;
+    font-weight: bold;
+}
+
+.total-order ul li h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.total-order ul li h5 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.total-order ul li.total h4 {
+    font-size: 16px;
+    color: #007bff;
+}
+
+/* Estilos para cantidad de productos */
+.product-quantity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.quantity-btn {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #495057;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background: #e9ecef;
+    color: #007bff;
+}
+
+.qty {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Estilos para productos */
+.productimgname {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-img img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.view-product img {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.view-info-product {
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.view-info-product:hover {
+    color: #007bff;
+}
+
+/* Estilos para botones */
+.btn-row {
+    gap: 10px;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-added {
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-added:hover {
+    background: #0056b3;
+    color: white;
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-cancel:hover {
+    background: #545b62;
+    color: white;
+}
+
+/* Estilos para modales */
+.modal-content-demo {
+    border-radius: 8px;
+}
+
+.effect-scale {
+    transform: scale(0.7);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.effect-scale.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.effect-slide-in-right {
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.effect-slide-in-right.show {
+    transform: translateX(0);
+}
+
+/* Estilos para tablas */
+.table-head {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 8px;
+    font-size: 13px;
+}
+
+/* Estilos para medios de pago */
+.form-check {
+    margin-bottom: 10px;
+}
+
+.progress-xs {
+    height: 8px;
+    margin: 10px 0;
+}
+
+.medio-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Estilos para alertas */
+.alert {
+    font-size: 13px;
+    padding: 10px;
+}
+
+/* Estilos para página */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.page-title h4 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.page-title h6 {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.add-item {
+    display: flex;
+    align-items: center;
+}
+
+.page-btn {
+    display: flex;
+    gap: 10px;
+}
+
+/* Estilos específicos para ventas y compras */
+.row.ventas,
+.row.compras {
+    margin: 0;
+}
+
+/* Estilos para iconos feather */
+.feather-16 {
+    width: 16px;
+    height: 16px;
+}
+
+.feather-search {
+    width: 14px;
+    height: 14px;
+}
+
+/* Estilos para elementos de dinero */
+.currency {
+    font-weight: 600;
+    color: #28a745;
+}
+
+.price {
+    font-weight: 500;
+}
+
+.amount {
+    text-align: right;
+}
+
+.total {
+    font-weight: bold;
+    background: #f8f9fa;
+}
+
+/* Estilos para elementos de tabla específicos */
+.tbl_lbl_precio_costo,
+.tbl_lbl_precio_total,
+.tbl_lbl_descuento {
+    font-weight: 500;
+}
+
+.tbl_txt_precio {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.tbl_btn_delete {
+    padding: 4px 8px;
+}
+
+.delete-set img {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .btn-row {
+        flex-direction: column;
+    }
+    
+    .product-quantity {
+        flex-wrap: wrap;
+    }
+    
+    .total-order {
+        margin-top: 20px;
+    }
+}
