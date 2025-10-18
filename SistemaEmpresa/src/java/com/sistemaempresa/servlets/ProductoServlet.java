@@ -218,13 +218,13 @@ public class ProductoServlet extends HttpServlet {
             json.append("{");
             json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
             json.append("\"id_producto\":").append(p.getIdProducto()).append(",");
-            json.append("\"codigo\":\"").append(escapeJson(p.getCodigo())).append("\",");
+            json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
             json.append("\"descripcion\":\"").append(escapeJson(p.getDescripcion())).append("\",");
             json.append("\"existencia\":").append(p.getExistencia()).append(",");
             json.append("\"precio_costo\":").append(p.getPrecioCosto()).append(",");
             json.append("\"precio_venta\":").append(p.getPrecioVenta()).append(",");
             json.append("\"precio_unitario\":").append(p.getPrecioVenta()).append(",");
-            json.append("\"moneda\":\"").append(escapeJson(p.getMoneda())).append("\"");
+            json.append("\"nombreMarca\":\"").append(escapeJson(p.getNombreMarca() != null ? p.getNombreMarca() : "")).append("\"");
             json.append("}");
             if (i < productos.size() - 1) json.append(",");
         }

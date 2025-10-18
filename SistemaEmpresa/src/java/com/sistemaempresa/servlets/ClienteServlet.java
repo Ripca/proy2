@@ -210,8 +210,8 @@ public class ClienteServlet extends HttpServlet {
             json.append("{");
             json.append("\"idCliente\":").append(c.getIdCliente()).append(",");
             json.append("\"id_cliente\":").append(c.getIdCliente()).append(",");
-            json.append("\"NIT\":\"").append(escapeJson(c.getNIT())).append("\",");
-            json.append("\"nit\":\"").append(escapeJson(c.getNIT())).append("\",");
+            json.append("\"NIT\":\"").append(escapeJson(c.getNit())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(c.getNit())).append("\",");
             json.append("\"nombres\":\"").append(escapeJson(c.getNombres())).append("\",");
             json.append("\"apellidos\":\"").append(escapeJson(c.getApellidos())).append("\"");
             json.append("}");
@@ -241,8 +241,8 @@ public class ClienteServlet extends HttpServlet {
             StringBuilder json = new StringBuilder("{");
             json.append("\"idCliente\":").append(cliente.getIdCliente()).append(",");
             json.append("\"id_cliente\":").append(cliente.getIdCliente()).append(",");
-            json.append("\"NIT\":\"").append(escapeJson(cliente.getNIT())).append("\",");
-            json.append("\"nit\":\"").append(escapeJson(cliente.getNIT())).append("\",");
+            json.append("\"NIT\":\"").append(escapeJson(cliente.getNit())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(cliente.getNit())).append("\",");
             json.append("\"nombres\":\"").append(escapeJson(cliente.getNombres())).append("\",");
             json.append("\"apellidos\":\"").append(escapeJson(cliente.getApellidos())).append("\"");
             json.append("}");
