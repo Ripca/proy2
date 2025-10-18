@@ -1,14 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.sistemaempresa.models.*" %>
 
 <%
-    Venta venta = (Venta) request.getAttribute("venta");
-    List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
-    List<Producto> productos = (List<Producto>) request.getAttribute("productos");
-    boolean esEdicion = venta != null;
-    String titulo = esEdicion ? "Editar Venta" : "Nueva Venta";
-    String action = esEdicion ? "update" : "save";
+    try {
+        Venta venta = (Venta) request.getAttribute("venta");
+        List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
+        List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+
+        if (clientes == null) {
+            clientes = new ArrayList<>();
+        }
+        if (productos == null) {
+            productos = new ArrayList<>();
+        }
+
+        boolean esEdicion = venta != null;
+        String titulo = esEdicion ? "Editar Venta" : "Nueva Venta";
+        String action = esEdicion ? "update" : "save";
+
+        request.setAttribute("clientes", clientes);
+        request.setAttribute("productos", productos);
 %>
 
 <!-- HEADER -->
@@ -383,3 +396,12 @@
     }
 </script>
 
+<%
+    } catch (Exception e) {
+        out.println("<div class='alert alert-danger'>");
+        out.println("<h4>Error en el formulario de ventas</h4>");
+        out.println("<p>" + e.getMessage() + "</p>");
+        out.println("</div>");
+        e.printStackTrace();
+    }
+%>

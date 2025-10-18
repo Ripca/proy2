@@ -1,14 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.sistemaempresa.models.*" %>
 
 <%
-    Compra compra = (Compra) request.getAttribute("compra");
-    List<Proveedor> proveedores = (List<Proveedor>) request.getAttribute("proveedores");
-    List<Producto> productos = (List<Producto>) request.getAttribute("productos");
-    boolean esEdicion = compra != null;
-    String titulo = esEdicion ? "Editar Compra" : "Nueva Compra";
-    String action = esEdicion ? "update" : "save";
+    try {
+        Compra compra = (Compra) request.getAttribute("compra");
+        List<Proveedor> proveedores = (List<Proveedor>) request.getAttribute("proveedores");
+        List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+
+        if (proveedores == null) {
+            proveedores = new ArrayList<>();
+        }
+        if (productos == null) {
+            productos = new ArrayList<>();
+        }
+
+        boolean esEdicion = compra != null;
+        String titulo = esEdicion ? "Editar Compra" : "Nueva Compra";
+        String action = esEdicion ? "update" : "save";
+
+        request.setAttribute("proveedores", proveedores);
+        request.setAttribute("productos", productos);
 %>
 
 <!-- HEADER -->
@@ -432,3 +445,13 @@
         if (modal) modal.hide();
     }
 </script>
+
+<%
+    } catch (Exception e) {
+        out.println("<div class='alert alert-danger'>");
+        out.println("<h4>Error en el formulario de compras</h4>");
+        out.println("<p>" + e.getMessage() + "</p>");
+        out.println("</div>");
+        e.printStackTrace();
+    }
+%>
