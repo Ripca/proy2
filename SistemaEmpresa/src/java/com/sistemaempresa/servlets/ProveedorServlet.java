@@ -53,6 +53,9 @@ public class ProveedorServlet extends HttpServlet {
             case "buscarPorNit":
                 buscarProveedorPorNit(request, response);
                 break;
+            case "obtenerTodos":
+                obtenerTodosProveedores(request, response);
+                break;
             default:
                 listarProveedores(request, response);
                 break;
@@ -246,6 +249,32 @@ public class ProveedorServlet extends HttpServlet {
         } else {
             response.getWriter().write("{}");
         }
+    }
+
+    /**
+     * Endpoint AJAX para obtener todos los proveedores en tabla modal
+     */
+    private void obtenerTodosProveedores(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Proveedor> proveedores = proveedorDAO.obtenerTodos();
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < proveedores.size(); i++) {
+            Proveedor p = proveedores.get(i);
+            json.append("{");
+            json.append("\"id_proveedor\":").append(p.getIdProveedor()).append(",");
+            json.append("\"proveedor\":\"").append(escapeJson(p.getProveedor())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(p.getNit())).append("\",");
+            json.append("\"telefono\":\"").append(escapeJson(p.getTelefono())).append("\"");
+            json.append("}");
+            if (i < proveedores.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
     }
 
     /**

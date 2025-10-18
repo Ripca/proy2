@@ -53,6 +53,9 @@ public class ClienteServlet extends HttpServlet {
             case "buscarPorNit":
                 buscarClientePorNit(request, response);
                 break;
+            case "obtenerTodos":
+                obtenerTodosClientes(request, response);
+                break;
             default:
                 listarClientes(request, response);
                 break;
@@ -250,6 +253,33 @@ public class ClienteServlet extends HttpServlet {
         } else {
             response.getWriter().write("{}");
         }
+    }
+
+    /**
+     * Endpoint AJAX para obtener todos los clientes en tabla modal
+     */
+    private void obtenerTodosClientes(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Cliente> clientes = clienteDAO.obtenerTodos();
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente c = clientes.get(i);
+            json.append("{");
+            json.append("\"id_cliente\":").append(c.getIdCliente()).append(",");
+            json.append("\"nit\":\"").append(escapeJson(c.getNit())).append("\",");
+            json.append("\"nombres\":\"").append(escapeJson(c.getNombres())).append("\",");
+            json.append("\"apellidos\":\"").append(escapeJson(c.getApellidos())).append("\",");
+            json.append("\"telefono\":\"").append(escapeJson(c.getTelefono())).append("\"");
+            json.append("}");
+            if (i < clientes.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
     }
 
     /**

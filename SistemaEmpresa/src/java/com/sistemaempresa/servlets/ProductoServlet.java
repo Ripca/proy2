@@ -55,6 +55,9 @@ public class ProductoServlet extends HttpServlet {
             case "buscarAjax":
                 buscarProductosAjax(request, response);
                 break;
+            case "obtenerTodos":
+                obtenerTodosProductos(request, response);
+                break;
             default:
                 listarProductos(request, response);
                 break;
@@ -225,6 +228,33 @@ public class ProductoServlet extends HttpServlet {
             json.append("\"precio_venta\":").append(p.getPrecioVenta()).append(",");
             json.append("\"precio_unitario\":").append(p.getPrecioVenta()).append(",");
             json.append("\"nombreMarca\":\"").append(escapeJson(p.getNombreMarca() != null ? p.getNombreMarca() : "")).append("\"");
+            json.append("}");
+            if (i < productos.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
+    }
+
+    /**
+     * Endpoint AJAX para obtener todos los productos en tabla modal
+     */
+    private void obtenerTodosProductos(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Producto> productos = productoDAO.obtenerTodos();
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < productos.size(); i++) {
+            Producto p = productos.get(i);
+            json.append("{");
+            json.append("\"id_producto\":").append(p.getIdProducto()).append(",");
+            json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
+            json.append("\"existencia\":").append(p.getExistencia()).append(",");
+            json.append("\"precio_costo\":").append(p.getPrecioCosto()).append(",");
+            json.append("\"precio_venta\":").append(p.getPrecioVenta()).append("\"");
             json.append("}");
             if (i < productos.size() - 1) json.append(",");
         }

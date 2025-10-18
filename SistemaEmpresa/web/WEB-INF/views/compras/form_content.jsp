@@ -51,8 +51,11 @@
                                 <button type="button" class="btn btn-outline-primary" id="btnBuscarProveedor">
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
+                                <button type="button" class="btn btn-outline-info" id="btnListarProveedores" data-bs-toggle="modal" data-bs-target="#modalProveedores">
+                                    <i class="fas fa-list"></i> Listar
+                                </button>
                             </div>
-                            <small class="text-muted">Ingrese el NIT del proveedor</small>
+                            <small class="text-muted">Ingrese el NIT del proveedor o haga clic en Listar</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nombre Proveedor</label>
@@ -238,7 +241,9 @@
                     document.getElementById('txtTelefonoProveedor').value = result.telefono || '';
                     idProveedorSeleccionado = result.id_proveedor;
                 } else {
-                    alert('Proveedor no encontrado');
+                    if (confirm('Proveedor no encontrado. ¿Desea crear un nuevo proveedor con este NIT?')) {
+                        window.location.href = 'ProveedorServlet?action=new&nit=' + encodeURIComponent(nit);
+                    }
                 }
             },
             error: function() {
@@ -265,7 +270,9 @@
                     agregarProductoATabla(result[0]);
                     document.getElementById('txtCodigoProducto').value = '';
                 } else {
-                    alert('Producto no encontrado');
+                    if (confirm('Producto no encontrado. ¿Desea crear un nuevo producto?')) {
+                        window.location.href = 'ProductoServlet?action=new&nombre=' + encodeURIComponent(termino);
+                    }
                 }
             },
             error: function() {
@@ -346,4 +353,82 @@
         // Inicializar totales
         actualizarTotales();
     });
+</script>
+
+<!-- MODAL DE PROVEEDORES -->
+<div class="modal fade" id="modalProveedores" tabindex="-1" aria-labelledby="modalProveedoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalProveedoresLabel">Seleccionar Proveedor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="tablaProveedoresModal">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NIT</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyProveedoresModal">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Cargar proveedores en el modal
+    document.getElementById('btnListarProveedores').addEventListener('click', function() {
+        $.ajax({
+            url: 'ProveedorServlet',
+            type: 'GET',
+            data: { action: 'obtenerTodos' },
+            dataType: 'json',
+            success: function(result) {
+                const tbody = document.getElementById('bodyProveedoresModal');
+                tbody.innerHTML = '';
+                if (result && result.length > 0) {
+                    result.forEach(function(proveedor) {
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td>${proveedor.nit}</td>
+                            <td>${proveedor.proveedor}</td>
+                            <td>${proveedor.telefono}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success" onclick="seleccionarProveedorModal(${proveedor.id_proveedor}, '${proveedor.proveedor}', '${proveedor.nit}', '${proveedor.telefono}')">
+                                    <i class="fas fa-check"></i> Seleccionar
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(fila);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay proveedores disponibles</td></tr>';
+                }
+            },
+            error: function() {
+                alert('Error al cargar proveedores');
+            }
+        });
+    });
+
+    // Seleccionar proveedor del modal
+    function seleccionarProveedorModal(idProveedor, nombre, nit, telefono) {
+        document.getElementById('lblIdProveedor').textContent = idProveedor;
+        document.getElementById('hiddenIdProveedor').value = idProveedor;
+        document.getElementById('txtNombreProveedor').value = nombre;
+        document.getElementById('txtNitProveedor').value = nit;
+        document.getElementById('txtTelefonoProveedor').value = telefono;
+
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalProveedores'));
+        if (modal) modal.hide();
+    }
 </script>

@@ -51,8 +51,11 @@
                                 <button type="button" class="btn btn-outline-success" id="btnBuscarCliente">
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
+                                <button type="button" class="btn btn-outline-info" id="btnListarClientes" data-bs-toggle="modal" data-bs-target="#modalClientes">
+                                    <i class="fas fa-list"></i> Listar
+                                </button>
                             </div>
-                            <small class="text-muted">Ingrese el NIT del cliente</small>
+                            <small class="text-muted">Ingrese el NIT del cliente o haga clic en Listar</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nombre Cliente</label>
@@ -234,7 +237,11 @@
                     document.getElementById('hiddenIdCliente').value = result.id_cliente;
                     document.getElementById('txtNombreCliente').value = (result.nombres || '') + ' ' + (result.apellidos || '');
                     document.getElementById('txtTelefonoCliente').value = result.telefono || '';
-                } else { alert('Cliente no encontrado'); }
+                } else {
+                    if (confirm('Cliente no encontrado. ¿Desea crear un nuevo cliente con este NIT?')) {
+                        window.location.href = 'ClienteServlet?action=new&nit=' + encodeURIComponent(nit);
+                    }
+                }
             },
             error: function() { alert('Error al buscar'); }
         });
@@ -253,7 +260,11 @@
                 if (result && result.length > 0) {
                     agregarProductoATabla(result[0]);
                     document.getElementById('txtCodigoProducto').value = '';
-                } else { alert('Producto no encontrado'); }
+                } else {
+                    if (confirm('Producto no encontrado. ¿Desea crear un nuevo producto?')) {
+                        window.location.href = 'ProductoServlet?action=new&nombre=' + encodeURIComponent(termino);
+                    }
+                }
             },
             error: function() { alert('Error al buscar'); }
         });
@@ -290,5 +301,85 @@
         document.getElementById('txtFecha').value = today;
         actualizarTotales();
     });
+</script>
+
+<!-- MODAL DE CLIENTES -->
+<div class="modal fade" id="modalClientes" tabindex="-1" aria-labelledby="modalClientesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalClientesLabel">Seleccionar Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="tablaClientesModal">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NIT</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Teléfono</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyClientesModal">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Cargar clientes en el modal
+    document.getElementById('btnListarClientes').addEventListener('click', function() {
+        $.ajax({
+            url: 'ClienteServlet',
+            type: 'GET',
+            data: { action: 'obtenerTodos' },
+            dataType: 'json',
+            success: function(result) {
+                const tbody = document.getElementById('bodyClientesModal');
+                tbody.innerHTML = '';
+                if (result && result.length > 0) {
+                    result.forEach(function(cliente) {
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td>${cliente.nit}</td>
+                            <td>${cliente.nombres}</td>
+                            <td>${cliente.apellidos}</td>
+                            <td>${cliente.telefono}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success" onclick="seleccionarClienteModal(${cliente.id_cliente}, '${cliente.nombres} ${cliente.apellidos}', '${cliente.nit}', '${cliente.telefono}')">
+                                    <i class="fas fa-check"></i> Seleccionar
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(fila);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay clientes disponibles</td></tr>';
+                }
+            },
+            error: function() {
+                alert('Error al cargar clientes');
+            }
+        });
+    });
+
+    // Seleccionar cliente del modal
+    function seleccionarClienteModal(idCliente, nombre, nit, telefono) {
+        document.getElementById('lblIdCliente').textContent = idCliente;
+        document.getElementById('hiddenIdCliente').value = idCliente;
+        document.getElementById('txtNombreCliente').value = nombre;
+        document.getElementById('txtNitCliente').value = nit;
+        document.getElementById('txtTelefonoCliente').value = telefono;
+
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalClientes'));
+        if (modal) modal.hide();
+    }
 </script>
 
