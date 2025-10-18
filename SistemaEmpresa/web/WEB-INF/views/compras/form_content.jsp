@@ -200,11 +200,17 @@
             <td><input type="number" class="form-control form-control-sm cantidad" value="1" min="1" onchange="actualizarSubtotal(this)"></td>
             <td>Q. ${parseFloat(producto.precio_costo).toFixed(2)}</td>
             <td class="subtotal">Q. ${subtotal.toFixed(2)}</td>
-            <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); actualizarTotales();">
+            <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaProducto(this)">
                 <i class="fas fa-trash"></i>
             </button></td>
         `;
         table.appendChild(fila);
+        actualizarTotales();
+    }
+
+    // Eliminar fila de producto
+    function eliminarFilaProducto(btn) {
+        btn.closest('tr').remove();
         actualizarTotales();
     }
 

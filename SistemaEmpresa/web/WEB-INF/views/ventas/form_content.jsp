@@ -197,18 +197,24 @@
         const table = document.querySelector('#grvProductosCompra tbody');
         const fila = document.createElement('tr');
         const subtotal = producto.precio_venta * 1;
-        
+
         fila.innerHTML = `
             <td style="display:none;">${producto.id_producto}</td>
             <td>${producto.producto}</td>
             <td><input type="number" class="form-control form-control-sm cantidad" value="1" min="1" onchange="actualizarSubtotal(this)"></td>
             <td>Q. ${parseFloat(producto.precio_venta).toFixed(2)}</td>
             <td class="subtotal">Q. ${subtotal.toFixed(2)}</td>
-            <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); actualizarTotales();">
+            <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaProducto(this)">
                 <i class="fas fa-trash"></i>
             </button></td>
         `;
         table.appendChild(fila);
+        actualizarTotales();
+    }
+
+    // Eliminar fila de producto
+    function eliminarFilaProducto(btn) {
+        btn.closest('tr').remove();
         actualizarTotales();
     }
 
