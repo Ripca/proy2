@@ -416,16 +416,21 @@
                 if (result && result.length > 0) {
                     result.forEach(function(proveedor) {
                         const fila = document.createElement('tr');
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-success';
+                        btn.innerHTML = '<i class="fas fa-check"></i> Seleccionar';
+                        btn.onclick = function() {
+                            seleccionarProveedorModal(proveedor.id_proveedor, proveedor.proveedor, proveedor.nit, proveedor.telefono);
+                        };
+
                         fila.innerHTML = `
                             <td>${proveedor.nit}</td>
                             <td>${proveedor.proveedor}</td>
                             <td>${proveedor.telefono}</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-success" onclick="seleccionarProveedorModal(${proveedor.id_proveedor}, '${proveedor.proveedor}', '${proveedor.nit}', '${proveedor.telefono}')">
-                                    <i class="fas fa-check"></i> Seleccionar
-                                </button>
-                            </td>
+                            <td></td>
                         `;
+                        fila.querySelector('td:last-child').appendChild(btn);
                         tbody.appendChild(fila);
                     });
                 } else {

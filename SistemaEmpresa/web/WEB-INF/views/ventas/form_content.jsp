@@ -365,17 +365,22 @@
                 if (result && result.length > 0) {
                     result.forEach(function(cliente) {
                         const fila = document.createElement('tr');
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-success';
+                        btn.innerHTML = '<i class="fas fa-check"></i> Seleccionar';
+                        btn.onclick = function() {
+                            seleccionarClienteModal(cliente.id_cliente, cliente.nombres + ' ' + cliente.apellidos, cliente.nit, cliente.telefono);
+                        };
+
                         fila.innerHTML = `
                             <td>${cliente.nit}</td>
                             <td>${cliente.nombres}</td>
                             <td>${cliente.apellidos}</td>
                             <td>${cliente.telefono}</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-success" onclick="seleccionarClienteModal(${cliente.id_cliente}, '${cliente.nombres} ${cliente.apellidos}', '${cliente.nit}', '${cliente.telefono}')">
-                                    <i class="fas fa-check"></i> Seleccionar
-                                </button>
-                            </td>
+                            <td></td>
                         `;
+                        fila.querySelector('td:last-child').appendChild(btn);
                         tbody.appendChild(fila);
                     });
                 } else {
