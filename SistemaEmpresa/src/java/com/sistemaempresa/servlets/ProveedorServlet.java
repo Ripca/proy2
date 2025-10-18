@@ -47,6 +47,12 @@ public class ProveedorServlet extends HttpServlet {
             case "search":
                 buscarProveedores(request, response);
                 break;
+            case "buscarAjax":
+                buscarProveedoresAjax(request, response);
+                break;
+            case "buscarPorNit":
+                buscarProveedorPorNit(request, response);
+                break;
             default:
                 listarProveedores(request, response);
                 break;
@@ -161,18 +167,96 @@ public class ProveedorServlet extends HttpServlet {
     
     private void buscarProveedores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String termino = request.getParameter("termino");
         List<Proveedor> proveedores;
-        
+
         if (termino != null && !termino.trim().isEmpty()) {
             proveedores = proveedorDAO.buscar(termino);
         } else {
             proveedores = proveedorDAO.obtenerTodos();
         }
-        
+
         request.setAttribute("proveedores", proveedores);
         request.setAttribute("termino", termino);
         request.getRequestDispatcher("/WEB-INF/views/proveedores/list_template.jsp").forward(request, response);
+    }
+
+    /**
+     * Endpoint AJAX para buscar proveedores y retornar JSON
+     */
+    private void buscarProveedoresAjax(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String termino = request.getParameter("termino");
+        List<Proveedor> proveedores;
+
+        if (termino != null && !termino.trim().isEmpty()) {
+            proveedores = proveedorDAO.buscar(termino);
+        } else {
+            proveedores = proveedorDAO.obtenerTodos();
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < proveedores.size(); i++) {
+            Proveedor p = proveedores.get(i);
+            json.append("{");
+            json.append("\"idProveedor\":").append(p.getIdProveedor()).append(",");
+            json.append("\"id_proveedor\":").append(p.getIdProveedor()).append(",");
+            json.append("\"proveedor\":\"").append(escapeJson(p.getProveedor())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(p.getNit())).append("\",");
+            json.append("\"direccion\":\"").append(escapeJson(p.getDireccion())).append("\",");
+            json.append("\"telefono\":\"").append(escapeJson(p.getTelefono())).append("\"");
+            json.append("}");
+            if (i < proveedores.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
+    }
+
+    /**
+     * Endpoint AJAX para buscar proveedor por NIT y retornar JSON
+     */
+    private void buscarProveedorPorNit(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String nit = request.getParameter("nit");
+        Proveedor proveedor = null;
+
+        if (nit != null && !nit.trim().isEmpty()) {
+            proveedor = proveedorDAO.obtenerPorNit(nit);
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (proveedor != null) {
+            StringBuilder json = new StringBuilder("{");
+            json.append("\"idProveedor\":").append(proveedor.getIdProveedor()).append(",");
+            json.append("\"id_proveedor\":").append(proveedor.getIdProveedor()).append(",");
+            json.append("\"proveedor\":\"").append(escapeJson(proveedor.getProveedor())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(proveedor.getNit())).append("\",");
+            json.append("\"direccion\":\"").append(escapeJson(proveedor.getDireccion())).append("\",");
+            json.append("\"telefono\":\"").append(escapeJson(proveedor.getTelefono())).append("\"");
+            json.append("}");
+            response.getWriter().write(json.toString());
+        } else {
+            response.getWriter().write("{}");
+        }
+    }
+
+    /**
+     * Escapa caracteres especiales para JSON
+     */
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
     }
 }

@@ -155,27 +155,52 @@ public class ClienteDAO {
         List<Cliente> clientes = new ArrayList<>();
         String sql = "SELECT * FROM Clientes WHERE nombres LIKE ? OR apellidos LIKE ? OR NIT LIKE ? " +
                     "ORDER BY nombres, apellidos";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             String patron = "%" + termino + "%";
             stmt.setString(1, patron);
             stmt.setString(2, patron);
             stmt.setString(3, patron);
-            
+
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 Cliente cliente = mapearResultSet(rs);
                 clientes.add(cliente);
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return clientes;
+    }
+
+    /**
+     * Busca un cliente por NIT
+     * @param nit NIT del cliente
+     * @return Cliente encontrado o null
+     */
+    public Cliente obtenerPorNit(String nit) {
+        String sql = "SELECT * FROM Clientes WHERE NIT = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nit);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapearResultSet(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
     
     /**

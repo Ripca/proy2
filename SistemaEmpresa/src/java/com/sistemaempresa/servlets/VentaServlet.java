@@ -135,22 +135,36 @@ public class VentaServlet extends HttpServlet {
     
     private void guardarVenta(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
-            // Obtener datos de la venta
+            // Obtener datos de la venta desde el formulario
             int noFactura = Integer.parseInt(request.getParameter("noFactura"));
             String serie = request.getParameter("serie");
-            LocalDate fechaFactura = LocalDate.parse(request.getParameter("fechaFactura"));
-            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
-            int idEmpleado = Integer.parseInt(request.getParameter("idEmpleado"));
-            
+            LocalDate fechaFactura = LocalDate.parse(request.getParameter("fecha"));
+
+            // Obtener idCliente del campo oculto
+            String idClienteStr = request.getParameter("idCliente");
+            if (idClienteStr == null || idClienteStr.isEmpty()) {
+                response.sendRedirect("VentaServlet?error=Debe seleccionar un cliente");
+                return;
+            }
+
+            int idCliente = Integer.parseInt(idClienteStr);
+
+            // Obtener idEmpleado (por ahora usar 1 como empleado por defecto)
+            int idEmpleado = 1;
+            String idEmpleadoStr = request.getParameter("idEmpleado");
+            if (idEmpleadoStr != null && !idEmpleadoStr.isEmpty()) {
+                idEmpleado = Integer.parseInt(idEmpleadoStr);
+            }
+
             Venta venta = new Venta(noFactura, serie, fechaFactura, idCliente, idEmpleado);
-            
+
             // Obtener detalles de la venta
             String[] productosIds = request.getParameterValues("idProducto");
             String[] cantidades = request.getParameterValues("cantidad");
             String[] precios = request.getParameterValues("precioUnitario");
-            
+
             if (productosIds != null && cantidades != null && precios != null) {
                 for (int i = 0; i < productosIds.length; i++) {
                     if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
@@ -162,15 +176,20 @@ public class VentaServlet extends HttpServlet {
                     }
                 }
             }
-            
+
+            if (!venta.tieneDetalles()) {
+                response.sendRedirect("VentaServlet?error=Debe agregar al menos un producto");
+                return;
+            }
+
             // Usar el método crearVenta() que implementa la lógica del C#
             int idVenta = ventaDAO.crearVenta(venta);
             if (idVenta > 0) {
-                response.sendRedirect("VentaServlet?success=Venta creada exitosamente con ID: " + idVenta);
+                response.sendRedirect("VentaServlet?success=Venta creada exitosamente");
             } else {
                 response.sendRedirect("VentaServlet?error=Error al crear la venta");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("VentaServlet?error=Error al procesar los datos: " + e.getMessage());

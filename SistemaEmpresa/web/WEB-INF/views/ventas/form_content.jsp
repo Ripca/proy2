@@ -169,6 +169,7 @@
             <div class="card-body">
                 <form action="VentaServlet" method="post" id="formVenta">
                     <input type="hidden" name="action" value="<%= action %>">
+                    <input type="hidden" name="idCliente" id="hiddenIdCliente" value="">
                     <% if (esEdicion) { %>
                         <input type="hidden" name="idVenta" value="<%= venta.getIdVenta() %>">
                     <% } %>
@@ -219,6 +220,20 @@
                                             </span>
                                             <input id="txtNoFactura" name="noFactura" class="form-control" type="text"
                                                    value="<%= esEdicion ? venta.getNoFactura() : "" %>" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SERIE -->
+                                <div class="mb-1 row">
+                                    <div class="col-sm-12">
+                                        <label class="form-label">Serie:</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-barcode"></i>
+                                            </span>
+                                            <input id="txtSerie" name="serie" class="form-control" type="text"
+                                                   value="<%= esEdicion ? venta.getSerie() : "" %>" required>
                                         </div>
                                     </div>
                                 </div>
@@ -575,8 +590,9 @@
     function seleccionarCliente(data, enableFields = false) {
         fnLimpiarCamposCliente();
 
-        $("#lblIdCliente").html(data.id_cliente);
-        $("#txtNitCliente").val(data.nit);
+        $("#lblIdCliente").html(data.idCliente || data.id_cliente);
+        $("#hiddenIdCliente").val(data.idCliente || data.id_cliente);
+        $("#txtNitCliente").val(data.nit || data.NIT);
         $("#txtNombreCliente").val([data.nombres, data.apellidos].filter(Boolean).join(' '));
 
         $("#txtNombreCliente").attr("disabled", !enableFields);
@@ -877,9 +893,57 @@
             }
         });
 
-        $("#btnGuardarVenta").on("click", function() {
-            // Lógica para guardar como cotización
-            alert("Funcionalidad de cotización en desarrollo");
+        // Evento submit del formulario
+        $("#formVenta").on("submit", function(e) {
+            e.preventDefault();
+
+            // Validar que haya cliente
+            if (!$("#hiddenIdCliente").val()) {
+                alert("Debe seleccionar un cliente");
+                return false;
+            }
+
+            // Validar que haya productos
+            const table = $('#grvProductosCompra').DataTable();
+            if (table.rows().count() === 0) {
+                alert("Debe agregar al menos un producto");
+                return false;
+            }
+
+            // Serializar datos de la tabla
+            const productos = [];
+            table.rows().every(function() {
+                const data = this.data();
+                productos.push({
+                    idProducto: data.id_producto,
+                    cantidad: data.cantidad,
+                    precioUnitario: data.precio_venta
+                });
+            });
+
+            // Agregar campos ocultos con los datos de productos
+            productos.forEach((prod, index) => {
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "idProducto",
+                    value: prod.idProducto
+                }).appendTo("#formVenta");
+
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "cantidad",
+                    value: prod.cantidad
+                }).appendTo("#formVenta");
+
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "precioUnitario",
+                    value: prod.precioUnitario
+                }).appendTo("#formVenta");
+            });
+
+            // Enviar formulario
+            this.submit();
         });
 
         // Inicializar totales

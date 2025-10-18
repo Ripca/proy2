@@ -47,6 +47,12 @@ public class ClienteServlet extends HttpServlet {
             case "search":
                 buscarClientes(request, response);
                 break;
+            case "buscarAjax":
+                buscarClientesAjax(request, response);
+                break;
+            case "buscarPorNit":
+                buscarClientePorNit(request, response);
+                break;
             default:
                 listarClientes(request, response);
                 break;
@@ -165,18 +171,96 @@ public class ClienteServlet extends HttpServlet {
     
     private void buscarClientes(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String termino = request.getParameter("termino");
         List<Cliente> clientes;
-        
+
         if (termino != null && !termino.trim().isEmpty()) {
             clientes = clienteDAO.buscar(termino);
         } else {
             clientes = clienteDAO.obtenerTodos();
         }
-        
+
         request.setAttribute("clientes", clientes);
         request.setAttribute("termino", termino);
         request.getRequestDispatcher("/WEB-INF/views/clientes/list_template.jsp").forward(request, response);
+    }
+
+    /**
+     * Endpoint AJAX para buscar clientes y retornar JSON
+     */
+    private void buscarClientesAjax(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String termino = request.getParameter("termino");
+        List<Cliente> clientes;
+
+        if (termino != null && !termino.trim().isEmpty()) {
+            clientes = clienteDAO.buscar(termino);
+        } else {
+            clientes = clienteDAO.obtenerTodos();
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente c = clientes.get(i);
+            json.append("{");
+            json.append("\"idCliente\":").append(c.getIdCliente()).append(",");
+            json.append("\"id_cliente\":").append(c.getIdCliente()).append(",");
+            json.append("\"NIT\":\"").append(escapeJson(c.getNIT())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(c.getNIT())).append("\",");
+            json.append("\"nombres\":\"").append(escapeJson(c.getNombres())).append("\",");
+            json.append("\"apellidos\":\"").append(escapeJson(c.getApellidos())).append("\"");
+            json.append("}");
+            if (i < clientes.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
+    }
+
+    /**
+     * Endpoint AJAX para buscar cliente por NIT y retornar JSON
+     */
+    private void buscarClientePorNit(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String nit = request.getParameter("nit");
+        Cliente cliente = null;
+
+        if (nit != null && !nit.trim().isEmpty()) {
+            cliente = clienteDAO.obtenerPorNit(nit);
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (cliente != null) {
+            StringBuilder json = new StringBuilder("{");
+            json.append("\"idCliente\":").append(cliente.getIdCliente()).append(",");
+            json.append("\"id_cliente\":").append(cliente.getIdCliente()).append(",");
+            json.append("\"NIT\":\"").append(escapeJson(cliente.getNIT())).append("\",");
+            json.append("\"nit\":\"").append(escapeJson(cliente.getNIT())).append("\",");
+            json.append("\"nombres\":\"").append(escapeJson(cliente.getNombres())).append("\",");
+            json.append("\"apellidos\":\"").append(escapeJson(cliente.getApellidos())).append("\"");
+            json.append("}");
+            response.getWriter().write(json.toString());
+        } else {
+            response.getWriter().write("{}");
+        }
+    }
+
+    /**
+     * Escapa caracteres especiales para JSON
+     */
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
     }
 }

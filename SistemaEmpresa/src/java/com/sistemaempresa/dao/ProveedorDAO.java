@@ -119,28 +119,53 @@ public class ProveedorDAO {
     public List<Proveedor> buscar(String termino) {
         List<Proveedor> proveedores = new ArrayList<>();
         String sql = "SELECT * FROM Proveedores WHERE proveedor LIKE ? OR nit LIKE ? ORDER BY proveedor";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             String patron = "%" + termino + "%";
             stmt.setString(1, patron);
             stmt.setString(2, patron);
-            
+
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 Proveedor proveedor = mapearResultSet(rs);
                 proveedores.add(proveedor);
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return proveedores;
     }
-    
+
+    /**
+     * Busca un proveedor por NIT
+     * @param nit NIT del proveedor
+     * @return Proveedor encontrado o null
+     */
+    public Proveedor obtenerPorNit(String nit) {
+        String sql = "SELECT * FROM Proveedores WHERE nit = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nit);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return mapearResultSet(rs);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     private Proveedor mapearResultSet(ResultSet rs) throws SQLException {
         Proveedor proveedor = new Proveedor();
         proveedor.setIdProveedor(rs.getInt("idProveedor"));

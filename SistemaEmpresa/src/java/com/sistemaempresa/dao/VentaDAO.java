@@ -104,6 +104,7 @@ public class VentaDAO {
     /**
      * Crea una nueva venta con sus detalles
      * Implementa exactamente la lógica del método crearVenta() del C# repp/vista/Venta.h
+     * Actualiza las existencias de productos automáticamente
      * @param venta objeto Venta con sus detalles
      * @return ID de la venta creada, 0 si hay error
      */
@@ -157,6 +158,21 @@ public class VentaDAO {
                         int detalleAfectado = stmtDetalle.executeUpdate();
                         if (detalleAfectado == 0) {
                             throw new SQLException("Error al insertar detalle de venta");
+                        }
+
+                        // 3. Actualizar existencias de productos (NUEVO - como en C#)
+                        // En ventas se RESTA la cantidad
+                        try {
+                            int cantidadVenta = Integer.parseInt(detalle.getCantidad());
+                            String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia - ? WHERE id_producto = ?";
+                            try (PreparedStatement stmtExistencia = conn.prepareStatement(sqlActualizarExistencia)) {
+                                stmtExistencia.setInt(1, cantidadVenta);
+                                stmtExistencia.setInt(2, detalle.getIdProducto());
+                                stmtExistencia.executeUpdate();
+                            }
+                        } catch (NumberFormatException e) {
+                            // Si no se puede parsear la cantidad, continuar sin actualizar existencia
+                            System.err.println("Error al parsear cantidad de venta: " + detalle.getCantidad());
                         }
                     }
                 }

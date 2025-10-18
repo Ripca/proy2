@@ -94,6 +94,7 @@ public class CompraDAO {
     /**
      * Crea una nueva compra con sus detalles
      * Implementa exactamente la lógica del método crear() del C# repp/vista/Compra.h
+     * Actualiza las existencias de productos automáticamente
      * @param compra objeto Compra con sus detalles
      * @return ID de la compra creada, 0 si hay error
      */
@@ -145,6 +146,14 @@ public class CompraDAO {
                         int detalleAfectado = stmtDetalle.executeUpdate();
                         if (detalleAfectado == 0) {
                             throw new SQLException("Error al insertar detalle de compra");
+                        }
+
+                        // 3. Actualizar existencias de productos (NUEVO - como en C#)
+                        String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia + ? WHERE id_producto = ?";
+                        try (PreparedStatement stmtExistencia = conn.prepareStatement(sqlActualizarExistencia)) {
+                            stmtExistencia.setInt(1, detalle.getCantidad());
+                            stmtExistencia.setInt(2, detalle.getIdProducto());
+                            stmtExistencia.executeUpdate();
                         }
                     }
                 }

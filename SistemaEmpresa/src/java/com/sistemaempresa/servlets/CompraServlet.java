@@ -128,20 +128,33 @@ public class CompraServlet extends HttpServlet {
     
     private void guardarCompra(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
-            // Obtener datos de la compra
-            int noOrdenCompra = Integer.parseInt(request.getParameter("noOrdenCompra"));
-            LocalDate fechaOrden = LocalDate.parse(request.getParameter("fechaOrden"));
-            int idProveedor = Integer.parseInt(request.getParameter("idProveedor"));
-            
+            // Obtener datos de la compra desde el formulario
+            int noOrdenCompra = Integer.parseInt(request.getParameter("noOrden"));
+            LocalDate fechaOrden = LocalDate.parse(request.getParameter("fecha"));
+
+            // Obtener idProveedor del campo oculto lblIdProveedor
+            String idProveedorStr = request.getParameter("idProveedor");
+            if (idProveedorStr == null || idProveedorStr.isEmpty()) {
+                // Si no viene en idProveedor, intentar obtenerlo del lblIdProveedor
+                idProveedorStr = request.getParameter("lblIdProveedor");
+            }
+
+            if (idProveedorStr == null || idProveedorStr.isEmpty()) {
+                response.sendRedirect("CompraServlet?error=Debe seleccionar un proveedor");
+                return;
+            }
+
+            int idProveedor = Integer.parseInt(idProveedorStr);
+
             Compra compra = new Compra(noOrdenCompra, fechaOrden, idProveedor);
-            
+
             // Obtener detalles de la compra
             String[] productosIds = request.getParameterValues("idProducto");
             String[] cantidades = request.getParameterValues("cantidad");
             String[] precios = request.getParameterValues("precioCostoUnitario");
-            
+
             if (productosIds != null && cantidades != null && precios != null) {
                 for (int i = 0; i < productosIds.length; i++) {
                     if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
@@ -153,15 +166,20 @@ public class CompraServlet extends HttpServlet {
                     }
                 }
             }
-            
+
+            if (!compra.tieneDetalles()) {
+                response.sendRedirect("CompraServlet?error=Debe agregar al menos un producto");
+                return;
+            }
+
             // Usar el método crear() que implementa la lógica del C#
             int idCompra = compraDAO.crear(compra);
             if (idCompra > 0) {
-                response.sendRedirect("CompraServlet?success=Compra creada exitosamente con ID: " + idCompra);
+                response.sendRedirect("CompraServlet?success=Compra creada exitosamente");
             } else {
                 response.sendRedirect("CompraServlet?error=Error al crear la compra");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("CompraServlet?error=Error al procesar los datos: " + e.getMessage());

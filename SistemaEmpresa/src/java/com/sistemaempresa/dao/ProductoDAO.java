@@ -134,28 +134,52 @@ public class ProductoDAO {
                     "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
                     "WHERE p.producto LIKE ? OR p.descripcion LIKE ? " +
                     "ORDER BY p.producto";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             String patron = "%" + termino + "%";
             stmt.setString(1, patron);
             stmt.setString(2, patron);
-            
+
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 Producto producto = mapearResultSet(rs);
                 productos.add(producto);
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return productos;
     }
-    
+
+    /**
+     * Actualiza la existencia de un producto (para compras y ventas)
+     * @param idProducto ID del producto
+     * @param cantidad cantidad a sumar (positivo para compras, negativo para ventas)
+     * @return true si se actualizó correctamente
+     */
+    public boolean actualizarExistencia(int idProducto, int cantidad) {
+        String sql = "UPDATE Productos SET existencia = existencia + ? WHERE idProducto = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, cantidad);
+            stmt.setInt(2, idProducto);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     private Producto mapearResultSet(ResultSet rs) throws SQLException {
         Producto producto = new Producto();
         producto.setIdProducto(rs.getInt("idProducto"));

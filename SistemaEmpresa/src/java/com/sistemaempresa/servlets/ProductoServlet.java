@@ -52,6 +52,9 @@ public class ProductoServlet extends HttpServlet {
             case "search":
                 buscarProductos(request, response);
                 break;
+            case "buscarAjax":
+                buscarProductosAjax(request, response);
+                break;
             default:
                 listarProductos(request, response);
                 break;
@@ -176,18 +179,68 @@ public class ProductoServlet extends HttpServlet {
     
     private void buscarProductos(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String termino = request.getParameter("termino");
         List<Producto> productos;
-        
+
         if (termino != null && !termino.trim().isEmpty()) {
             productos = productoDAO.buscar(termino);
         } else {
             productos = productoDAO.obtenerTodos();
         }
-        
+
         request.setAttribute("productos", productos);
         request.setAttribute("termino", termino);
         request.getRequestDispatcher("/WEB-INF/views/productos/list_template.jsp").forward(request, response);
+    }
+
+    /**
+     * Endpoint AJAX para buscar productos y retornar JSON
+     */
+    private void buscarProductosAjax(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String termino = request.getParameter("termino");
+        List<Producto> productos;
+
+        if (termino != null && !termino.trim().isEmpty()) {
+            productos = productoDAO.buscar(termino);
+        } else {
+            productos = productoDAO.obtenerTodos();
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < productos.size(); i++) {
+            Producto p = productos.get(i);
+            json.append("{");
+            json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
+            json.append("\"id_producto\":").append(p.getIdProducto()).append(",");
+            json.append("\"codigo\":\"").append(escapeJson(p.getCodigo())).append("\",");
+            json.append("\"descripcion\":\"").append(escapeJson(p.getDescripcion())).append("\",");
+            json.append("\"existencia\":").append(p.getExistencia()).append(",");
+            json.append("\"precio_costo\":").append(p.getPrecioCosto()).append(",");
+            json.append("\"precio_venta\":").append(p.getPrecioVenta()).append(",");
+            json.append("\"precio_unitario\":").append(p.getPrecioVenta()).append(",");
+            json.append("\"moneda\":\"").append(escapeJson(p.getMoneda())).append("\"");
+            json.append("}");
+            if (i < productos.size() - 1) json.append(",");
+        }
+        json.append("]");
+        response.getWriter().write(json.toString());
+    }
+
+    /**
+     * Escapa caracteres especiales para JSON
+     */
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
     }
 }

@@ -96,6 +96,7 @@
             <div class="card-body">
                 <form action="CompraServlet" method="post" id="formCompra">
                     <input type="hidden" name="action" value="<%= action %>">
+                    <input type="hidden" name="idProveedor" id="hiddenIdProveedor" value="">
                     <% if (esEdicion) { %>
                         <input type="hidden" name="idCompra" value="<%= compra.getIdCompra() %>">
                     <% } %>
@@ -444,7 +445,8 @@
     function seleccionarProveedor(data, enableFields = false) {
         fnLimpiarCamposProveedor();
 
-        $("#lblIdProveedor").html(data.id_proveedor);
+        $("#lblIdProveedor").html(data.idProveedor || data.id_proveedor);
+        $("#hiddenIdProveedor").val(data.idProveedor || data.id_proveedor);
         $("#txtNitProveedor").val(data.nit);
         $("#txtNombreProveedor").val(data.proveedor);
 
@@ -578,6 +580,59 @@
             if (confirm("¿Está seguro de cancelar la compra?")) {
                 fnLimpiarCamposCompra();
             }
+        });
+
+        // Evento submit del formulario
+        $("#formCompra").on("submit", function(e) {
+            e.preventDefault();
+
+            // Validar que haya proveedor
+            if (!$("#hiddenIdProveedor").val()) {
+                alert("Debe seleccionar un proveedor");
+                return false;
+            }
+
+            // Validar que haya productos
+            const table = $('#grvProductosCompra').DataTable();
+            if (table.rows().count() === 0) {
+                alert("Debe agregar al menos un producto");
+                return false;
+            }
+
+            // Serializar datos de la tabla
+            const productos = [];
+            table.rows().every(function() {
+                const data = this.data();
+                productos.push({
+                    idProducto: data.id_producto,
+                    cantidad: data.cantidad,
+                    precioCostoUnitario: data.precio_costo
+                });
+            });
+
+            // Agregar campos ocultos con los datos de productos
+            productos.forEach((prod, index) => {
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "idProducto",
+                    value: prod.idProducto
+                }).appendTo("#formCompra");
+
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "cantidad",
+                    value: prod.cantidad
+                }).appendTo("#formCompra");
+
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "precioCostoUnitario",
+                    value: prod.precioCostoUnitario
+                }).appendTo("#formCompra");
+            });
+
+            // Enviar formulario
+            this.submit();
         });
 
         // Inicializar totales
