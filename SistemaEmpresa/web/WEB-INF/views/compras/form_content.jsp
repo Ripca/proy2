@@ -1,27 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.sistemaempresa.models.*" %>
 
 <%
-    try {
-        Compra compra = (Compra) request.getAttribute("compra");
-        List<Proveedor> proveedores = (List<Proveedor>) request.getAttribute("proveedores");
-        List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+    Compra compra = (Compra) request.getAttribute("compra");
+    List<Proveedor> proveedores = (List<Proveedor>) request.getAttribute("proveedores");
+    List<Producto> productos = (List<Producto>) request.getAttribute("productos");
 
-        if (proveedores == null) {
-            proveedores = new ArrayList<>();
-        }
-        if (productos == null) {
-            productos = new ArrayList<>();
-        }
+    if (proveedores == null) proveedores = new java.util.ArrayList<>();
+    if (productos == null) productos = new java.util.ArrayList<>();
 
-        boolean esEdicion = compra != null;
-        String titulo = esEdicion ? "Editar Compra" : "Nueva Compra";
-        String action = esEdicion ? "update" : "save";
-
-        request.setAttribute("proveedores", proveedores);
-        request.setAttribute("productos", productos);
+    boolean esEdicion = compra != null;
+    String titulo = esEdicion ? "Editar Compra" : "Nueva Compra";
+    String action = esEdicion ? "update" : "save";
 %>
 
 <!-- HEADER -->
@@ -183,250 +174,6 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    // Variables globales
-    let productosCompra = [];
-    let idProveedorSeleccionado = null;
-
-    // Agregar producto a la tabla
-    function agregarProductoATabla(producto) {
-        const table = document.querySelector('#grvProductosCompra tbody');
-        const fila = document.createElement('tr');
-        const subtotal = producto.precio_costo * 1;
-
-        fila.innerHTML = `
-            <td style="display:none;">${producto.id_producto}</td>
-            <td>${producto.producto}</td>
-            <td><input type="number" class="form-control form-control-sm cantidad" value="1" min="1" onchange="actualizarSubtotal(this)"></td>
-            <td>Q. ${parseFloat(producto.precio_costo).toFixed(2)}</td>
-            <td class="subtotal">Q. ${subtotal.toFixed(2)}</td>
-            <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaProducto(this)">
-                <i class="fas fa-trash"></i>
-            </button></td>
-        `;
-        table.appendChild(fila);
-        actualizarTotales();
-    }
-
-    // Eliminar fila de producto
-    function eliminarFilaProducto(btn) {
-        btn.closest('tr').remove();
-        actualizarTotales();
-    }
-
-    // Actualizar subtotal de una fila
-    function actualizarSubtotal(input) {
-        const fila = input.closest('tr');
-        const cantidad = parseFloat(input.value) || 0;
-        const precioCosto = parseFloat(fila.cells[3].textContent.replace('Q. ', ''));
-        const subtotal = cantidad * precioCosto;
-        fila.querySelector('.subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
-        actualizarTotales();
-    }
-
-    // Actualizar totales
-    function actualizarTotales() {
-        let subtotal = 0;
-        const filas = document.querySelectorAll('#grvProductosCompra tbody tr');
-
-        filas.forEach(fila => {
-            const subtotalText = fila.querySelector('.subtotal').textContent.replace('Q. ', '');
-            subtotal += parseFloat(subtotalText) || 0;
-        });
-
-        document.querySelector('.lbl-info-subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
-        document.querySelector('.lbl-info-descuento').textContent = 'Q. 0.00';
-        document.querySelector('.lbl-info-total').textContent = 'Q. ' + subtotal.toFixed(2);
-    }
-
-    // Buscar proveedor por NIT
-    function buscarProveedor() {
-        const nit = document.getElementById('txtNitProveedor').value.trim();
-        if (!nit) {
-            alert('Ingrese el NIT del proveedor');
-            return;
-        }
-
-        $.ajax({
-            url: 'ProveedorServlet',
-            type: 'GET',
-            data: { action: 'buscarPorNit', nit: nit },
-            dataType: 'json',
-            success: function(result) {
-                if (result && result.id_proveedor) {
-                    document.getElementById('lblIdProveedor').textContent = result.id_proveedor;
-                    document.getElementById('hiddenIdProveedor').value = result.id_proveedor;
-                    document.getElementById('txtNombreProveedor').value = result.proveedor;
-                    document.getElementById('txtTelefonoProveedor').value = result.telefono || '';
-                    idProveedorSeleccionado = result.id_proveedor;
-                } else {
-                    if (confirm('Proveedor no encontrado. ¿Desea crear un nuevo proveedor con este NIT?')) {
-                        window.location.href = 'ProveedorServlet?action=new&nit=' + encodeURIComponent(nit);
-                    }
-                }
-            },
-            error: function() {
-                alert('Error al buscar el proveedor');
-            }
-        });
-    }
-
-    // Buscar producto
-    function buscarProducto() {
-        const termino = document.getElementById('txtCodigoProducto').value.trim();
-        if (!termino) {
-            alert('Ingrese el código o nombre del producto');
-            return;
-        }
-
-        $.ajax({
-            url: 'ProductoServlet',
-            type: 'GET',
-            data: { action: 'buscarAjax', termino: termino },
-            dataType: 'json',
-            success: function(result) {
-                if (result && result.length > 0) {
-                    agregarProductoATabla(result[0]);
-                    document.getElementById('txtCodigoProducto').value = '';
-                } else {
-                    if (confirm('Producto no encontrado. ¿Desea crear un nuevo producto?')) {
-                        window.location.href = 'ProductoServlet?action=new&nombre=' + encodeURIComponent(termino);
-                    }
-                }
-            },
-            error: function() {
-                alert('Error al buscar el producto');
-            }
-        });
-    }
-
-    // Inicialización
-    $(document).ready(function() {
-        // Botón buscar proveedor
-        document.getElementById('btnBuscarProveedor').addEventListener('click', buscarProveedor);
-
-        // Botón buscar producto
-        document.getElementById('btnBuscarProducto').addEventListener('click', buscarProducto);
-
-        // Enter en NIT proveedor
-        document.getElementById('txtNitProveedor').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                buscarProveedor();
-            }
-        });
-
-        // Enter en código producto
-        document.getElementById('txtCodigoProducto').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                buscarProducto();
-            }
-        });
-
-        // Submit del formulario
-        document.getElementById('formCompra').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Validar proveedor
-            if (!document.getElementById('hiddenIdProveedor').value) {
-                alert('Debe seleccionar un proveedor');
-                return;
-            }
-
-            // Validar productos
-            const filas = document.querySelectorAll('#grvProductosCompra tbody tr');
-            if (filas.length === 0) {
-                alert('Debe agregar al menos un producto');
-                return;
-            }
-
-            // Serializar datos
-            filas.forEach((fila, index) => {
-                const idProducto = fila.cells[0].textContent;
-                const cantidad = fila.querySelector('.cantidad').value;
-                const precioCosto = fila.cells[3].textContent.replace('Q. ', '');
-
-                const input1 = document.createElement('input');
-                input1.type = 'hidden';
-                input1.name = 'idProducto';
-                input1.value = idProducto;
-                this.appendChild(input1);
-
-                const input2 = document.createElement('input');
-                input2.type = 'hidden';
-                input2.name = 'cantidad';
-                input2.value = cantidad;
-                this.appendChild(input2);
-
-                const input3 = document.createElement('input');
-                input3.type = 'hidden';
-                input3.name = 'precioCostoUnitario';
-                input3.value = precioCosto;
-                this.appendChild(input3);
-            });
-
-            this.submit();
-        });
-
-        // Inicializar totales
-        actualizarTotales();
-    });
-
-    // Cargar proveedores en el modal
-    document.getElementById('btnListarProveedores').addEventListener('click', function() {
-        $.ajax({
-            url: 'ProveedorServlet',
-            type: 'GET',
-            data: { action: 'obtenerTodos' },
-            dataType: 'json',
-            success: function(result) {
-                const tbody = document.getElementById('bodyProveedoresModal');
-                tbody.innerHTML = '';
-                if (result && result.length > 0) {
-                    result.forEach(function(proveedor) {
-                        const fila = document.createElement('tr');
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'btn btn-sm btn-success';
-                        btn.innerHTML = '<i class="fas fa-check"></i> Seleccionar';
-                        btn.onclick = function() {
-                            seleccionarProveedorModal(proveedor.id_proveedor, proveedor.proveedor, proveedor.nit, proveedor.telefono);
-                        };
-
-                        fila.innerHTML = `
-                            <td>${proveedor.nit}</td>
-                            <td>${proveedor.proveedor}</td>
-                            <td>${proveedor.telefono}</td>
-                            <td></td>
-                        `;
-                        fila.querySelector('td:last-child').appendChild(btn);
-                        tbody.appendChild(fila);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay proveedores disponibles</td></tr>';
-                }
-            },
-            error: function() {
-                alert('Error al cargar proveedores');
-            }
-        });
-    });
-
-    // Seleccionar proveedor del modal
-    function seleccionarProveedorModal(idProveedor, nombre, nit, telefono) {
-        document.getElementById('lblIdProveedor').textContent = idProveedor;
-        document.getElementById('hiddenIdProveedor').value = idProveedor;
-        document.getElementById('txtNombreProveedor').value = nombre;
-        document.getElementById('txtNitProveedor').value = nit;
-        document.getElementById('txtTelefonoProveedor').value = telefono;
-
-        // Cerrar modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalProveedores'));
-        if (modal) modal.hide();
-    }
-</script>
-
 <!-- MODAL DE PROVEEDORES -->
 <div class="modal fade" id="modalProveedores" tabindex="-1" aria-labelledby="modalProveedoresLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -455,12 +202,247 @@
     </div>
 </div>
 
-<%
-    } catch (Exception e) {
-        out.println("<div class='alert alert-danger'>");
-        out.println("<h4>Error en el formulario de compras</h4>");
-        out.println("<p>" + e.getMessage() + "</p>");
-        out.println("</div>");
-        e.printStackTrace();
+<script type="text/javascript">
+    function agregarProductoATabla(producto) {
+        const table = document.querySelector('#grvProductosCompra tbody');
+        const fila = document.createElement('tr');
+        const subtotal = producto.precio_costo * 1;
+
+        const tdId = document.createElement('td');
+        tdId.style.display = 'none';
+        tdId.textContent = producto.id_producto;
+
+        const tdNombre = document.createElement('td');
+        tdNombre.textContent = producto.producto;
+
+        const tdCantidad = document.createElement('td');
+        const inputCantidad = document.createElement('input');
+        inputCantidad.type = 'number';
+        inputCantidad.className = 'form-control form-control-sm cantidad';
+        inputCantidad.value = '1';
+        inputCantidad.min = '1';
+        inputCantidad.addEventListener('change', function() { actualizarSubtotal(this); });
+        tdCantidad.appendChild(inputCantidad);
+
+        const tdPrecio = document.createElement('td');
+        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
+
+        const tdSubtotal = document.createElement('td');
+        tdSubtotal.className = 'subtotal';
+        tdSubtotal.textContent = 'Q. ' + subtotal.toFixed(2);
+
+        const tdAccion = document.createElement('td');
+        const btnEliminar = document.createElement('button');
+        btnEliminar.type = 'button';
+        btnEliminar.className = 'btn btn-sm btn-danger';
+        btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+        btnEliminar.addEventListener('click', function() { eliminarFilaProducto(this); });
+        tdAccion.appendChild(btnEliminar);
+
+        fila.appendChild(tdId);
+        fila.appendChild(tdNombre);
+        fila.appendChild(tdCantidad);
+        fila.appendChild(tdPrecio);
+        fila.appendChild(tdSubtotal);
+        fila.appendChild(tdAccion);
+
+        table.appendChild(fila);
+        actualizarTotales();
     }
-%>
+
+    function eliminarFilaProducto(btn) {
+        btn.closest('tr').remove();
+        actualizarTotales();
+    }
+
+    function actualizarSubtotal(input) {
+        const fila = input.closest('tr');
+        const cantidad = parseFloat(input.value) || 0;
+        const precioCosto = parseFloat(fila.cells[3].textContent.replace('Q. ', ''));
+        const subtotal = cantidad * precioCosto;
+        fila.querySelector('.subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
+        actualizarTotales();
+    }
+
+    function actualizarTotales() {
+        let subtotal = 0;
+        const filas = document.querySelectorAll('#grvProductosCompra tbody tr');
+        filas.forEach(fila => {
+            const subtotalText = fila.querySelector('.subtotal').textContent.replace('Q. ', '');
+            subtotal += parseFloat(subtotalText) || 0;
+        });
+        document.querySelector('.lbl-info-subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
+        document.querySelector('.lbl-info-descuento').textContent = 'Q. 0.00';
+        document.querySelector('.lbl-info-total').textContent = 'Q. ' + subtotal.toFixed(2);
+    }
+
+    function buscarProveedor() {
+        const nit = document.getElementById('txtNitProveedor').value.trim();
+        if (!nit) {
+            alert('Ingrese el NIT del proveedor');
+            return;
+        }
+        $.ajax({
+            url: 'ProveedorServlet',
+            type: 'GET',
+            data: { action: 'buscarPorNit', nit: nit },
+            dataType: 'json',
+            success: function(result) {
+                if (result && result.id_proveedor) {
+                    document.getElementById('lblIdProveedor').textContent = result.id_proveedor;
+                    document.getElementById('hiddenIdProveedor').value = result.id_proveedor;
+                    document.getElementById('txtNombreProveedor').value = result.proveedor;
+                    document.getElementById('txtTelefonoProveedor').value = result.telefono || '';
+                } else {
+                    if (confirm('Proveedor no encontrado. ¿Desea crear un nuevo proveedor con este NIT?')) {
+                        window.location.href = 'ProveedorServlet?action=new&nit=' + encodeURIComponent(nit);
+                    }
+                }
+            },
+            error: function() {
+                alert('Error al buscar el proveedor');
+            }
+        });
+    }
+
+    function buscarProducto() {
+        const termino = document.getElementById('txtCodigoProducto').value.trim();
+        if (!termino) {
+            alert('Ingrese el código o nombre del producto');
+            return;
+        }
+        $.ajax({
+            url: 'ProductoServlet',
+            type: 'GET',
+            data: { action: 'buscarAjax', termino: termino },
+            dataType: 'json',
+            success: function(result) {
+                if (result && result.length > 0) {
+                    agregarProductoATabla(result[0]);
+                    document.getElementById('txtCodigoProducto').value = '';
+                } else {
+                    if (confirm('Producto no encontrado. ¿Desea crear un nuevo producto?')) {
+                        window.location.href = 'ProductoServlet?action=new&nombre=' + encodeURIComponent(termino);
+                    }
+                }
+            },
+            error: function() {
+                alert('Error al buscar el producto');
+            }
+        });
+    }
+
+    function cargarProveedoresModal() {
+        $.ajax({
+            url: 'ProveedorServlet',
+            type: 'GET',
+            data: { action: 'obtenerTodos' },
+            dataType: 'json',
+            success: function(result) {
+                const tbody = document.getElementById('bodyProveedoresModal');
+                tbody.innerHTML = '';
+                if (result && result.length > 0) {
+                    result.forEach(function(proveedor) {
+                        const fila = document.createElement('tr');
+                        const tdNit = document.createElement('td');
+                        tdNit.textContent = proveedor.nit;
+                        const tdNombre = document.createElement('td');
+                        tdNombre.textContent = proveedor.proveedor;
+                        const tdTelefono = document.createElement('td');
+                        tdTelefono.textContent = proveedor.telefono;
+                        const tdAccion = document.createElement('td');
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-success';
+                        btn.innerHTML = '<i class="fas fa-check"></i> Seleccionar';
+                        btn.addEventListener('click', function() {
+                            seleccionarProveedorModal(proveedor.id_proveedor, proveedor.proveedor, proveedor.nit, proveedor.telefono);
+                        });
+                        tdAccion.appendChild(btn);
+                        fila.appendChild(tdNit);
+                        fila.appendChild(tdNombre);
+                        fila.appendChild(tdTelefono);
+                        fila.appendChild(tdAccion);
+                        tbody.appendChild(fila);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay proveedores disponibles</td></tr>';
+                }
+            },
+            error: function() {
+                alert('Error al cargar proveedores');
+            }
+        });
+    }
+
+    function seleccionarProveedorModal(idProveedor, nombre, nit, telefono) {
+        document.getElementById('lblIdProveedor').textContent = idProveedor;
+        document.getElementById('hiddenIdProveedor').value = idProveedor;
+        document.getElementById('txtNombreProveedor').value = nombre;
+        document.getElementById('txtNitProveedor').value = nit;
+        document.getElementById('txtTelefonoProveedor').value = telefono;
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalProveedores'));
+        if (modal) modal.hide();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('btnBuscarProveedor').addEventListener('click', buscarProveedor);
+        document.getElementById('btnBuscarProducto').addEventListener('click', buscarProducto);
+        document.getElementById('btnListarProveedores').addEventListener('click', cargarProveedoresModal);
+
+        document.getElementById('txtNitProveedor').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarProveedor();
+            }
+        });
+
+        document.getElementById('txtCodigoProducto').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                buscarProducto();
+            }
+        });
+
+        document.getElementById('formCompra').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!document.getElementById('hiddenIdProveedor').value) {
+                alert('Debe seleccionar un proveedor');
+                return;
+            }
+            const filas = document.querySelectorAll('#grvProductosCompra tbody tr');
+            if (filas.length === 0) {
+                alert('Debe agregar al menos un producto');
+                return;
+            }
+            filas.forEach((fila) => {
+                const idProducto = fila.cells[0].textContent;
+                const cantidad = fila.querySelector('.cantidad').value;
+                const precioCosto = fila.cells[3].textContent.replace('Q. ', '');
+
+                const input1 = document.createElement('input');
+                input1.type = 'hidden';
+                input1.name = 'idProducto';
+                input1.value = idProducto;
+                this.appendChild(input1);
+
+                const input2 = document.createElement('input');
+                input2.type = 'hidden';
+                input2.name = 'cantidad';
+                input2.value = cantidad;
+                this.appendChild(input2);
+
+                const input3 = document.createElement('input');
+                input3.type = 'hidden';
+                input3.name = 'precioCostoUnitario';
+                input3.value = precioCosto;
+                this.appendChild(input3);
+            });
+            this.submit();
+        });
+
+        actualizarTotales();
+    });
+</script>
+
+
