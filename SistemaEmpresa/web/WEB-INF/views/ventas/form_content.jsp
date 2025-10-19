@@ -119,6 +119,9 @@
                                 <button type="button" class="btn btn-outline-success" id="btnBuscarProducto">
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
+                                <button type="button" class="btn btn-outline-info" id="btnListarProductos" data-bs-toggle="modal" data-bs-target="#modalProductos">
+                                    <i class="fas fa-list"></i> Listar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -131,6 +134,7 @@
                                     <th style="display:none;">Id Producto</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
+                                    <th>Existencias</th>
                                     <th>Precio Venta</th>
                                     <th>Subtotal</th>
                                     <th style="width: 80px;">Acción</th>
@@ -211,6 +215,35 @@
     </div>
 </div>
 
+<!-- MODAL DE PRODUCTOS -->
+<div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="modalProductosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalProductosLabel">Seleccionar Producto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="tablaProductosModal">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Existencias</th>
+                                <th>Precio Venta</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyProductosModal">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function agregarProductoATabla(producto) {
         const table = document.querySelector('#grvProductosCompra tbody');
@@ -230,8 +263,21 @@
         inputCantidad.className = 'form-control form-control-sm cantidad';
         inputCantidad.value = '1';
         inputCantidad.min = '1';
-        inputCantidad.addEventListener('change', function() { actualizarSubtotal(this); });
+        inputCantidad.max = producto.existencia || 999999;
+        inputCantidad.dataset.existencia = producto.existencia || 0;
+        inputCantidad.addEventListener('change', function() {
+            const existencia = parseInt(this.dataset.existencia) || 0;
+            const cantidad = parseInt(this.value) || 0;
+            if (cantidad > existencia) {
+                alert('La cantidad no puede ser mayor a las existencias disponibles (' + existencia + ')');
+                this.value = existencia;
+            }
+            actualizarSubtotal(this);
+        });
         tdCantidad.appendChild(inputCantidad);
+
+        const tdExistencia = document.createElement('td');
+        tdExistencia.textContent = producto.existencia || 0;
 
         const tdPrecio = document.createElement('td');
         tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
@@ -251,6 +297,7 @@
         fila.appendChild(tdId);
         fila.appendChild(tdNombre);
         fila.appendChild(tdCantidad);
+        fila.appendChild(tdExistencia);
         fila.appendChild(tdPrecio);
         fila.appendChild(tdSubtotal);
         fila.appendChild(tdAccion);
@@ -267,7 +314,7 @@
     function actualizarSubtotal(input) {
         const fila = input.closest('tr');
         const cantidad = parseFloat(input.value) || 0;
-        const precioVenta = parseFloat(fila.cells[3].textContent.replace('Q. ', ''));
+        const precioVenta = parseFloat(fila.cells[4].textContent.replace('Q. ', ''));
         const subtotal = cantidad * precioVenta;
         fila.querySelector('.subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
         actualizarTotales();
@@ -387,6 +434,54 @@
         });
     }
 
+    function cargarProductosModal() {
+        $.ajax({
+            url: 'ProductoServlet',
+            type: 'GET',
+            data: { action: 'obtenerTodos' },
+            dataType: 'json',
+            success: function(result) {
+                const tbody = document.getElementById('bodyProductosModal');
+                tbody.innerHTML = '';
+                if (result && result.length > 0) {
+                    result.forEach(function(producto) {
+                        const fila = document.createElement('tr');
+                        const tdCodigo = document.createElement('td');
+                        tdCodigo.textContent = producto.codigo || '';
+                        const tdNombre = document.createElement('td');
+                        tdNombre.textContent = producto.producto;
+                        const tdExistencia = document.createElement('td');
+                        tdExistencia.textContent = producto.existencia || 0;
+                        const tdPrecio = document.createElement('td');
+                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
+                        const tdAccion = document.createElement('td');
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-success';
+                        btn.innerHTML = '<i class="fas fa-check"></i> Seleccionar';
+                        btn.addEventListener('click', function() {
+                            agregarProductoATabla(producto);
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalProductos'));
+                            if (modal) modal.hide();
+                        });
+                        tdAccion.appendChild(btn);
+                        fila.appendChild(tdCodigo);
+                        fila.appendChild(tdNombre);
+                        fila.appendChild(tdExistencia);
+                        fila.appendChild(tdPrecio);
+                        fila.appendChild(tdAccion);
+                        tbody.appendChild(fila);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay productos disponibles</td></tr>';
+                }
+            },
+            error: function() {
+                alert('Error al cargar productos');
+            }
+        });
+    }
+
     function seleccionarClienteModal(idCliente, nombre, nit, telefono) {
         document.getElementById('lblIdCliente').textContent = idCliente;
         document.getElementById('hiddenIdCliente').value = idCliente;
@@ -401,6 +496,7 @@
         document.getElementById('btnBuscarCliente').addEventListener('click', buscarCliente);
         document.getElementById('btnBuscarProducto').addEventListener('click', buscarProducto);
         document.getElementById('btnListarClientes').addEventListener('click', cargarClientesModal);
+        document.getElementById('btnListarProductos').addEventListener('click', cargarProductosModal);
 
         document.getElementById('txtNitCliente').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -441,7 +537,7 @@
                 const input3 = document.createElement('input');
                 input3.type = 'hidden';
                 input3.name = 'precioUnitario';
-                input3.value = fila.cells[3].textContent.replace('Q. ', '');
+                input3.value = fila.cells[4].textContent.replace('Q. ', '');
                 this.appendChild(input3);
             });
             this.submit();
