@@ -320,38 +320,7 @@
         document.getElementById('txtFecha').value = today;
         actualizarTotales();
     });
-</script>
 
-<!-- MODAL DE CLIENTES -->
-<div class="modal fade" id="modalClientes" tabindex="-1" aria-labelledby="modalClientesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="modalClientesLabel">Seleccionar Cliente</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="tablaClientesModal">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>NIT</th>
-                                <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Teléfono</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyClientesModal">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
     // Cargar clientes en el modal
     document.getElementById('btnListarClientes').addEventListener('click', function() {
         $.ajax({
@@ -406,6 +375,35 @@
         if (modal) modal.hide();
     }
 </script>
+
+<!-- MODAL DE CLIENTES -->
+<div class="modal fade" id="modalClientes" tabindex="-1" aria-labelledby="modalClientesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalClientesLabel">Seleccionar Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="tablaClientesModal">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NIT</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Teléfono</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyClientesModal">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%
     } catch (Exception e) {

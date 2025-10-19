@@ -372,37 +372,7 @@
         // Inicializar totales
         actualizarTotales();
     });
-</script>
 
-<!-- MODAL DE PROVEEDORES -->
-<div class="modal fade" id="modalProveedores" tabindex="-1" aria-labelledby="modalProveedoresLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalProveedoresLabel">Seleccionar Proveedor</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="tablaProveedoresModal">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>NIT</th>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyProveedoresModal">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
     // Cargar proveedores en el modal
     document.getElementById('btnListarProveedores').addEventListener('click', function() {
         $.ajax({
@@ -456,6 +426,34 @@
         if (modal) modal.hide();
     }
 </script>
+
+<!-- MODAL DE PROVEEDORES -->
+<div class="modal fade" id="modalProveedores" tabindex="-1" aria-labelledby="modalProveedoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalProveedoresLabel">Seleccionar Proveedor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered" id="tablaProveedoresModal">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NIT</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyProveedoresModal">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%
     } catch (Exception e) {
