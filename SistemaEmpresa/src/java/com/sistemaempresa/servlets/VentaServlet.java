@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -108,10 +109,16 @@ public class VentaServlet extends HttpServlet {
             List<Empleado> empleados = empleadoDAO.obtenerTodos();
             List<Producto> productos = productoDAO.obtenerTodos();
             
+               // Obtener los detalles de la venta
+            List<VentaDetalle> detalles = ventaDAO.obtenerDetallesPorVenta(idVenta);
+            venta.setDetalles(detalles);
+            
             request.setAttribute("venta", venta);
             request.setAttribute("clientes", clientes);
             request.setAttribute("empleados", empleados);
             request.setAttribute("productos", productos);
+            request.setAttribute("detalles", detalles); 
+
             
             request.getRequestDispatcher("/WEB-INF/views/ventas/form_template.jsp").forward(request, response);
         } else {
@@ -170,7 +177,7 @@ public class VentaServlet extends HttpServlet {
                     if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
                         VentaDetalle detalle = new VentaDetalle();
                         detalle.setIdProducto(Integer.parseInt(productosIds[i]));
-                        detalle.setCantidad(cantidades[i]); // VARCHAR(45) como en C#
+                        detalle.setCantidad(cantidades[i]); 
                         detalle.setPrecioUnitario(Double.parseDouble(precios[i]));
                         venta.agregarDetalle(detalle);
                     }
@@ -197,13 +204,75 @@ public class VentaServlet extends HttpServlet {
     }
     
     private void actualizarVenta(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    
+    try {
+        int idVenta = Integer.parseInt(request.getParameter("idVenta"));
+        int noFactura = Integer.parseInt(request.getParameter("noFactura"));
+        String serie = request.getParameter("serie");
+        
+        // CORRECCIÓN: El parámetro se llama "fecha", no "fechaFactura"
+        String fechaStr = request.getParameter("fecha");
+        LocalDate fechaFactura = null;
+        if (fechaStr != null && !fechaStr.trim().isEmpty()) {
+            fechaFactura = LocalDate.parse(fechaStr);
+        } else {
+            fechaFactura = LocalDate.now(); // O maneja el error como prefieras
+        }
+        
+        int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+        
+        // CORRECCIÓN: Si no tienes idEmpleado en el formulario, obténlo de la sesión o usa un valor por defecto
+        HttpSession session = request.getSession();
+        Integer idEmpleadoSession = (Integer) session.getAttribute("idEmpleado");
+        int idEmpleado = (idEmpleadoSession != null) ? idEmpleadoSession : 1; // Valor por defecto si no hay sesión
+        
+        Venta venta = new Venta(noFactura, serie, fechaFactura, idCliente, idEmpleado);
+        venta.setIdVenta(idVenta);
+        
+        // CORRECCIÓN: También necesitas procesar los detalles de la venta
+        String[] idProductos = request.getParameterValues("idProducto");
+        String[] cantidades = request.getParameterValues("cantidad");
+        String[] preciosUnitarios = request.getParameterValues("precioUnitario");
+        
+        List<VentaDetalle> detalles = new ArrayList<>();
+        if (idProductos != null) {
+            for (int i = 0; i < idProductos.length; i++) {
+                int idProducto = Integer.parseInt(idProductos[i]);
+                String cantidad = cantidades[i];
+                double precioUnitario = Double.parseDouble(preciosUnitarios[i]);
+                
+                VentaDetalle detalle = new VentaDetalle();
+                detalle.setIdVenta(idVenta);
+                detalle.setIdProducto(idProducto);
+                detalle.setCantidad(cantidad);
+                detalle.setPrecioUnitario(precioUnitario);
+                
+                detalles.add(detalle);
+            }
+        }
+        venta.setDetalles(detalles);
+        
+        if (ventaDAO.actualizar(venta)) {
+            response.sendRedirect("VentaServlet?success=Venta actualizada exitosamente");
+        } else {
+            response.sendRedirect("VentaServlet?error=Error al actualizar la venta");
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendRedirect("VentaServlet?error=Error al procesar los datos: " + e.getMessage());
+    }
+}
+    /*
+    private void actualizarVenta(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         try {
             int idVenta = Integer.parseInt(request.getParameter("idVenta"));
             int noFactura = Integer.parseInt(request.getParameter("noFactura"));
             String serie = request.getParameter("serie");
-            LocalDate fechaFactura = LocalDate.parse(request.getParameter("fechaFactura"));
+            LocalDate fechaFactura = LocalDate.parse(request.getParameter("fecha"));
             int idCliente = Integer.parseInt(request.getParameter("idCliente"));
             int idEmpleado = Integer.parseInt(request.getParameter("idEmpleado"));
             
@@ -221,7 +290,7 @@ public class VentaServlet extends HttpServlet {
             response.sendRedirect("VentaServlet?error=Error al procesar los datos: " + e.getMessage());
         }
     }
-    
+   */ 
     private void eliminarVenta(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

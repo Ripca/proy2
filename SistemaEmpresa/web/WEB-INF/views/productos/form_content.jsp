@@ -144,6 +144,7 @@
         const producto = document.getElementById('producto').value.trim();
         const precioCosto = parseFloat(document.getElementById('precioCosto').value);
         const precioVenta = parseFloat(document.getElementById('precioVenta').value);
+        console.log('productos hola');
         
         if (!producto) {
             e.preventDefault();

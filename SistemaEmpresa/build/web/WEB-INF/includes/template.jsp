@@ -216,7 +216,15 @@
                 </div>
                 <div class="d-flex align-items-center">
                     <span class="me-3 text-muted">
-                        <i class="fas fa-user"></i> <%= session.getAttribute("nombreCompleto") %>
+                        <i class="fas fa-user"></i>
+                        <%
+                            Object nombreCompleto = session.getAttribute("nombreCompleto");
+                            if (nombreCompleto != null) {
+                                out.print(nombreCompleto);
+                            } else {
+                                out.print("Usuario");
+                            }
+                        %>
                     </span>
                     <a href="LoginServlet?action=logout" class="btn btn-outline-danger btn-sm" title="Cerrar Sesión">
                         <i class="fas fa-sign-out-alt"></i>
@@ -231,9 +239,17 @@
             <%
                 String contentPage = request.getParameter("contentPage");
                 if (contentPage != null) {
+                    try {
             %>
                 <jsp:include page="<%= contentPage %>" />
             <%
+                    } catch (Exception e) {
+                        out.println("<div class='alert alert-danger'>");
+                        out.println("<h4>Error al cargar la página</h4>");
+                        out.println("<p>" + e.getMessage() + "</p>");
+                        out.println("</div>");
+                        e.printStackTrace();
+                    }
                 }
             %>
         </div>

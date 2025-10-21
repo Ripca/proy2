@@ -1,18 +1,40 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.sistemaempresa.models.*" %>
+<%@ page import="java.util.ArrayList" %>
 
 <%
     Venta venta = (Venta) request.getAttribute("venta");
     List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
     List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+    List<VentaDetalle> detalles = (List<VentaDetalle>) request.getAttribute("detalles");
 
     if (clientes == null) clientes = new java.util.ArrayList<>();
     if (productos == null) productos = new java.util.ArrayList<>();
+    if (detalles == null) detalles = new java.util.ArrayList<>();
 
     boolean esEdicion = venta != null;
     String titulo = esEdicion ? "Editar Venta" : "Nueva Venta";
     String action = esEdicion ? "update" : "save";
+    
+    // Para edición, obtener datos del cliente
+    String nombreCliente = "";
+    String nitCliente = "";
+    String telefonoCliente = "";
+    int idCliente = 0;
+    
+    if (esEdicion) {
+        nombreCliente = venta.getNombreCliente() != null ? venta.getNombreCliente() : "";
+        // Buscar cliente completo para obtener NIT y teléfono
+        for (Cliente cliente : clientes) {
+            if (cliente.getIdCliente() == venta.getIdCliente()) {
+                nitCliente = cliente.getNit() != null ? cliente.getNit() : "";
+                telefonoCliente = cliente.getTelefono() != null ? cliente.getTelefono() : "";
+                idCliente = cliente.getIdCliente();
+                break;
+            }
+        }
+    }
 %>
 
 <!-- HEADER -->
@@ -40,7 +62,7 @@
             <div class="card-body">
                 <form action="VentaServlet" method="post" id="formVenta">
                     <input type="hidden" name="action" value="<%= action %>">
-                    <input type="hidden" name="idCliente" id="hiddenIdCliente" value="">
+                    <input type="hidden" name="idCliente" id="hiddenIdCliente" value="<%= esEdicion ? String.valueOf(idCliente) : "" %>">
                     <% if (esEdicion) { %>
                         <input type="hidden" name="idVenta" value="<%= venta.getIdVenta() %>">
                     <% } %>
@@ -51,7 +73,8 @@
                             <label class="form-label fw-bold">Cliente <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" id="txtNitCliente" class="form-control" placeholder="Buscar por NIT" autocomplete="off">
+                                <input type="text" id="txtNitCliente" class="form-control" placeholder="Buscar por NIT" 
+                                       value="<%= esEdicion ? nitCliente : "" %>" autocomplete="off">
                                 <button type="button" class="btn btn-outline-success" id="btnBuscarCliente">
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
@@ -65,9 +88,10 @@
                             <label class="form-label fw-bold">Nombre Cliente</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                <input type="text" id="txtNombreCliente" class="form-control" disabled>
+                                <input type="text" id="txtNombreCliente" class="form-control" 
+                                       value="<%= esEdicion ? nombreCliente : "" %>" disabled>
                             </div>
-                            <span id="lblIdCliente" style="display:none;"></span>
+                            <span id="lblIdCliente" style="display:none;"><%= esEdicion ? String.valueOf(idCliente) : "" %></span>
                         </div>
                     </div>
 
@@ -85,7 +109,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                                 <input type="text" id="txtSerie" name="serie" class="form-control" 
-                                       value="<%= esEdicion ? venta.getSerie() : "" %>" required>
+                                       value="<%= esEdicion ? venta.getSerie() : "" %>" maxlength="1" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -100,7 +124,8 @@
                             <label class="form-label fw-bold">Teléfono Cliente</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="text" id="txtTelefonoCliente" class="form-control" disabled>
+                                <input type="text" id="txtTelefonoCliente" class="form-control" 
+                                       value="<%= esEdicion ? telefonoCliente : "" %>" disabled>
                             </div>
                         </div>
                     </div>
@@ -141,6 +166,37 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% if (esEdicion && detalles != null) { 
+                                    for (VentaDetalle detalle : detalles) { 
+                                        // Buscar el producto completo para obtener existencias actuales
+                                        int existenciasActuales = 0;
+                                        for (Producto producto : productos) {
+                                            if (producto.getIdProducto() == detalle.getIdProducto()) {
+                                                existenciasActuales = producto.getExistencia();
+                                                break;
+                                            }
+                                        }
+                                %>
+                                    <tr>
+                                        <td style="display:none;"><%= detalle.getIdProducto() %></td>
+                                        <td><%= detalle.getNombreProducto() %></td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm cantidad" 
+                                                   value="<%= detalle.getCantidad() %>" min="1" 
+                                                   max="<%= existenciasActuales + Integer.parseInt(detalle.getCantidad()) %>"
+                                                   data-existencia="<%= existenciasActuales %>">
+                                        </td>
+                                        <td><%= existenciasActuales %></td>
+                                        <td>Q. <%= String.format("%.2f", detalle.getPrecioUnitario()) %></td>
+                                        <td class="subtotal">Q. <%= String.format("%.2f", detalle.getSubtotal()) %></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaProducto(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% } 
+                                } %>
                             </tbody>
                         </table>
                     </div>
@@ -153,7 +209,7 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Subtotal:</span>
-                                        <strong><span class="lbl-info-subtotal">Q. 0.00</span></strong>
+                                        <strong><span class="lbl-info-subtotal">Q. <%= esEdicion ? String.format("%.2f", venta.getTotal()) : "0.00" %></span></strong>
                                     </div>
                                     <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
                                         <span>Descuento:</span>
@@ -161,7 +217,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <h5>Total:</h5>
-                                        <h5><strong><span class="lbl-info-total">Q. 0.00</span></strong></h5>
+                                        <h5><strong><span class="lbl-info-total">Q. <%= esEdicion ? String.format("%.2f", venta.getTotal()) : "0.00" %></span></strong></h5>
                                     </div>
                                 </div>
                             </div>
@@ -172,7 +228,7 @@
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-success btn-lg me-2">
-                                <i class="fas fa-save me-2"></i>Guardar Venta
+                                <i class="fas fa-save me-2"></i><%= esEdicion ? "Actualizar Venta" : "Guardar Venta" %>
                             </button>
                             <a href="VentaServlet" class="btn btn-secondary btn-lg">
                                 <i class="fas fa-times me-2"></i>Cancelar
@@ -248,11 +304,11 @@
     function agregarProductoATabla(producto) {
         const table = document.querySelector('#grvProductosCompra tbody');
         const fila = document.createElement('tr');
-        const subtotal = producto.precio_venta * 1;
+        const subtotal = producto.precioVenta * 1;
 
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
-        tdId.textContent = producto.id_producto;
+        tdId.textContent = producto.idProducto;
 
         const tdNombre = document.createElement('td');
         tdNombre.textContent = producto.producto;
@@ -280,7 +336,7 @@
         tdExistencia.textContent = producto.existencia || 0;
 
         const tdPrecio = document.createElement('td');
-        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
+        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioVenta).toFixed(2);
 
         const tdSubtotal = document.createElement('td');
         tdSubtotal.className = 'subtotal';
@@ -447,13 +503,13 @@
                     result.forEach(function(producto) {
                         const fila = document.createElement('tr');
                         const tdCodigo = document.createElement('td');
-                        tdCodigo.textContent = producto.codigo || '';
+                        tdCodigo.textContent = producto.idProducto || '';
                         const tdNombre = document.createElement('td');
                         tdNombre.textContent = producto.producto;
                         const tdExistencia = document.createElement('td');
                         tdExistencia.textContent = producto.existencia || 0;
                         const tdPrecio = document.createElement('td');
-                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
+                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioVenta).toFixed(2);
                         const tdAccion = document.createElement('td');
                         const btn = document.createElement('button');
                         btn.type = 'button';
@@ -493,6 +549,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Agregar event listeners a los inputs de cantidad existentes (para edición)
+        document.querySelectorAll('#grvProductosCompra .cantidad').forEach(input => {
+            input.addEventListener('change', function() {
+                actualizarSubtotal(this);
+            });
+        });
+
         document.getElementById('btnBuscarCliente').addEventListener('click', buscarCliente);
         document.getElementById('btnBuscarProducto').addEventListener('click', buscarProducto);
         document.getElementById('btnListarClientes').addEventListener('click', cargarClientesModal);
@@ -523,6 +586,12 @@
                 alert('Agregue productos');
                 return;
             }
+            
+            // Limpiar inputs ocultos previos
+            document.querySelectorAll('input[name="idProducto"], input[name="cantidad"], input[name="precioUnitario"]').forEach(input => {
+                input.remove();
+            });
+            
             filas.forEach((fila) => {
                 const input1 = document.createElement('input');
                 input1.type = 'hidden';
@@ -543,8 +612,12 @@
             this.submit();
         });
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('txtFecha').value = today;
+        // Solo establecer fecha actual si no es edición
+        <% if (!esEdicion) { %>
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('txtFecha').value = today;
+        <% } %>
+        
         actualizarTotales();
     });
 </script>

@@ -2,6 +2,15 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/ProductoServlet.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/ClienteServlet.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/VentaServlet.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/dao/ProductoDAO.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/models/Producto.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/dao/VentaDAO.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/LoginServlet.java</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/utils/JWTUtil.java</file>
+        </group>
     </open-files>
 </project-private>

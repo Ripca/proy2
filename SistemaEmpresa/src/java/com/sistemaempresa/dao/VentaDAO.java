@@ -11,17 +11,35 @@ public class VentaDAO {
     /**
      * Obtiene todas las ventas con información de cliente y empleado
      */
-    public List<Venta> obtenerTodos() {
+    /*public List<Venta> obtenerTodos() {
         List<Venta> ventas = new ArrayList<>();
         String sql = """
-            SELECT v.id_venta, v.no_factura, v.serie, v.fecha_factura, 
-                   v.id_cliente, v.id_empleado, v.fecha_ingreso,
-                   c.cliente as nombre_cliente,
-                   CONCAT(e.nombres, ' ', e.apellidos) as nombre_empleado
+                                    SELECT 
+                v.idVenta,
+                v.noFactura,
+                v.serie,
+                v.fechaFactura,
+                v.idCliente,
+                v.idEmpleado,
+                v.fechaingreso,
+                CONCAT(c.nombres, ' ', c.apellidos) AS nombre_cliente,
+                CONCAT(e.nombres, ' ', e.apellidos) AS nombre_empleado,
+                IFNULL(SUM(d.cantidad * d.precio_unitario), 0) AS Total
             FROM ventas v
-            LEFT JOIN clientes c ON v.id_cliente = c.id_cliente
-            LEFT JOIN empleados e ON v.id_empleado = e.id_empleado
-            ORDER BY v.fecha_factura DESC
+            LEFT JOIN clientes c ON v.idCliente = c.idCliente
+            LEFT JOIN empleados e ON v.idEmpleado = e.idEmpleado
+            LEFT JOIN ventas_detalle d ON v.idVenta = d.idVenta
+            GROUP BY 
+                v.idVenta,
+                v.noFactura,
+                v.serie,
+                v.fechaFactura,
+                v.idCliente,
+                v.idEmpleado,
+                v.fechaingreso,
+                nombre_cliente,
+                nombre_empleado
+            ORDER BY v.fechaFactura DESC;
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -30,16 +48,16 @@ public class VentaDAO {
             
             while (rs.next()) {
                 Venta venta = new Venta();
-                venta.setIdVenta(rs.getInt("id_venta"));
-                venta.setNoFactura(rs.getInt("no_factura"));
+                venta.setIdVenta(rs.getInt("idVenta"));
+                venta.setNoFactura(rs.getInt("noFactura"));
                 venta.setSerie(rs.getString("serie"));
-                venta.setFechaFactura(rs.getDate("fecha_factura").toLocalDate());
-                venta.setIdCliente(rs.getInt("id_cliente"));
-                venta.setIdEmpleado(rs.getInt("id_empleado"));
-                venta.setFechaIngreso(rs.getDate("fecha_ingreso").toLocalDate());
+                venta.setFechaFactura(rs.getDate("fechaFactura").toLocalDate());
+                venta.setIdCliente(rs.getInt("idCliente"));
+                venta.setIdEmpleado(rs.getInt("idEmpleado"));
+                venta.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
                 venta.setNombreCliente(rs.getString("nombre_cliente"));
                 venta.setNombreEmpleado(rs.getString("nombre_empleado"));
-                
+                venta.setTotal(rs.getDouble("total"));                
                 // Calcular total
                 venta.setTotal(calcularTotalVenta(venta.getIdVenta()));
                 
@@ -51,21 +69,80 @@ public class VentaDAO {
         }
         
         return ventas;
+    }*/
+    
+    public List<Venta> obtenerTodos() {
+    List<Venta> ventas = new ArrayList<>();
+    String sql = """
+        SELECT 
+            v.idVenta,
+            v.noFactura,
+            v.serie,
+            v.fechaFactura,
+            v.idCliente,
+            v.idEmpleado,
+            v.fechaingreso,
+            CONCAT(c.nombres, ' ', c.apellidos) AS nombre_cliente,
+            CONCAT(e.nombres, ' ', e.apellidos) AS nombre_empleado,
+            IFNULL(SUM(d.cantidad * d.precio_unitario), 0) AS total
+        FROM ventas v
+        LEFT JOIN clientes c ON v.idCliente = c.idCliente
+        LEFT JOIN empleados e ON v.idEmpleado = e.idEmpleado
+        LEFT JOIN ventas_detalle d ON v.idVenta = d.idVenta
+        GROUP BY 
+            v.idVenta,
+            v.noFactura,
+            v.serie,
+            v.fechaFactura,
+            v.idCliente,
+            v.idEmpleado,
+            v.fechaingreso,
+            nombre_cliente,
+            nombre_empleado
+        ORDER BY v.fechaFactura DESC;
+    """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Venta venta = new Venta();
+            venta.setIdVenta(rs.getInt("idVenta"));
+            venta.setNoFactura(rs.getInt("noFactura"));
+            venta.setSerie(rs.getString("serie"));
+            venta.setFechaFactura(rs.getDate("fechaFactura").toLocalDate());
+            venta.setIdCliente(rs.getInt("idCliente"));
+            venta.setIdEmpleado(rs.getInt("idEmpleado"));
+            venta.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
+            venta.setNombreCliente(rs.getString("nombre_cliente"));
+            venta.setNombreEmpleado(rs.getString("nombre_empleado"));
+            venta.setTotal(rs.getDouble("total"));
+            
+            ventas.add(venta);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return ventas;
+}
+
     
     /**
      * Obtiene una venta por su ID con sus detalles
      */
     public Venta obtenerPorId(int idVenta) {
         String sql = """
-            SELECT v.id_venta, v.no_factura, v.serie, v.fecha_factura, 
-                   v.id_cliente, v.id_empleado, v.fecha_ingreso,
-                   c.cliente as nombre_cliente,
+            SELECT v.idVenta, v.noFactura, v.serie, v.fechaFactura, 
+                   v.idCliente, v.idEmpleado, v.fechaingreso,
+                   CONCAT(c.nombres, ' ', c.apellidos) as nombre_cliente,
                    CONCAT(e.nombres, ' ', e.apellidos) as nombre_empleado
             FROM ventas v
-            LEFT JOIN clientes c ON v.id_cliente = c.id_cliente
-            LEFT JOIN empleados e ON v.id_empleado = e.id_empleado
-            WHERE v.id_venta = ?
+            LEFT JOIN clientes c ON v.idCliente = c.idCliente
+            LEFT JOIN empleados e ON v.idEmpleado = e.idEmpleado
+            WHERE v.idVenta = ?
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -76,13 +153,13 @@ public class VentaDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Venta venta = new Venta();
-                    venta.setIdVenta(rs.getInt("id_venta"));
-                    venta.setNoFactura(rs.getInt("no_factura"));
+                    venta.setIdVenta(rs.getInt("idVenta"));
+                    venta.setNoFactura(rs.getInt("noFactura"));
                     venta.setSerie(rs.getString("serie"));
-                    venta.setFechaFactura(rs.getDate("fecha_factura").toLocalDate());
-                    venta.setIdCliente(rs.getInt("id_cliente"));
-                    venta.setIdEmpleado(rs.getInt("id_empleado"));
-                    venta.setFechaIngreso(rs.getDate("fecha_ingreso").toLocalDate());
+                    venta.setFechaFactura(rs.getDate("fechaFactura").toLocalDate());
+                    venta.setIdCliente(rs.getInt("idCliente"));
+                    venta.setIdEmpleado(rs.getInt("idEmpleado"));
+                    venta.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
                     venta.setNombreCliente(rs.getString("nombre_cliente"));
                     venta.setNombreEmpleado(rs.getString("nombre_empleado"));
                     
@@ -115,7 +192,7 @@ public class VentaDAO {
             conn.setAutoCommit(false); // Iniciar transacción
 
             // 1. Insertar la venta maestro (igual que en C#)
-            String sqlVenta = "INSERT INTO ventas(no_factura, serie, fecha_factura, id_cliente, id_empleado, fecha_ingreso) " +
+            String sqlVenta = "INSERT INTO ventas(noFactura, serie, fechaFactura, idCliente, idEmpleado, fechaingreso) " +
                              "VALUES (?, ?, ?, ?, ?, ?)";
 
             int idVentaCreada = 0;
@@ -145,14 +222,14 @@ public class VentaDAO {
 
             // 2. Insertar los detalles de venta (igual que en C#)
             if (venta.tieneDetalles()) {
-                String sqlDetalle = "INSERT INTO ventas_detalle(id_venta, id_producto, cantidad, precio_unitario) " +
+                String sqlDetalle = "INSERT INTO ventas_detalle(idVenta, idProducto, cantidad, precio_unitario) " +
                                    "VALUES (?, ?, ?, ?)";
 
                 try (PreparedStatement stmtDetalle = conn.prepareStatement(sqlDetalle)) {
                     for (VentaDetalle detalle : venta.getDetalles()) {
                         stmtDetalle.setInt(1, idVentaCreada);
                         stmtDetalle.setInt(2, detalle.getIdProducto());
-                        stmtDetalle.setString(3, detalle.getCantidad()); // VARCHAR(45) como en C#
+                        stmtDetalle.setString(3, detalle.getCantidad()); 
                         stmtDetalle.setDouble(4, detalle.getPrecioUnitario());
 
                         int detalleAfectado = stmtDetalle.executeUpdate();
@@ -160,11 +237,10 @@ public class VentaDAO {
                             throw new SQLException("Error al insertar detalle de venta");
                         }
 
-                        // 3. Actualizar existencias de productos (NUEVO - como en C#)
                         // En ventas se RESTA la cantidad
                         try {
                             int cantidadVenta = Integer.parseInt(detalle.getCantidad());
-                            String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia - ? WHERE id_producto = ?";
+                            String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia - ? WHERE idProducto = ?";
                             try (PreparedStatement stmtExistencia = conn.prepareStatement(sqlActualizarExistencia)) {
                                 stmtExistencia.setInt(1, cantidadVenta);
                                 stmtExistencia.setInt(2, detalle.getIdProducto());
@@ -207,7 +283,7 @@ public class VentaDAO {
      */
     public boolean insertar(Venta venta) {
         String sqlVenta = """
-            INSERT INTO ventas (no_factura, serie, fecha_factura, id_cliente, id_empleado, fecha_ingreso)
+            INSERT INTO ventas (noFactura, serie, fechaFactura, idCliente, idEmpleado, fechaingreso)
             VALUES (?, ?, ?, ?, ?, ?)
         """;
         
@@ -276,11 +352,11 @@ public class VentaDAO {
     /**
      * Actualiza una venta existente
      */
-    public boolean actualizar(Venta venta) {
+   /* public boolean actualizar(Venta venta) {
         String sql = """
             UPDATE ventas 
-            SET no_factura = ?, serie = ?, fecha_factura = ?, id_cliente = ?, id_empleado = ?
-            WHERE id_venta = ?
+            SET noFactura = ?, serie = ?, fechaFactura = ?, idCliente = ?, idEmpleado = ?
+            WHERE idVenta = ?
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -301,6 +377,82 @@ public class VentaDAO {
         
         return false;
     }
+    */
+    
+    
+    public boolean actualizar(Venta venta) {
+    Connection conn = null;
+    try {
+        conn = DatabaseConnection.getConnection();
+        conn.setAutoCommit(false); // Iniciar transacción
+
+        // 1. Actualizar la venta principal
+        String sqlVenta = """
+            UPDATE ventas 
+            SET noFactura = ?, serie = ?, fechaFactura = ?, idCliente = ?, idEmpleado = ?
+            WHERE idVenta = ?
+        """;
+        
+        try (PreparedStatement stmtVenta = conn.prepareStatement(sqlVenta)) {
+            stmtVenta.setInt(1, venta.getNoFactura());
+            stmtVenta.setString(2, venta.getSerie());
+            stmtVenta.setDate(3, java.sql.Date.valueOf(venta.getFechaFactura()));
+            stmtVenta.setInt(4, venta.getIdCliente());
+            stmtVenta.setInt(5, venta.getIdEmpleado());
+            stmtVenta.setInt(6, venta.getIdVenta());
+            
+            int filasAfectadas = stmtVenta.executeUpdate();
+            if (filasAfectadas == 0) {
+                conn.rollback();
+                return false;
+            }
+        }
+
+        // 2. Actualizar los detalles de la venta
+        if (venta.getDetalles() != null && !venta.getDetalles().isEmpty()) {
+            String sqlDetalle = """
+                UPDATE ventas_detalle 
+                SET idProducto = ?, cantidad = ?, precio_unitario = ?
+                WHERE idVenta = ? AND idVenta_detalle = ?
+            """;
+            
+            try (PreparedStatement stmtDetalle = conn.prepareStatement(sqlDetalle)) {
+                for (VentaDetalle detalle : venta.getDetalles()) {
+                    stmtDetalle.setInt(1, detalle.getIdProducto());
+                    stmtDetalle.setInt(2, Integer.parseInt(detalle.getCantidad()));
+                    stmtDetalle.setDouble(3, detalle.getPrecioUnitario());
+                    stmtDetalle.setInt(4, venta.getIdVenta());
+                    stmtDetalle.setInt(5, detalle.getIdVentaDetalle());
+                    stmtDetalle.addBatch();
+                }
+                stmtDetalle.executeBatch();
+            }
+        }
+
+        conn.commit(); // Confirmar transacción
+        return true;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        if (conn != null) {
+            try {
+                conn.rollback(); // Revertir en caso de error
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+    } finally {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
     
     /**
      * Elimina una venta y sus detalles
@@ -312,14 +464,14 @@ public class VentaDAO {
             conn.setAutoCommit(false);
             
             // Eliminar detalles primero
-            String sqlDetalles = "DELETE FROM ventas_detalle WHERE id_venta = ?";
+            String sqlDetalles = "DELETE FROM ventas_detalle WHERE idVenta = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDetalles)) {
                 stmt.setInt(1, idVenta);
                 stmt.executeUpdate();
             }
             
             // Eliminar venta
-            String sqlVenta = "DELETE FROM ventas WHERE id_venta = ?";
+            String sqlVenta = "DELETE FROM ventas WHERE idVenta = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlVenta)) {
                 stmt.setInt(1, idVenta);
                 int filasAfectadas = stmt.executeUpdate();
@@ -359,15 +511,15 @@ public class VentaDAO {
     public List<VentaDetalle> obtenerDetallesPorVenta(int idVenta) {
         List<VentaDetalle> detalles = new ArrayList<>();
         String sql = """
-            SELECT vd.id_venta_detalle, vd.id_venta, vd.id_producto, 
+            SELECT vd.idVenta_detalle, vd.idVenta, vd.idProducto, 
                    vd.cantidad, vd.precio_unitario,
                    p.producto as nombre_producto,
                    m.marca as marca_producto
             FROM ventas_detalle vd
-            LEFT JOIN productos p ON vd.id_producto = p.id_producto
-            LEFT JOIN marcas m ON p.id_marca = m.id_marca
-            WHERE vd.id_venta = ?
-            ORDER BY vd.id_venta_detalle
+            LEFT JOIN productos p ON vd.idProducto = p.idProducto
+            LEFT JOIN marcas m ON p.idMarca = m.idMarca
+            WHERE vd.idVenta = ?
+            ORDER BY vd.idVenta_detalle
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -378,10 +530,10 @@ public class VentaDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     VentaDetalle detalle = new VentaDetalle();
-                    detalle.setIdVentaDetalle(rs.getInt("id_venta_detalle"));
-                    detalle.setIdVenta(rs.getInt("id_venta"));
-                    detalle.setIdProducto(rs.getInt("id_producto"));
-                    detalle.setCantidad(rs.getString("cantidad")); // VARCHAR(45) como en C#
+                    detalle.setIdVentaDetalle(rs.getInt("idVenta_detalle"));
+                    detalle.setIdVenta(rs.getInt("idVenta"));
+                    detalle.setIdProducto(rs.getInt("idProducto"));
+                    detalle.setCantidad(rs.getString("cantidad")); 
                     detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
                     detalle.setNombreProducto(rs.getString("nombre_producto"));
                     detalle.setMarcaProducto(rs.getString("marca_producto"));
@@ -403,7 +555,7 @@ public class VentaDAO {
      */
     private boolean insertarDetalle(Connection conn, VentaDetalle detalle) throws SQLException {
         String sql = """
-            INSERT INTO ventas_detalle (id_venta, id_producto, cantidad, precio_unitario)
+            INSERT INTO ventas_detalle (idVenta, idProducto, cantidad, precio_unitario)
             VALUES (?, ?, ?, ?)
         """;
         

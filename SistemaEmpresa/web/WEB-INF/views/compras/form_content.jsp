@@ -239,7 +239,7 @@
     function agregarProductoATabla(producto) {
         const table = document.querySelector('#grvProductosCompra tbody');
         const fila = document.createElement('tr');
-        const subtotal = producto.precio_costo * 1;
+        const subtotal = producto.precioCosto * 1;
 
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
@@ -271,7 +271,7 @@
         tdExistencia.textContent = producto.existencia || 0;
 
         const tdPrecio = document.createElement('td');
-        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
+        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioCosto).toFixed(2);
 
         const tdSubtotal = document.createElement('td');
         tdSubtotal.className = 'subtotal';
@@ -430,18 +430,20 @@
             dataType: 'json',
             success: function(result) {
                 const tbody = document.getElementById('bodyProductosModal');
-                tbody.innerHTML = '';
+                    console.log('entrooo pruebaaaa');
+                    console.log(tbody.innerHTML);
+        tbody.innerHTML = '';
                 if (result && result.length > 0) {
                     result.forEach(function(producto) {
                         const fila = document.createElement('tr');
                         const tdCodigo = document.createElement('td');
-                        tdCodigo.textContent = producto.codigo || '';
+                        tdCodigo.textContent = producto.idProducto || '';
                         const tdNombre = document.createElement('td');
                         tdNombre.textContent = producto.producto;
                         const tdExistencia = document.createElement('td');
                         tdExistencia.textContent = producto.existencia || 0;
                         const tdPrecio = document.createElement('td');
-                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
+                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioCosto).toFixed(2);
                         const tdAccion = document.createElement('td');
                         const btn = document.createElement('button');
                         btn.type = 'button';
@@ -460,6 +462,9 @@
                         fila.appendChild(tdAccion);
                         tbody.appendChild(fila);
                     });
+                    console.log('pruebaaaa');
+                    console.log(tbody.innerHTML);
+                    
                 } else {
                     tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay productos disponibles</td></tr>';
                 }

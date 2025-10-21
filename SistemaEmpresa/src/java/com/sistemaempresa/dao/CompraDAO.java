@@ -14,11 +14,11 @@ public class CompraDAO {
     public List<Compra> obtenerTodos() {
         List<Compra> compras = new ArrayList<>();
         String sql = """
-            SELECT c.id_compra, c.no_orden_compra, c.fecha_orden, 
-                   c.fecha_ingreso, c.id_proveedor,
+            SELECT c.idCompra, c.no_orden_compra, c.fecha_orden, 
+                   c.fechaingreso, c.idProveedor,
                    p.proveedor as nombre_proveedor
             FROM compras c
-            LEFT JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+            LEFT JOIN proveedores p ON c.idProveedor = p.idProveedor
             ORDER BY c.fecha_orden DESC
         """;
         
@@ -28,11 +28,11 @@ public class CompraDAO {
             
             while (rs.next()) {
                 Compra compra = new Compra();
-                compra.setIdCompra(rs.getInt("id_compra"));
+                compra.setIdCompra(rs.getInt("idCompra"));
                 compra.setNoOrdenCompra(rs.getInt("no_orden_compra"));
                 compra.setFechaOrden(rs.getDate("fecha_orden").toLocalDate());
-                compra.setFechaIngreso(rs.getDate("fecha_ingreso").toLocalDate());
-                compra.setIdProveedor(rs.getInt("id_proveedor"));
+                compra.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
+                compra.setIdProveedor(rs.getInt("idProveedor"));
                 compra.setNombreProveedor(rs.getString("nombre_proveedor"));
                 
                 // Calcular total
@@ -53,12 +53,12 @@ public class CompraDAO {
      */
     public Compra obtenerPorId(int idCompra) {
         String sql = """
-            SELECT c.id_compra, c.no_orden_compra, c.fecha_orden, 
-                   c.fecha_ingreso, c.id_proveedor,
+            SELECT c.idCompra, c.no_orden_compra, c.fecha_orden, 
+                   c.fechaingreso, c.idProveedor,
                    p.proveedor as nombre_proveedor
             FROM compras c
-            LEFT JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-            WHERE c.id_compra = ?
+            LEFT JOIN proveedores p ON c.idProveedor = p.idProveedor
+            WHERE c.idCompra = ?
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -69,11 +69,11 @@ public class CompraDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Compra compra = new Compra();
-                    compra.setIdCompra(rs.getInt("id_compra"));
+                    compra.setIdCompra(rs.getInt("idCompra"));
                     compra.setNoOrdenCompra(rs.getInt("no_orden_compra"));
                     compra.setFechaOrden(rs.getDate("fecha_orden").toLocalDate());
-                    compra.setFechaIngreso(rs.getDate("fecha_ingreso").toLocalDate());
-                    compra.setIdProveedor(rs.getInt("id_proveedor"));
+                    compra.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
+                    compra.setIdProveedor(rs.getInt("idProveedor"));
                     compra.setNombreProveedor(rs.getString("nombre_proveedor"));
                     
                     // Cargar detalles
@@ -93,7 +93,6 @@ public class CompraDAO {
     
     /**
      * Crea una nueva compra con sus detalles
-     * Implementa exactamente la lógica del método crear() del C# repp/vista/Compra.h
      * Actualiza las existencias de productos automáticamente
      * @param compra objeto Compra con sus detalles
      * @return ID de la compra creada, 0 si hay error
@@ -105,7 +104,7 @@ public class CompraDAO {
             conn.setAutoCommit(false); // Iniciar transacción
 
             // 1. Insertar la compra maestro (igual que en C#)
-            String sqlCompra = "INSERT INTO compras(no_orden_compra, id_proveedor, fecha_orden, fecha_ingreso) " +
+            String sqlCompra = "INSERT INTO compras(no_orden_compra, idProveedor, fecha_orden, fechaingreso) " +
                               "VALUES (?, ?, ?, ?)";
 
             int idCompraCreada = 0;
@@ -118,7 +117,6 @@ public class CompraDAO {
                 int filasAfectadas = stmtCompra.executeUpdate();
 
                 if (filasAfectadas > 0) {
-                    // Obtener el ID de la compra recién insertada (LAST_INSERT_ID como en C#)
                     try (ResultSet generatedKeys = stmtCompra.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             idCompraCreada = generatedKeys.getInt(1);
@@ -133,7 +131,7 @@ public class CompraDAO {
 
             // 2. Insertar los detalles de compra (igual que en C#)
             if (compra.tieneDetalles()) {
-                String sqlDetalle = "INSERT INTO compras_detalle(id_compra, id_producto, cantidad, precio_costo_unitario) " +
+                String sqlDetalle = "INSERT INTO compras_detalle(idCompra, idProducto, cantidad, precio_costo_unitario) " +
                                    "VALUES (?, ?, ?, ?)";
 
                 try (PreparedStatement stmtDetalle = conn.prepareStatement(sqlDetalle)) {
@@ -149,7 +147,7 @@ public class CompraDAO {
                         }
 
                         // 3. Actualizar existencias de productos (NUEVO - como en C#)
-                        String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia + ? WHERE id_producto = ?";
+                        String sqlActualizarExistencia = "UPDATE productos SET existencia = existencia + ? WHERE idProducto = ?";
                         try (PreparedStatement stmtExistencia = conn.prepareStatement(sqlActualizarExistencia)) {
                             stmtExistencia.setInt(1, detalle.getCantidad());
                             stmtExistencia.setInt(2, detalle.getIdProducto());
@@ -188,7 +186,7 @@ public class CompraDAO {
      */
     public boolean insertar(Compra compra) {
         String sqlCompra = """
-            INSERT INTO compras (no_orden_compra, fecha_orden, fecha_ingreso, id_proveedor)
+            INSERT INTO compras (no_orden_compra, fecha_orden, fechaingreso, idProveedor)
             VALUES (?, ?, ?, ?)
         """;
         
@@ -259,8 +257,8 @@ public class CompraDAO {
     public boolean actualizar(Compra compra) {
         String sql = """
             UPDATE compras 
-            SET no_orden_compra = ?, fecha_orden = ?, id_proveedor = ?
-            WHERE id_compra = ?
+            SET no_orden_compra = ?, fecha_orden = ?, idProveedor = ?
+            WHERE idCompra = ?
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -290,14 +288,14 @@ public class CompraDAO {
             conn.setAutoCommit(false);
             
             // Eliminar detalles primero
-            String sqlDetalles = "DELETE FROM compras_detalle WHERE id_compra = ?";
+            String sqlDetalles = "DELETE FROM compras_detalle WHERE idCompra = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDetalles)) {
                 stmt.setInt(1, idCompra);
                 stmt.executeUpdate();
             }
             
             // Eliminar compra
-            String sqlCompra = "DELETE FROM compras WHERE id_compra = ?";
+            String sqlCompra = "DELETE FROM compras WHERE idCompra = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlCompra)) {
                 stmt.setInt(1, idCompra);
                 int filasAfectadas = stmt.executeUpdate();
@@ -337,15 +335,15 @@ public class CompraDAO {
     public List<CompraDetalle> obtenerDetallesPorCompra(int idCompra) {
         List<CompraDetalle> detalles = new ArrayList<>();
         String sql = """
-            SELECT cd.id_compra_detalle, cd.id_compra, cd.id_producto, 
+            SELECT cd.idCompra_detalle, cd.idCompra, cd.idProducto, 
                    cd.cantidad, cd.precio_costo_unitario,
                    p.producto as nombre_producto,
                    m.marca as marca_producto
             FROM compras_detalle cd
-            LEFT JOIN productos p ON cd.id_producto = p.id_producto
-            LEFT JOIN marcas m ON p.id_marca = m.id_marca
-            WHERE cd.id_compra = ?
-            ORDER BY cd.id_compra_detalle
+            LEFT JOIN productos p ON cd.idProducto = p.idProducto
+            LEFT JOIN marcas m ON p.idMarca = m.idMarca
+            WHERE cd.idCompra = ?
+            ORDER BY cd.idCompra_detalle
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -356,9 +354,9 @@ public class CompraDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CompraDetalle detalle = new CompraDetalle();
-                    detalle.setIdCompraDetalle(rs.getInt("id_compra_detalle"));
-                    detalle.setIdCompra(rs.getInt("id_compra"));
-                    detalle.setIdProducto(rs.getInt("id_producto"));
+                    detalle.setIdCompraDetalle(rs.getInt("idCompra_detalle"));
+                    detalle.setIdCompra(rs.getInt("idCompra"));
+                    detalle.setIdProducto(rs.getInt("idProducto"));
                     detalle.setCantidad(rs.getInt("cantidad"));
                     detalle.setPrecioCostoUnitario(rs.getDouble("precio_costo_unitario"));
                     detalle.setNombreProducto(rs.getString("nombre_producto"));
@@ -381,7 +379,7 @@ public class CompraDAO {
      */
     private boolean insertarDetalle(Connection conn, CompraDetalle detalle) throws SQLException {
         String sql = """
-            INSERT INTO compras_detalle (id_compra, id_producto, cantidad, precio_costo_unitario)
+            INSERT INTO compras_detalle (idCompra, idProducto, cantidad, precio_costo_unitario)
             VALUES (?, ?, ?, ?)
         """;
         
@@ -402,7 +400,7 @@ public class CompraDAO {
         String sql = """
             SELECT SUM(cantidad * precio_costo_unitario) as total
             FROM compras_detalle
-            WHERE id_compra = ?
+            WHERE idCompra = ?
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();

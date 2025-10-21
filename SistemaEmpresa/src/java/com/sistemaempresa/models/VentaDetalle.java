@@ -4,7 +4,7 @@ public class VentaDetalle {
     private int idVentaDetalle;
     private int idVenta;
     private int idProducto;
-    private String cantidad; // VARCHAR(45) como en C# - NO INT!
+    private String cantidad; 
     private double precioUnitario;
     
     // Campos adicionales para mostrar información relacionada

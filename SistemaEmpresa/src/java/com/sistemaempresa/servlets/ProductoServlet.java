@@ -238,40 +238,53 @@ public class ProductoServlet extends HttpServlet {
     /**
      * Endpoint AJAX para obtener todos los productos en tabla modal
      */
-    private void obtenerTodosProductos(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   private void obtenerTodosProductos(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        List<Producto> productos = productoDAO.obtenerTodos();
+    List<Producto> productos = productoDAO.obtenerTodos();
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
 
-        StringBuilder json = new StringBuilder("[");
-        for (int i = 0; i < productos.size(); i++) {
-            Producto p = productos.get(i);
-            json.append("{");
-            json.append("\"id_producto\":").append(p.getIdProducto()).append(",");
-            json.append("\"codigo\":\"").append(escapeJson(p.getCodigo() != null ? p.getCodigo() : "")).append("\",");
-            json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
-            json.append("\"existencia\":").append(p.getExistencia()).append(",");
-            json.append("\"precio_costo\":").append(p.getPrecioCosto()).append(",");
-            json.append("\"precio_venta\":").append(p.getPrecioVenta()).append("\"");
-            json.append("}");
-            if (i < productos.size() - 1) json.append(",");
-        }
-        json.append("]");
-        response.getWriter().write(json.toString());
+    StringBuilder json = new StringBuilder("[");
+    for (int i = 0; i < productos.size(); i++) {
+        Producto p = productos.get(i);
+        json.append("{");
+        json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
+        json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
+        json.append("\"existencia\":").append(p.getExistencia()).append(",");
+        json.append("\"precioCosto\":").append(p.getPrecioCosto()).append(",");
+        // --- aquí estaba el error: no pongas comillas para números ---
+        json.append("\"precioVenta\":").append(p.getPrecioVenta());
+        json.append("}");
+        if (i < productos.size() - 1) json.append(",");
     }
+    json.append("]");
+    response.getWriter().write(json.toString());
+}
+
+// Si no tienes escapeJson, aquí una versión mínima:
+private String escapeJson(String s) {
+    if (s == null) return "";
+    return s.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\b", "\\b")
+            .replace("\f", "\\f")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t");
+}
+
 
     /**
      * Escapa caracteres especiales para JSON
      */
-    private String escapeJson(String str) {
+    /*private String escapeJson(String str) {
         if (str == null) return "";
         return str.replace("\\", "\\\\")
                   .replace("\"", "\\\"")
                   .replace("\n", "\\n")
                   .replace("\r", "\\r")
                   .replace("\t", "\\t");
-    }
+    } */
 }
