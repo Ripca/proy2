@@ -3,6 +3,8 @@
 ## ✅ ESTADO ACTUAL
 Todos los cambios han sido completados. El proyecto está 100% listo para compilar.
 
+**IMPORTANTE**: Se agregaron los servlets al `web.xml` para que funcionen correctamente.
+
 ---
 
 ## 📋 PASOS PARA COMPILAR Y PROBAR

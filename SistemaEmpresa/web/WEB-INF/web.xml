@@ -130,6 +130,24 @@
         <url-pattern>/MenuServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ReporteServlet</servlet-name>
+        <servlet-class>com.sistemaempresa.reportes.ReporteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteServlet</servlet-name>
+        <url-pattern>/ReporteServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReporteListServlet</servlet-name>
+        <servlet-class>com.sistemaempresa.servlets.ReporteListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReporteListServlet</servlet-name>
+        <url-pattern>/ReporteListServlet</url-pattern>
+    </servlet-mapping>
+
     <!-- Filtro de autenticación JWT -->
     <filter>
         <filter-name>JWTAuthFilter</filter-name>
@@ -142,7 +160,7 @@
 
     <!-- Página de bienvenida -->
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>

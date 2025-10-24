@@ -73,6 +73,7 @@ MODIFICADOS:
   ✅ SistemaEmpresa/src/java/com/sistemaempresa/reportes/ReporteServlet.java
   ✅ SistemaEmpresa/web/WEB-INF/views/compras/form_content.jsp
   ✅ SistemaEmpresa/database/reorganizar_menus_jerarquicos.sql
+  ✅ SistemaEmpresa/web/WEB-INF/web.xml - AGREGADOS SERVLETS Y PÁGINA DE BIENVENIDA
 
 ELIMINADOS:
   ✅ SistemaEmpresa/web/index.html
