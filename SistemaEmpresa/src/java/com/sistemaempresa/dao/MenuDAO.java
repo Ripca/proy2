@@ -8,12 +8,12 @@ import java.util.*;
 public class MenuDAO {
     
     /**
-     * Obtiene todos los menús principales (sin padre) con sus submenús
+     * Obtiene todos los menús principales (sin padre) con sus submenús en estructura jerárquica multinivel
      */
     public List<Menu> obtenerMenusJerarquicos() {
         List<Menu> menusPrincipales = new ArrayList<>();
         String sql = """
-            SELECT 
+            SELECT
                 m1.id_menu, m1.nombre, m1.icono, m1.url, m1.id_padre, m1.orden, m1.estado,
                 m2.nombre as nombre_padre
             FROM menus m1
@@ -21,13 +21,13 @@ public class MenuDAO {
             WHERE m1.estado = 1
             ORDER BY m1.id_padre, m1.orden
         """;
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
-            
+
             Map<Integer, Menu> mapaMenus = new HashMap<>();
-            
+
             while (rs.next()) {
                 Menu menu = new Menu();
                 menu.setIdMenu(rs.getInt("id_menu"));
@@ -38,40 +38,59 @@ public class MenuDAO {
                 menu.setOrden(rs.getInt("orden"));
                 menu.setEstado(rs.getBoolean("estado"));
                 menu.setNombrePadre(rs.getString("nombre_padre"));
-                
+
                 mapaMenus.put(menu.getIdMenu(), menu);
-                
+
                 // Si es menú principal, agregarlo a la lista
                 if (menu.esMenuPrincipal()) {
                     menusPrincipales.add(menu);
                 }
             }
-            
-            // Organizar submenús bajo sus padres
-            for (Menu menu : mapaMenus.values()) {
-                if (!menu.esMenuPrincipal()) {
-                    Menu padre = mapaMenus.get(menu.getIdPadre());
-                    if (padre != null) {
-                        padre.agregarSubmenu(menu);
-                    }
-                }
-            }
-            
+
+            // Construir estructura jerárquica multinivel
+            construirArbolJerarquico(mapaMenus, menusPrincipales);
+
             // Ordenar menús principales
             menusPrincipales.sort(Comparator.comparingInt(Menu::getOrden));
-            
-            // Ordenar submenús
-            for (Menu menu : menusPrincipales) {
-                if (menu.tieneSubmenus()) {
-                    menu.getSubmenus().sort(Comparator.comparingInt(Menu::getOrden));
-                }
-            }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return menusPrincipales;
+    }
+
+    /**
+     * Construye la estructura jerárquica multinivel del árbol de menús
+     */
+    private void construirArbolJerarquico(Map<Integer, Menu> mapaMenus, List<Menu> menusPrincipales) {
+        // Organizar submenús bajo sus padres recursivamente
+        for (Menu menu : mapaMenus.values()) {
+            if (!menu.esMenuPrincipal()) {
+                Menu padre = mapaMenus.get(menu.getIdPadre());
+                if (padre != null) {
+                    padre.agregarSubmenu(menu);
+                }
+            }
+        }
+
+        // Ordenar recursivamente todos los niveles
+        for (Menu menu : menusPrincipales) {
+            ordenarSubmenusRecursivo(menu);
+        }
+    }
+
+    /**
+     * Ordena los submenús recursivamente en todos los niveles
+     */
+    private void ordenarSubmenusRecursivo(Menu menu) {
+        if (menu.tieneSubmenus()) {
+            menu.getSubmenus().sort(Comparator.comparingInt(Menu::getOrden));
+            // Ordenar recursivamente los submenús de los submenús
+            for (Menu submenu : menu.getSubmenus()) {
+                ordenarSubmenusRecursivo(submenu);
+            }
+        }
     }
     
     /**

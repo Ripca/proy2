@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.sistemaempresa.models.MenuItem" %>
+<%@ page import="com.sistemaempresa.models.Menu" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.sistemaempresa.dao.MenuItemDAO" %>
+<%@ page import="com.sistemaempresa.dao.MenuDAO" %>
 
 <%
-    // Obtener el menú estructurado
-    MenuItemDAO menuDAO = new MenuItemDAO();
-    List<MenuItem> menuItems = menuDAO.obtenerMenuEstructurado();
+    // Obtener el menú estructurado jerárquico
+    MenuDAO menuDAO = new MenuDAO();
+    List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
 %>
 
 <!-- Menú Dashboard siempre visible -->
@@ -17,46 +17,74 @@
             <span>Dashboard</span>
         </a>
     </li>
-    
+
     <%
-        if (menuItems != null && !menuItems.isEmpty()) {
-            for (MenuItem item : menuItems) {
+        if (menusJerarquicos != null && !menusJerarquicos.isEmpty()) {
+            for (Menu menu : menusJerarquicos) {
     %>
         <li class="menu-item">
-            <% if (item.tieneHijos()) { %>
+            <% if (menu.tieneSubmenus()) { %>
                 <!-- Elemento padre con submenú -->
-                <a href="#submenu<%= item.getIdMenuItem() %>" data-bs-toggle="collapse" 
+                <a href="#submenu<%= menu.getIdMenu() %>" data-bs-toggle="collapse"
                    class="menu-link collapsed" aria-expanded="false">
-                    <i class="<%= item.getIcono() %>"></i>
-                    <span><%= item.getTitulo() %></span>
+                    <i class="<%= menu.getIcono() %>"></i>
+                    <span><%= menu.getNombre() %></span>
                     <i class="fas fa-chevron-down ms-auto"></i>
                 </a>
-                
-                <div class="collapse" id="submenu<%= item.getIdMenuItem() %>">
+
+                <div class="collapse" id="submenu<%= menu.getIdMenu() %>">
                     <ul class="list-unstyled submenu">
                         <%
-                            for (MenuItem hijo : item.getHijos()) {
+                            for (Menu submenu : menu.getSubmenus()) {
                         %>
                             <li>
-                                <% if (hijo.tieneHijos()) { %>
-                                    <!-- Submenú de segundo nivel -->
-                                    <a href="#submenu<%= hijo.getIdMenuItem() %>" data-bs-toggle="collapse" 
+                                <% if (submenu.tieneSubmenus()) { %>
+                                    <!-- Submenú de segundo nivel con más hijos -->
+                                    <a href="#submenu<%= submenu.getIdMenu() %>" data-bs-toggle="collapse"
                                        class="submenu-link collapsed" aria-expanded="false">
-                                        <i class="<%= hijo.getIcono() %>"></i>
-                                        <span><%= hijo.getTitulo() %></span>
+                                        <i class="<%= submenu.getIcono() %>"></i>
+                                        <span><%= submenu.getNombre() %></span>
                                         <i class="fas fa-chevron-down ms-auto"></i>
                                     </a>
-                                    
-                                    <div class="collapse" id="submenu<%= hijo.getIdMenuItem() %>">
+
+                                    <div class="collapse" id="submenu<%= submenu.getIdMenu() %>">
                                         <ul class="list-unstyled sub-submenu">
                                             <%
-                                                for (MenuItem nieto : hijo.getHijos()) {
+                                                for (Menu subsubmenu : submenu.getSubmenus()) {
                                             %>
                                                 <li>
-                                                    <a href="<%= nieto.getUrl() %>" class="sub-submenu-link">
-                                                        <i class="<%= nieto.getIcono() %>"></i>
-                                                        <span><%= nieto.getTitulo() %></span>
-                                                    </a>
+                                                    <% if (subsubmenu.tieneSubmenus()) { %>
+                                                        <!-- Tercer nivel con más hijos -->
+                                                        <a href="#submenu<%= subsubmenu.getIdMenu() %>" data-bs-toggle="collapse"
+                                                           class="sub-submenu-link collapsed" aria-expanded="false">
+                                                            <i class="<%= subsubmenu.getIcono() %>"></i>
+                                                            <span><%= subsubmenu.getNombre() %></span>
+                                                            <i class="fas fa-chevron-down ms-auto"></i>
+                                                        </a>
+
+                                                        <div class="collapse" id="submenu<%= subsubmenu.getIdMenu() %>">
+                                                            <ul class="list-unstyled sub-sub-submenu">
+                                                                <%
+                                                                    for (Menu item : subsubmenu.getSubmenus()) {
+                                                                %>
+                                                                    <li>
+                                                                        <a href="<%= item.getUrl() %>" class="sub-sub-submenu-link">
+                                                                            <i class="<%= item.getIcono() %>"></i>
+                                                                            <span><%= item.getNombre() %></span>
+                                                                        </a>
+                                                                    </li>
+                                                                <%
+                                                                    }
+                                                                %>
+                                                            </ul>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <!-- Elemento hoja de tercer nivel -->
+                                                        <a href="<%= subsubmenu.getUrl() %>" class="sub-submenu-link">
+                                                            <i class="<%= subsubmenu.getIcono() %>"></i>
+                                                            <span><%= subsubmenu.getNombre() %></span>
+                                                        </a>
+                                                    <% } %>
                                                 </li>
                                             <%
                                                 }
@@ -64,10 +92,10 @@
                                         </ul>
                                     </div>
                                 <% } else { %>
-                                    <!-- Elemento hijo simple -->
-                                    <a href="<%= hijo.getUrl() %>" class="submenu-link">
-                                        <i class="<%= hijo.getIcono() %>"></i>
-                                        <span><%= hijo.getTitulo() %></span>
+                                    <!-- Elemento hijo simple de segundo nivel -->
+                                    <a href="<%= submenu.getUrl() %>" class="submenu-link">
+                                        <i class="<%= submenu.getIcono() %>"></i>
+                                        <span><%= submenu.getNombre() %></span>
                                     </a>
                                 <% } %>
                             </li>
@@ -78,9 +106,9 @@
                 </div>
             <% } else { %>
                 <!-- Elemento simple sin hijos -->
-                <a href="<%= item.getUrl() %>" class="menu-link">
-                    <i class="<%= item.getIcono() %>"></i>
-                    <span><%= item.getTitulo() %></span>
+                <a href="<%= menu.getUrl() %>" class="menu-link">
+                    <i class="<%= menu.getIcono() %>"></i>
+                    <span><%= menu.getNombre() %></span>
                 </a>
             <% } %>
         </li>
@@ -102,13 +130,13 @@
     %>
 </ul>
 
-<!-- CSS específico para el menú del sidebar -->
+<!-- CSS específico para el menú del sidebar con soporte multinivel -->
 <style>
 .menu-item {
     margin-bottom: 0.25rem;
 }
 
-.menu-link, .submenu-link, .sub-submenu-link {
+.menu-link, .submenu-link, .sub-submenu-link, .sub-sub-submenu-link {
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
@@ -119,13 +147,13 @@
     margin-bottom: 0.125rem;
 }
 
-.menu-link:hover, .submenu-link:hover, .sub-submenu-link:hover {
+.menu-link:hover, .submenu-link:hover, .sub-submenu-link:hover, .sub-sub-submenu-link:hover {
     color: #fff;
     background-color: rgba(255, 255, 255, 0.1);
     text-decoration: none;
 }
 
-.menu-link.active, .submenu-link.active, .sub-submenu-link.active {
+.menu-link.active, .submenu-link.active, .sub-submenu-link.active, .sub-sub-submenu-link.active {
     color: #fff;
     background-color: #007bff;
 }
@@ -154,7 +182,19 @@
     font-size: 0.85rem;
 }
 
-.menu-link i, .submenu-link i, .sub-submenu-link i {
+.sub-sub-submenu {
+    padding-left: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0.375rem;
+    margin-top: 0.25rem;
+}
+
+.sub-sub-submenu-link {
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+}
+
+.menu-link i, .submenu-link i, .sub-submenu-link i, .sub-sub-submenu-link i {
     width: 1.25rem;
     margin-right: 0.75rem;
     text-align: center;
@@ -166,39 +206,40 @@
 }
 
 .menu-link[aria-expanded="true"] .fa-chevron-down,
-.submenu-link[aria-expanded="true"] .fa-chevron-down {
+.submenu-link[aria-expanded="true"] .fa-chevron-down,
+.sub-submenu-link[aria-expanded="true"] .fa-chevron-down {
     transform: rotate(180deg);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .menu-link, .submenu-link, .sub-submenu-link {
+    .menu-link, .submenu-link, .sub-submenu-link, .sub-sub-submenu-link {
         padding: 0.5rem;
     }
-    
-    .submenu, .sub-submenu {
+
+    .submenu, .sub-submenu, .sub-sub-submenu {
         padding-left: 0.5rem;
     }
 }
 </style>
 
-<!-- JavaScript para manejar el estado activo del menú -->
+<!-- JavaScript para manejar el estado activo del menú en estructura multinivel -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Obtener la URL actual
     const currentPath = window.location.pathname;
     const currentSearch = window.location.search;
     const currentUrl = currentPath + currentSearch;
-    
-    // Buscar el enlace activo
-    const menuLinks = document.querySelectorAll('.menu-link, .submenu-link, .sub-submenu-link');
-    
+
+    // Buscar el enlace activo en todos los niveles
+    const menuLinks = document.querySelectorAll('.menu-link, .submenu-link, .sub-submenu-link, .sub-sub-submenu-link');
+
     menuLinks.forEach(function(link) {
         const href = link.getAttribute('href');
-        if (href && (currentUrl.includes(href) || currentPath.includes(href))) {
+        if (href && href !== '#' && (currentUrl.includes(href) || currentPath.includes(href))) {
             link.classList.add('active');
-            
-            // Expandir menús padre si es necesario
+
+            // Expandir todos los menús padres recursivamente
             let parent = link.closest('.collapse');
             while (parent) {
                 parent.classList.add('show');
