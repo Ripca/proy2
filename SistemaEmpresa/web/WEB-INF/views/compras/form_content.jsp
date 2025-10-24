@@ -496,7 +496,9 @@
 
             <% for (CompraDetalle detalle : detalles) { %>
                 const fila = document.createElement('tr');
-                const subtotal = <%= detalle.getCantidad() %> * <%= detalle.getPrecioCostoUnitario() %>;
+                const cantidad = <%= detalle.getCantidad() %>;
+                const precio = <%= detalle.getPrecioCostoUnitario() %>;
+                const subtotal = cantidad * precio;
 
                 const tdId = document.createElement('td');
                 tdId.style.display = 'none';
@@ -509,18 +511,15 @@
                 const inputCantidad = document.createElement('input');
                 inputCantidad.type = 'number';
                 inputCantidad.className = 'form-control form-control-sm cantidad';
-                inputCantidad.value = '<%= detalle.getCantidad() %>';
+                inputCantidad.value = cantidad;
                 inputCantidad.min = '1';
                 inputCantidad.addEventListener('change', function() {
                     actualizarSubtotal(this);
                 });
                 tdCantidad.appendChild(inputCantidad);
 
-                const tdExistencia = document.createElement('td');
-                tdExistencia.textContent = '<%= detalle.getExistencia() != 0 ? detalle.getExistencia() : 0 %>';
-
                 const tdPrecio = document.createElement('td');
-                tdPrecio.textContent = 'Q. ' + parseFloat('<%= detalle.getPrecioCostoUnitario() %>').toFixed(2);
+                tdPrecio.textContent = 'Q. ' + precio.toFixed(2);
 
                 const tdSubtotal = document.createElement('td');
                 tdSubtotal.className = 'subtotal';
@@ -534,10 +533,13 @@
                 btnEliminar.addEventListener('click', function() { eliminarFilaProducto(this); });
                 tdAccion.appendChild(btnEliminar);
 
+                const tdExistencias = document.createElement('td');
+                tdExistencias.textContent = '-';
+
                 fila.appendChild(tdId);
                 fila.appendChild(tdNombre);
                 fila.appendChild(tdCantidad);
-                fila.appendChild(tdExistencia);
+                fila.appendChild(tdExistencias);
                 fila.appendChild(tdPrecio);
                 fila.appendChild(tdSubtotal);
                 fila.appendChild(tdAccion);
