@@ -36,7 +36,7 @@ UPDATE menus SET id_padre = 9, orden = 1 WHERE id_menu = 7;
 -- 10. Reportes - Nuevo menú principal (CON URL para ser clickeable)
 -- Verificar si existe, si no, insertarlo
 INSERT INTO menus (nombre, icono, url, id_padre, orden, estado, fecha_creacion)
-SELECT 'Reportes', 'fas fa-chart-bar', 'ReporteServlet', NULL, 5, 1, NOW()
+SELECT 'Reportes', 'fas fa-chart-bar', 'ReporteListServlet', NULL, 5, 1, NOW()
 WHERE NOT EXISTS (SELECT 1 FROM menus WHERE nombre = 'Reportes');
 
 -- ============================================================================

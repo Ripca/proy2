@@ -48,6 +48,31 @@ public class ReporteServlet extends HttpServlet {
                 reportName = "miReporte.jrxml";
                 fileName = "reporte_inventario.pdf";
                 titulo = "Reporte de Inventario de Productos";
+            } else if ("productos".equals(tipoReporte)) {
+                // TODO: Crear reporte de productos
+                reportName = "miReporte.jrxml";
+                fileName = "reporte_productos.pdf";
+                titulo = "Reporte de Productos";
+            } else if ("empleados".equals(tipoReporte)) {
+                // TODO: Crear reporte de empleados
+                reportName = "miReporte.jrxml";
+                fileName = "reporte_empleados.pdf";
+                titulo = "Reporte de Empleados";
+            } else if ("clientes".equals(tipoReporte)) {
+                // TODO: Crear reporte de clientes
+                reportName = "miReporte.jrxml";
+                fileName = "reporte_clientes.pdf";
+                titulo = "Reporte de Clientes";
+            } else if ("factura_venta".equals(tipoReporte)) {
+                // TODO: Crear reporte de factura de venta
+                reportName = "miReporte.jrxml";
+                fileName = "factura_venta.pdf";
+                titulo = "Factura de Venta";
+            } else if ("factura_compra".equals(tipoReporte)) {
+                // TODO: Crear reporte de factura de compra
+                reportName = "miReporte.jrxml";
+                fileName = "factura_compra.pdf";
+                titulo = "Factura de Compra";
             } else if ("ventas".equals(tipoReporte)) {
                 reportName = "miReporte.jrxml";
                 fileName = "reporte_ventas.pdf";
