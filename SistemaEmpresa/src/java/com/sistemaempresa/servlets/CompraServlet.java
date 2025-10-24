@@ -93,19 +93,24 @@ public class CompraServlet extends HttpServlet {
     
     private void mostrarFormularioEditar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         int idCompra = Integer.parseInt(request.getParameter("id"));
         Compra compra = compraDAO.obtenerPorId(idCompra);
-        
+
         if (compra != null) {
             // Cargar datos para los dropdowns
             List<Proveedor> proveedores = proveedorDAO.obtenerTodos();
             List<Producto> productos = productoDAO.obtenerTodos();
-            
+
+            // Obtener los detalles de la compra
+            List<CompraDetalle> detalles = compraDAO.obtenerDetallesPorCompra(idCompra);
+            compra.setDetalles(detalles);
+
             request.setAttribute("compra", compra);
             request.setAttribute("proveedores", proveedores);
             request.setAttribute("productos", productos);
-            
+            request.setAttribute("detalles", detalles);
+
             request.getRequestDispatcher("/WEB-INF/views/compras/form_template.jsp").forward(request, response);
         } else {
             response.sendRedirect("CompraServlet?error=Compra no encontrada");
@@ -188,22 +193,51 @@ public class CompraServlet extends HttpServlet {
     
     private void actualizarCompra(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             int idCompra = Integer.parseInt(request.getParameter("idCompra"));
             int noOrdenCompra = Integer.parseInt(request.getParameter("noOrdenCompra"));
             LocalDate fechaOrden = LocalDate.parse(request.getParameter("fechaOrden"));
             int idProveedor = Integer.parseInt(request.getParameter("idProveedor"));
-            
+
             Compra compra = new Compra(noOrdenCompra, fechaOrden, idProveedor);
             compra.setIdCompra(idCompra);
-            
+
+            // Obtener detalles de la compra
+            String[] productosIds = request.getParameterValues("idProducto");
+            String[] cantidades = request.getParameterValues("cantidad");
+            String[] precios = request.getParameterValues("precioCostoUnitario");
+            String[] detalleIds = request.getParameterValues("idCompraDetalle");
+
+            if (productosIds != null && cantidades != null && precios != null) {
+                for (int i = 0; i < productosIds.length; i++) {
+                    if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
+                        CompraDetalle detalle = new CompraDetalle();
+
+                        // Si existe idCompraDetalle, es un detalle existente
+                        if (detalleIds != null && i < detalleIds.length && !detalleIds[i].isEmpty()) {
+                            detalle.setIdCompraDetalle(Integer.parseInt(detalleIds[i]));
+                        }
+
+                        detalle.setIdProducto(Integer.parseInt(productosIds[i]));
+                        detalle.setCantidad(Integer.parseInt(cantidades[i]));
+                        detalle.setPrecioCostoUnitario(Double.parseDouble(precios[i]));
+                        compra.agregarDetalle(detalle);
+                    }
+                }
+            }
+
+            if (!compra.tieneDetalles()) {
+                response.sendRedirect("CompraServlet?error=Debe agregar al menos un producto");
+                return;
+            }
+
             if (compraDAO.actualizar(compra)) {
                 response.sendRedirect("CompraServlet?success=Compra actualizada exitosamente");
             } else {
                 response.sendRedirect("CompraServlet?error=Error al actualizar la compra");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("CompraServlet?error=Error al procesar los datos: " + e.getMessage());

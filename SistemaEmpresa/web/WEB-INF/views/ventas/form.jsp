@@ -140,11 +140,12 @@
                                                 VentaDetalle detalle = venta.getDetalles().get(i);
                                         %>
                                         <tr>
+                                            <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
                                             <td>
                                                 <select class="form-select" name="idProducto" onchange="calcularSubtotal(this)" required>
                                                     <option value="">Seleccionar...</option>
                                                     <% for (Producto producto : productos) { %>
-                                                    <option value="<%= producto.getIdProducto() %>" 
+                                                    <option value="<%= producto.getIdProducto() %>"
                                                             <%= detalle.getIdProducto() == producto.getIdProducto() ? "selected" : "" %>>
                                                         <%= producto.getProducto() %>
                                                     </option>
@@ -152,15 +153,15 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="number" class="form-control" name="cantidad" 
+                                                <input type="number" class="form-control" name="cantidad"
                                                        value="<%= detalle.getCantidad() %>" min="1" onchange="calcularSubtotal(this)" required>
                                             </td>
                                             <td>
-                                                <input type="number" class="form-control" name="precioUnitario" 
+                                                <input type="number" class="form-control" name="precioUnitario"
                                                        value="<%= detalle.getPrecioUnitario() %>" step="0.01" min="0" onchange="calcularSubtotal(this)" required>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control subtotal" readonly 
+                                                <input type="text" class="form-control subtotal" readonly
                                                        value="<%= String.format("%.2f", detalle.calcularSubtotal()) %>">
                                             </td>
                                             <td>

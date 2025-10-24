@@ -53,19 +53,19 @@ public class CompraDAO {
      */
     public Compra obtenerPorId(int idCompra) {
         String sql = """
-            SELECT c.idCompra, c.no_orden_compra, c.fecha_orden, 
+            SELECT c.idCompra, c.no_orden_compra, c.fecha_orden,
                    c.fechaingreso, c.idProveedor,
-                   p.proveedor as nombre_proveedor
+                   p.proveedor as nombre_proveedor, p.nit, p.telefono
             FROM compras c
             LEFT JOIN proveedores p ON c.idProveedor = p.idProveedor
             WHERE c.idCompra = ?
         """;
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, idCompra);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Compra compra = new Compra();
@@ -75,11 +75,13 @@ public class CompraDAO {
                     compra.setFechaIngreso(rs.getDate("fechaingreso").toLocalDate());
                     compra.setIdProveedor(rs.getInt("idProveedor"));
                     compra.setNombreProveedor(rs.getString("nombre_proveedor"));
-                    
+                    compra.setNitProveedor(rs.getString("nit"));
+                    compra.setTelefonoProveedor(rs.getString("telefono"));
+
                     // Cargar detalles
                     compra.setDetalles(obtenerDetallesPorCompra(idCompra));
                     compra.setTotal(compra.calcularTotal());
-                    
+
                     return compra;
                 }
             }

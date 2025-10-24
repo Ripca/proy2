@@ -178,9 +178,7 @@
                         </div>
                     </div>
                 </div>
-                      <a href="ReporteServlet?tipo=ventas" class="btn btn-info">
-    <i class="fas fa-print"></i> Generar Reportsssssse
-</a>
+
                 <!-- Accesos rápidos -->
                 <div class="row">
                     <div class="col-12">
@@ -190,10 +188,6 @@
                                     <i class="fas fa-bolt"></i> Accesos Rápidos
                                 </h5>
                             </div>
-                            
-                                  <a href="ReporteServlet?tipo=ventas" class="btn btn-info">
-    <i class="fas fa-print"></i> Generar Reportsssssse
-</a>
                             
                             
                             <div class="card-body">

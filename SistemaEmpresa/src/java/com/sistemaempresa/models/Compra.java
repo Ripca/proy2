@@ -13,6 +13,8 @@ public class Compra {
     
     // Campos adicionales para mostrar información relacionada
     private String nombreProveedor;
+    private String nitProveedor;
+    private String telefonoProveedor;
     private double total;
     
     // Lista de detalles de compra
@@ -79,7 +81,23 @@ public class Compra {
     public void setNombreProveedor(String nombreProveedor) {
         this.nombreProveedor = nombreProveedor;
     }
-    
+
+    public String getNitProveedor() {
+        return nitProveedor;
+    }
+
+    public void setNitProveedor(String nitProveedor) {
+        this.nitProveedor = nitProveedor;
+    }
+
+    public String getTelefonoProveedor() {
+        return telefonoProveedor;
+    }
+
+    public void setTelefonoProveedor(String telefonoProveedor) {
+        this.telefonoProveedor = telefonoProveedor;
+    }
+
     public double getTotal() {
         return total;
     }
