@@ -9,28 +9,25 @@
     List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
 %>
 
-<!-- Menú Dashboard siempre visible -->
+<!-- Menú dinámico jerárquico -->
 <ul class="list-unstyled">
-    <li>
-        <a href="DashboardServlet">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-    </li>
-
     <%
         if (menusJerarquicos != null && !menusJerarquicos.isEmpty()) {
             for (Menu menu : menusJerarquicos) {
     %>
         <li class="menu-item">
             <% if (menu.tieneSubmenus()) { %>
-                <!-- Elemento padre con submenú -->
-                <a href="#submenu<%= menu.getIdMenu() %>" data-bs-toggle="collapse"
-                   class="menu-link collapsed" aria-expanded="false">
-                    <i class="<%= menu.getIcono() %>"></i>
-                    <span><%= menu.getNombre() %></span>
-                    <i class="fas fa-chevron-down ms-auto"></i>
-                </a>
+                <!-- Elemento padre con submenú - CLICKEABLE Y EXPANDIBLE -->
+                <div class="d-flex align-items-center menu-parent">
+                    <a href="<%= menu.getUrl() %>" class="menu-link flex-grow-1">
+                        <i class="<%= menu.getIcono() %>"></i>
+                        <span><%= menu.getNombre() %></span>
+                    </a>
+                    <a href="#submenu<%= menu.getIdMenu() %>" data-bs-toggle="collapse"
+                       class="menu-toggle collapsed" aria-expanded="false">
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                </div>
 
                 <div class="collapse" id="submenu<%= menu.getIdMenu() %>">
                     <ul class="list-unstyled submenu">
@@ -39,13 +36,17 @@
                         %>
                             <li>
                                 <% if (submenu.tieneSubmenus()) { %>
-                                    <!-- Submenú de segundo nivel con más hijos -->
-                                    <a href="#submenu<%= submenu.getIdMenu() %>" data-bs-toggle="collapse"
-                                       class="submenu-link collapsed" aria-expanded="false">
-                                        <i class="<%= submenu.getIcono() %>"></i>
-                                        <span><%= submenu.getNombre() %></span>
-                                        <i class="fas fa-chevron-down ms-auto"></i>
-                                    </a>
+                                    <!-- Submenú de segundo nivel con más hijos - CLICKEABLE Y EXPANDIBLE -->
+                                    <div class="d-flex align-items-center submenu-parent">
+                                        <a href="<%= submenu.getUrl() %>" class="submenu-link flex-grow-1">
+                                            <i class="<%= submenu.getIcono() %>"></i>
+                                            <span><%= submenu.getNombre() %></span>
+                                        </a>
+                                        <a href="#submenu<%= submenu.getIdMenu() %>" data-bs-toggle="collapse"
+                                           class="submenu-toggle collapsed" aria-expanded="false">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </a>
+                                    </div>
 
                                     <div class="collapse" id="submenu<%= submenu.getIdMenu() %>">
                                         <ul class="list-unstyled sub-submenu">
@@ -136,6 +137,65 @@
     margin-bottom: 0.25rem;
 }
 
+.menu-parent {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 0.125rem;
+}
+
+.menu-parent .menu-link {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0;
+}
+
+.menu-parent .menu-toggle {
+    padding: 0.75rem 0.5rem;
+    color: #adb5bd;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.menu-parent .menu-toggle:hover {
+    color: #fff;
+}
+
+.submenu-parent {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 0.125rem;
+}
+
+.submenu-parent .submenu-link {
+    flex-grow: 1;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+.submenu-parent .submenu-toggle {
+    padding: 0.5rem 0.5rem;
+    color: #adb5bd;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.submenu-parent .submenu-toggle:hover {
+    color: #fff;
+}
+
 .menu-link, .submenu-link, .sub-submenu-link, .sub-sub-submenu-link {
     display: flex;
     align-items: center;
@@ -205,6 +265,7 @@
     font-size: 0.75rem;
 }
 
+.menu-toggle[aria-expanded="true"] .fa-chevron-down,
 .menu-link[aria-expanded="true"] .fa-chevron-down,
 .submenu-link[aria-expanded="true"] .fa-chevron-down,
 .sub-submenu-link[aria-expanded="true"] .fa-chevron-down {
@@ -251,6 +312,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 parent = parent.parentElement.closest('.collapse');
             }
         }
+    });
+
+    // Rotar el icono del chevron cuando se expande/colapsa
+    const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    collapseElements.forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            const icon = this.querySelector('.fa-chevron-down');
+            if (icon) {
+                setTimeout(() => {
+                    if (this.getAttribute('aria-expanded') === 'true') {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }, 10);
+            }
+        });
     });
 });
 </script>

@@ -33,10 +33,10 @@ UPDATE menus SET id_padre = NULL, orden = 4 WHERE id_menu = 9;
 -- 9. Proveedores - Hijo de Compras - ID: 7
 UPDATE menus SET id_padre = 9, orden = 1 WHERE id_menu = 7;
 
--- 10. Reportes - Nuevo menú principal (sin URL, solo contenedor)
+-- 10. Reportes - Nuevo menú principal (CON URL para ser clickeable)
 -- Verificar si existe, si no, insertarlo
 INSERT INTO menus (nombre, icono, url, id_padre, orden, estado, fecha_creacion)
-SELECT 'Reportes', 'fas fa-chart-bar', '', NULL, 5, 1, NOW()
+SELECT 'Reportes', 'fas fa-chart-bar', 'ReporteServlet', NULL, 5, 1, NOW()
 WHERE NOT EXISTS (SELECT 1 FROM menus WHERE nombre = 'Reportes');
 
 -- ============================================================================
@@ -58,10 +58,12 @@ ORDER BY m1.id_padre, m1.orden;
 -- ============================================================================
 -- Notas importantes:
 -- ============================================================================
--- 1. Los menús sin URL (como Productos, Ventas, Compras, Reportes) actúan como contenedores
--- 2. Los menús con URL son los que tienen acciones directas (servlets)
--- 3. La estructura soporta hasta 3 niveles: Principal -> Secundario -> Terciario
--- 4. El campo 'orden' controla el orden de visualización dentro de cada nivel
--- 5. El campo 'estado' = 1 significa que el menú está activo
+-- 1. Todos los menús principales (Productos, Ventas, Compras, Reportes) tienen URL
+--    para ser clickeables Y también pueden tener submenús
+-- 2. Los menús secundarios (Marcas, Clientes, Empleados, Proveedores) también tienen URL
+-- 3. Los menús terciarios (Puestos) tienen URL
+-- 4. La estructura soporta hasta 3 niveles: Principal -> Secundario -> Terciario
+-- 5. El campo 'orden' controla el orden de visualización dentro de cada nivel
+-- 6. El campo 'estado' = 1 significa que el menú está activo
 -- ============================================================================
 
