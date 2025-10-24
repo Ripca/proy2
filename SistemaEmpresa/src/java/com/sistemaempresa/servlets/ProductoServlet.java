@@ -220,7 +220,7 @@ public class ProductoServlet extends HttpServlet {
             Producto p = productos.get(i);
             json.append("{");
             json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
-            json.append("\"id_producto\":").append(p.getIdProducto()).append(",");
+            json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
             json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
             json.append("\"descripcion\":\"").append(escapeJson(p.getDescripcion())).append("\",");
             json.append("\"existencia\":").append(p.getExistencia()).append(",");

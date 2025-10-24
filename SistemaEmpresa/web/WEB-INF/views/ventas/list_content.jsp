@@ -64,10 +64,6 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="VentaServlet?action=view&id=<%= venta.getIdVenta() %>" 
-                                   class="btn btn-info btn-sm" title="Ver Detalle">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                                 <a href="VentaServlet?action=edit&id=<%= venta.getIdVenta() %>" 
                                    class="btn btn-warning btn-sm" title="Editar">
                                     <i class="fas fa-edit"></i>

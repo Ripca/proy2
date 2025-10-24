@@ -304,7 +304,7 @@
     function agregarProductoATabla(producto) {
         const table = document.querySelector('#grvProductosCompra tbody');
         const fila = document.createElement('tr');
-        const subtotal = producto.precioVenta * 1;
+        const subtotal = producto.precio_venta * 1;
 
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
@@ -336,7 +336,7 @@
         tdExistencia.textContent = producto.existencia || 0;
 
         const tdPrecio = document.createElement('td');
-        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioVenta).toFixed(2);
+        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
 
         const tdSubtotal = document.createElement('td');
         tdSubtotal.className = 'subtotal';
@@ -429,6 +429,8 @@
             data: { action: 'buscarAjax', termino: termino },
             dataType: 'json',
             success: function(result) {
+                console.log("Producto:::");
+                console.log(result);
                 if (result && result.length > 0) {
                     agregarProductoATabla(result[0]);
                     document.getElementById('txtCodigoProducto').value = '';

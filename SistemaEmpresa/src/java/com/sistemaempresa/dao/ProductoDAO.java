@@ -128,33 +128,34 @@ public class ProductoDAO {
         return false;
     }
     
-    public List<Producto> buscar(String termino) {
-        List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT p.*, m.marca as nombreMarca FROM Productos p " +
-                    "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
-                    "WHERE p.producto LIKE ? OR p.descripcion LIKE ? " +
-                    "ORDER BY p.producto";
+public List<Producto> buscar(String termino) {
+    List<Producto> productos = new ArrayList<>();
+    String sql = "SELECT p.*, m.marca AS nombreMarca FROM Productos p " +
+                 "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
+                 "WHERE p.idProducto = ? " +
+                 "ORDER BY p.producto";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            String patron = "%" + termino + "%";
-            stmt.setString(1, patron);
-            stmt.setString(2, patron);
+        stmt.setString(1, termino);
 
-            ResultSet rs = stmt.executeQuery();
+        ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                Producto producto = mapearResultSet(rs);
-                productos.add(producto);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while (rs.next()) {
+            Producto producto = mapearResultSet(rs);
+            productos.add(producto);
         }
 
-        return productos;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return productos;
+}
+
+    
+    
 
     /**
      * Actualiza la existencia de un producto (para compras y ventas)

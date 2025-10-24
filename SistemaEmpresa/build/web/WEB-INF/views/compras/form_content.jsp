@@ -239,7 +239,7 @@
     function agregarProductoATabla(producto) {
         const table = document.querySelector('#grvProductosCompra tbody');
         const fila = document.createElement('tr');
-        const subtotal = producto.precioCosto * 1;
+        const subtotal = producto.precio_costo * 1;
 
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
@@ -271,7 +271,7 @@
         tdExistencia.textContent = producto.existencia || 0;
 
         const tdPrecio = document.createElement('td');
-        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioCosto).toFixed(2);
+        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
 
         const tdSubtotal = document.createElement('td');
         tdSubtotal.className = 'subtotal';
