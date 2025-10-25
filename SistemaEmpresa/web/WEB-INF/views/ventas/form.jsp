@@ -140,7 +140,9 @@
                                                 VentaDetalle detalle = venta.getDetalles().get(i);
                                         %>
                                         <tr>
-                                            <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
+                                            <td style="display:none;">
+                                                <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
+                                            </td>
                                             <td>
                                                 <select class="form-select" name="idProducto" onchange="calcularSubtotal(this)" required>
                                                     <option value="">Seleccionar...</option>

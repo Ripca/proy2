@@ -91,6 +91,9 @@
 - [x] Rutas correctas en menú
 - [x] URLs correctas en servlets
 - [x] Imports correctos
+- [x] Servlets registrados en web.xml
+- [x] Página de bienvenida apunta a index.jsp
+- [x] Error 404 SOLUCIONADO
 
 ---
 
