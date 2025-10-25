@@ -3,47 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/list_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/list.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/form.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/form_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/form_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/dao/ProductoDAO.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/form_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/filters/JWTAuthFilter.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/dao/CompraDAO.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/CompraServlet.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/utils/JWTUtil.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/LoginServlet.java</file>
             <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/dao/VentaDAO.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/models/Producto.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/VentaServlet.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/ClienteServlet.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/ProductoServlet.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/reportes/ReporteServlet.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/config/DatabaseConnection.java</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/dashboard.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/conf/MANIFEST.MF</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/web.xml</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/dashboard_content.jsp</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/form_content.jsp</file>
             <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/form_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/form.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/form_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/list_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/list.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/productos/list_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/list_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/view.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/view_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/ventas/view_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/list_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/list_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/view_content.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/view_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/includes/template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/form_template.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/form.jsp</file>
-            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/web/WEB-INF/views/compras/list.jsp</file>
+            <file>file:/C:/Users/VELA/Desktop/ProyectoFinalPro/proy2/SistemaEmpresa/src/java/com/sistemaempresa/servlets/VentaServlet.java</file>
         </group>
     </open-files>
 </project-private>

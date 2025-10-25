@@ -253,9 +253,9 @@ public class ProductoServlet extends HttpServlet {
         json.append("\"idProducto\":").append(p.getIdProducto()).append(",");
         json.append("\"producto\":\"").append(escapeJson(p.getProducto())).append("\",");
         json.append("\"existencia\":").append(p.getExistencia()).append(",");
-        json.append("\"precioCosto\":").append(p.getPrecioCosto()).append(",");
+        json.append("\"precio_costo\":").append(p.getPrecioCosto()).append(",");
         // --- aquí estaba el error: no pongas comillas para números ---
-        json.append("\"precioVenta\":").append(p.getPrecioVenta());
+        json.append("\"precio_venta\":").append(p.getPrecioVenta());
         json.append("}");
         if (i < productos.size() - 1) json.append(",");
     }

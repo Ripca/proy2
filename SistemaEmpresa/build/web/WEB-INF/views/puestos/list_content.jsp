@@ -39,6 +39,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Puesto</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,7 +52,12 @@
                         <td>
                             <strong><%= puesto.getPuesto() %></strong>
                         </td>
-                                         </tr>
+                        <td>
+                            <a href="PuestoServlet?action=edit&id=<%= puesto.getIdPuesto() %>" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
                     <%
                             }
                         }

@@ -39,6 +39,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Marca</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +51,11 @@
                         <td><%= marca.getIdMarca() %></td>
                         <td>
                             <strong><%= marca.getMarca() %></strong>
+                        </td>
+                        <td>
+                            <a href="MarcaServlet?action=edit&id=<%= marca.getIdMarca() %>" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
                         </td>
                     </tr>
                     <%

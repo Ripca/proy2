@@ -246,9 +246,23 @@
         const fila = document.createElement('tr');
         const subtotal = producto.precio_costo * 1;
 
+        // IMPORTANTE: Primera celda con campos ocultos para el servidor
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
-        tdId.textContent = producto.id_producto;
+
+        // Input oculto para idProducto (REQUERIDO para el servidor)
+        const inputIdProducto = document.createElement('input');
+        inputIdProducto.type = 'hidden';
+        inputIdProducto.name = 'idProducto';
+        inputIdProducto.value = producto.id_producto;
+        tdId.appendChild(inputIdProducto);
+
+        // Input oculto para precioCostoUnitario (REQUERIDO para el servidor)
+        const inputPrecioOculto = document.createElement('input');
+        inputPrecioOculto.type = 'hidden';
+        inputPrecioOculto.name = 'precioCostoUnitario';
+        inputPrecioOculto.value = producto.precio_costo;
+        tdId.appendChild(inputPrecioOculto);
 
         const tdNombre = document.createElement('td');
         tdNombre.textContent = producto.producto;
@@ -257,6 +271,7 @@
         const inputCantidad = document.createElement('input');
         inputCantidad.type = 'number';
         inputCantidad.className = 'form-control form-control-sm cantidad';
+        inputCantidad.name = 'cantidad';
         inputCantidad.value = '1';
         inputCantidad.min = '1';
         inputCantidad.max = producto.existencia || 999999;
@@ -299,6 +314,7 @@
         fila.appendChild(tdAccion);
 
         table.appendChild(fila);
+        console.log('DEBUG: Producto agregado - idProducto: ' + producto.id_producto + ', precio: ' + producto.precio_costo);
         actualizarTotales();
     }
 
@@ -310,9 +326,14 @@
     function actualizarSubtotal(input) {
         const fila = input.closest('tr');
         const cantidad = parseFloat(input.value) || 0;
-        const precioCosto = parseFloat(fila.cells[4].textContent.replace('Q. ', ''));
+
+        // Obtener el precio del input oculto precioCostoUnitario
+        const precioInput = fila.querySelector('input[name="precioCostoUnitario"]');
+        const precioCosto = precioInput ? parseFloat(precioInput.value) : 0;
+
         const subtotal = cantidad * precioCosto;
         fila.querySelector('.subtotal').textContent = 'Q. ' + subtotal.toFixed(2);
+        console.log('DEBUG actualizarSubtotal: cantidad=' + cantidad + ', precio=' + precioCosto + ', subtotal=' + subtotal);
         actualizarTotales();
     }
 
@@ -448,7 +469,7 @@
                         const tdExistencia = document.createElement('td');
                         tdExistencia.textContent = producto.existencia || 0;
                         const tdPrecio = document.createElement('td');
-                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioCosto).toFixed(2);
+                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
                         const tdAccion = document.createElement('td');
                         const btn = document.createElement('button');
                         btn.type = 'button';
@@ -500,9 +521,30 @@
                 const precio = <%= detalle.getPrecioCostoUnitario() %>;
                 const subtotal = cantidad * precio;
 
+                // IMPORTANTE: Primera celda con campos ocultos para el servidor
                 const tdId = document.createElement('td');
                 tdId.style.display = 'none';
-                tdId.textContent = '<%= detalle.getIdProducto() %>';
+
+                // Input oculto para idCompraDetalle (para identificar detalles existentes)
+                const inputIdCompraDetalle = document.createElement('input');
+                inputIdCompraDetalle.type = 'hidden';
+                inputIdCompraDetalle.name = 'idCompraDetalle';
+                inputIdCompraDetalle.value = '<%= detalle.getIdCompraDetalle() %>';
+                tdId.appendChild(inputIdCompraDetalle);
+
+                // Input oculto para idProducto
+                const inputIdProducto = document.createElement('input');
+                inputIdProducto.type = 'hidden';
+                inputIdProducto.name = 'idProducto';
+                inputIdProducto.value = '<%= detalle.getIdProducto() %>';
+                tdId.appendChild(inputIdProducto);
+
+                // Input oculto para precioCostoUnitario
+                const inputPrecio = document.createElement('input');
+                inputPrecio.type = 'hidden';
+                inputPrecio.name = 'precioCostoUnitario';
+                inputPrecio.value = precio;
+                tdId.appendChild(inputPrecio);
 
                 const tdNombre = document.createElement('td');
                 tdNombre.textContent = '<%= detalle.getNombreProducto() != null ? detalle.getNombreProducto() : "Producto" %>';
@@ -511,6 +553,7 @@
                 const inputCantidad = document.createElement('input');
                 inputCantidad.type = 'number';
                 inputCantidad.className = 'form-control form-control-sm cantidad';
+                inputCantidad.name = 'cantidad';
                 inputCantidad.value = cantidad;
                 inputCantidad.min = '1';
                 inputCantidad.addEventListener('change', function() {
@@ -583,48 +626,27 @@
                 return;
             }
 
-            let detalleIndex = 0;
-            <% if (esEdicion && detalles != null && !detalles.isEmpty()) { %>
-                const detallesOriginales = <%= detalles.size() %>;
-            <% } else { %>
-                const detallesOriginales = 0;
-            <% } %>
-
+            // DEBUG: Verificar que cada fila tenga los inputs ocultos correctos
+            let filasValidas = 0;
             filas.forEach((fila, index) => {
-                const idProducto = fila.cells[0].textContent;
-                const cantidad = fila.querySelector('.cantidad').value;
-                const precioCosto = fila.cells[4].textContent.replace('Q. ', '');
+                const idProductoInput = fila.querySelector('input[name="idProducto"]');
+                const cantidadInput = fila.querySelector('input[name="cantidad"]');
+                const precioInput = fila.querySelector('input[name="precioCostoUnitario"]');
 
-                const input1 = document.createElement('input');
-                input1.type = 'hidden';
-                input1.name = 'idProducto';
-                input1.value = idProducto;
-                this.appendChild(input1);
-
-                const input2 = document.createElement('input');
-                input2.type = 'hidden';
-                input2.name = 'cantidad';
-                input2.value = cantidad;
-                this.appendChild(input2);
-
-                const input3 = document.createElement('input');
-                input3.type = 'hidden';
-                input3.name = 'precioCostoUnitario';
-                input3.value = precioCosto;
-                this.appendChild(input3);
-
-                // Si es edición y este es un detalle existente, agregar su ID
-                <% if (esEdicion && detalles != null && !detalles.isEmpty()) { %>
-                    if (index < detallesOriginales) {
-                        const detalleIds = [<%= detalles.stream().map(d -> d.getIdCompraDetalle()).map(String::valueOf).collect(java.util.stream.Collectors.joining(",")) %>];
-                        const input4 = document.createElement('input');
-                        input4.type = 'hidden';
-                        input4.name = 'idCompraDetalle';
-                        input4.value = detalleIds[index];
-                        this.appendChild(input4);
-                    }
-                <% } %>
+                if (idProductoInput && idProductoInput.value && idProductoInput.value.trim() !== '') {
+                    filasValidas++;
+                    console.log('DEBUG Fila ' + index + ': idProducto=' + idProductoInput.value + ', cantidad=' + (cantidadInput ? cantidadInput.value : 'N/A') + ', precio=' + (precioInput ? precioInput.value : 'N/A'));
+                } else {
+                    console.warn('DEBUG: Fila ' + index + ' sin idProducto válido, será ignorada');
+                }
             });
+
+            if (filasValidas === 0) {
+                alert('No hay productos válidos para guardar');
+                return;
+            }
+
+            console.log('DEBUG: Total de filas válidas: ' + filasValidas);
             this.submit();
         });
 

@@ -469,7 +469,7 @@
                         const tdExistencia = document.createElement('td');
                         tdExistencia.textContent = producto.existencia || 0;
                         const tdPrecio = document.createElement('td');
-                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precioCosto).toFixed(2);
+                        tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_costo).toFixed(2);
                         const tdAccion = document.createElement('td');
                         const btn = document.createElement('button');
                         btn.type = 'button';
