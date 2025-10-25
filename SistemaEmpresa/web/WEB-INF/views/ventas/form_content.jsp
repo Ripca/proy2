@@ -166,8 +166,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (esEdicion && detalles != null) { 
-                                    for (VentaDetalle detalle : detalles) { 
+                                <% if (esEdicion && detalles != null) {
+                                    for (VentaDetalle detalle : detalles) {
+                                        System.out.println("DEBUG form_content.jsp - Detalle idVentaDetalle: " + detalle.getIdVentaDetalle() + ", idProducto: " + detalle.getIdProducto());
                                         // Buscar el producto completo para obtener existencias actuales
                                         int existenciasActuales = 0;
                                         for (Producto producto : productos) {
@@ -178,16 +179,22 @@
                                         }
                                 %>
                                     <tr>
-                                        <td style="display:none;"><%= detalle.getIdProducto() %></td>
+                                        <td style="display:none;">
+                                            <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
+                                            <input type="hidden" name="idProducto" value="<%= detalle.getIdProducto() %>">
+                                        </td>
                                         <td><%= detalle.getNombreProducto() %></td>
                                         <td>
-                                            <input type="number" class="form-control form-control-sm cantidad" 
-                                                   value="<%= detalle.getCantidad() %>" min="1" 
+                                            <input type="number" class="form-control form-control-sm cantidad" name="cantidad"
+                                                   value="<%= detalle.getCantidad() %>" min="1"
                                                    max="<%= existenciasActuales + Integer.parseInt(detalle.getCantidad()) %>"
                                                    data-existencia="<%= existenciasActuales %>">
                                         </td>
                                         <td><%= existenciasActuales %></td>
-                                        <td>Q. <%= String.format("%.2f", detalle.getPrecioUnitario()) %></td>
+                                        <td>
+                                            <input type="hidden" name="precioUnitario" value="<%= detalle.getPrecioUnitario() %>">
+                                            Q. <%= String.format("%.2f", detalle.getPrecioUnitario()) %>
+                                        </td>
                                         <td class="subtotal">Q. <%= String.format("%.2f", detalle.getSubtotal()) %></td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaProducto(this)">
@@ -590,11 +597,24 @@
             }
             
             // Limpiar inputs ocultos previos
-            document.querySelectorAll('input[name="idProducto"], input[name="cantidad"], input[name="precioUnitario"]').forEach(input => {
-                input.remove();
+            document.querySelectorAll('input[name="idProducto"], input[name="cantidad"], input[name="precioUnitario"], input[name="idVentaDetalle"]').forEach(input => {
+                if (!input.closest('tr')) { // Solo remover los que están fuera de las filas
+                    input.remove();
+                }
             });
-            
+
             filas.forEach((fila) => {
+                // Obtener el idVentaDetalle si existe (para edición)
+                const idVentaDetalleInput = fila.querySelector('input[name="idVentaDetalle"]');
+                if (idVentaDetalleInput) {
+                    const inputIdVentaDetalle = document.createElement('input');
+                    inputIdVentaDetalle.type = 'hidden';
+                    inputIdVentaDetalle.name = 'idVentaDetalle';
+                    inputIdVentaDetalle.value = idVentaDetalleInput.value;
+                    this.appendChild(inputIdVentaDetalle);
+                    console.log('DEBUG: Agregando idVentaDetalle: ' + inputIdVentaDetalle.value);
+                }
+
                 const input1 = document.createElement('input');
                 input1.type = 'hidden';
                 input1.name = 'idProducto';
