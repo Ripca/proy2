@@ -100,16 +100,21 @@ public class ReporteServlet extends HttpServlet {
             HashMap<String, Object> parametros = new HashMap<>();
             parametros.put("titulo", titulo);
 
-            // 5. Generar reporte
+            // 5. Compilar el reporte JRXML a JasperReport
+            System.out.println("Compilando JRXML...");
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+            System.out.println("JRXML compilado OK");
+
+            // 6. Generar reporte
             System.out.println("Generando JasperPrint...");
-            JasperPrint jasperPrint = JasperFillManager.fillReport(reportStream, parametros, conn);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, conn);
             System.out.println("JasperPrint generado OK");
 
-            // 6. Configurar respuesta
+            // 7. Configurar respuesta
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 
-            // 7. Exportar a PDF
+            // 8. Exportar a PDF
             OutputStream out = response.getOutputStream();
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
             out.flush();

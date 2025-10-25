@@ -173,13 +173,22 @@ public class CompraServlet extends HttpServlet {
                     String cantidadStr = cantidades != null && i < cantidades.length ? cantidades[i].trim() : "";
                     String precioStr = precios != null && i < precios.length ? precios[i].trim() : "";
 
-                    if (!idProductoStr.isEmpty() && !cantidadStr.isEmpty() && !precioStr.isEmpty()) {
-                        CompraDetalle detalle = new CompraDetalle();
-                        detalle.setIdProducto(Integer.parseInt(idProductoStr));
-                        detalle.setCantidad(Integer.parseInt(cantidadStr));
-                        detalle.setPrecioCostoUnitario(Double.parseDouble(precioStr));
-                        compra.agregarDetalle(detalle);
-                        System.out.println("DEBUG - Detalle agregado: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
+                    // Validar que no sean "undefined" ni valores vacíos
+                    if (!idProductoStr.isEmpty() && !cantidadStr.isEmpty() && !precioStr.isEmpty() &&
+                        !"undefined".equals(idProductoStr) && !"undefined".equals(cantidadStr) && !"undefined".equals(precioStr)) {
+                        try {
+                            CompraDetalle detalle = new CompraDetalle();
+                            detalle.setIdProducto(Integer.parseInt(idProductoStr));
+                            detalle.setCantidad(Integer.parseInt(cantidadStr));
+                            detalle.setPrecioCostoUnitario(Double.parseDouble(precioStr));
+                            compra.agregarDetalle(detalle);
+                            System.out.println("DEBUG - Detalle agregado: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
+                        } catch (NumberFormatException e) {
+                            System.out.println("DEBUG - Error parseando detalle " + i + ": " + e.getMessage());
+                            System.out.println("DEBUG - Valores: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
+                        }
+                    } else {
+                        System.out.println("DEBUG - Saltando fila " + i + " por valores inválidos: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
                     }
                 }
             }
@@ -209,7 +218,14 @@ public class CompraServlet extends HttpServlet {
         try {
             int idCompra = Integer.parseInt(request.getParameter("idCompra"));
             int noOrdenCompra = Integer.parseInt(request.getParameter("noOrdenCompra"));
-            LocalDate fechaOrden = LocalDate.parse(request.getParameter("fechaOrden"));
+
+            String fechaStr = request.getParameter("fechaOrden");
+            if (fechaStr == null || fechaStr.trim().isEmpty()) {
+                response.sendRedirect("CompraServlet?error=Debe ingresar la fecha de la orden");
+                return;
+            }
+            LocalDate fechaOrden = LocalDate.parse(fechaStr);
+
             int idProveedor = Integer.parseInt(request.getParameter("idProveedor"));
 
             Compra compra = new Compra(noOrdenCompra, fechaOrden, idProveedor);
@@ -221,20 +237,43 @@ public class CompraServlet extends HttpServlet {
             String[] precios = request.getParameterValues("precioCostoUnitario");
             String[] detalleIds = request.getParameterValues("idCompraDetalle");
 
+            System.out.println("DEBUG - Actualizando compra: idCompra=" + idCompra + ", noOrden=" + noOrdenCompra + ", fecha=" + fechaOrden + ", idProveedor=" + idProveedor);
+            System.out.println("DEBUG - idProductos: " + java.util.Arrays.toString(productosIds));
+            System.out.println("DEBUG - cantidades: " + java.util.Arrays.toString(cantidades));
+            System.out.println("DEBUG - precios: " + java.util.Arrays.toString(precios));
+            System.out.println("DEBUG - detalleIds: " + java.util.Arrays.toString(detalleIds));
+
             if (productosIds != null && cantidades != null && precios != null) {
                 for (int i = 0; i < productosIds.length; i++) {
-                    if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
-                        CompraDetalle detalle = new CompraDetalle();
+                    String idProductoStr = productosIds[i] != null ? productosIds[i].trim() : "";
+                    String cantidadStr = cantidades != null && i < cantidades.length ? cantidades[i].trim() : "";
+                    String precioStr = precios != null && i < precios.length ? precios[i].trim() : "";
 
-                        // Si existe idCompraDetalle, es un detalle existente
-                        if (detalleIds != null && i < detalleIds.length && !detalleIds[i].isEmpty()) {
-                            detalle.setIdCompraDetalle(Integer.parseInt(detalleIds[i]));
+                    // Validar que no sean "undefined" ni valores vacíos
+                    if (!idProductoStr.isEmpty() && !cantidadStr.isEmpty() && !precioStr.isEmpty() &&
+                        !"undefined".equals(idProductoStr) && !"undefined".equals(cantidadStr) && !"undefined".equals(precioStr)) {
+                        try {
+                            CompraDetalle detalle = new CompraDetalle();
+
+                            // Si existe idCompraDetalle, es un detalle existente
+                            if (detalleIds != null && i < detalleIds.length && detalleIds[i] != null) {
+                                String idDetalleStr = detalleIds[i].trim();
+                                if (!idDetalleStr.isEmpty() && !"undefined".equals(idDetalleStr)) {
+                                    detalle.setIdCompraDetalle(Integer.parseInt(idDetalleStr));
+                                }
+                            }
+
+                            detalle.setIdProducto(Integer.parseInt(idProductoStr));
+                            detalle.setCantidad(Integer.parseInt(cantidadStr));
+                            detalle.setPrecioCostoUnitario(Double.parseDouble(precioStr));
+                            compra.agregarDetalle(detalle);
+                            System.out.println("DEBUG - Detalle agregado: idCompraDetalle=" + detalle.getIdCompraDetalle() + ", idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
+                        } catch (NumberFormatException e) {
+                            System.out.println("DEBUG - Error parseando detalle " + i + ": " + e.getMessage());
+                            System.out.println("DEBUG - Valores: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
                         }
-
-                        detalle.setIdProducto(Integer.parseInt(productosIds[i]));
-                        detalle.setCantidad(Integer.parseInt(cantidades[i]));
-                        detalle.setPrecioCostoUnitario(Double.parseDouble(precios[i]));
-                        compra.agregarDetalle(detalle);
+                    } else {
+                        System.out.println("DEBUG - Saltando fila " + i + " por valores inválidos: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
                     }
                 }
             }
