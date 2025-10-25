@@ -380,6 +380,154 @@ public class VentaDAO {
     */
     
     
+    
+    
+    
+    public boolean actualizar(Venta venta) {
+    Connection conn = null;
+    try {
+        conn = DatabaseConnection.getConnection();
+        conn.setAutoCommit(false); // Iniciar transacción
+
+        // 1️⃣ Actualizar tabla principal 'ventas'
+        String sqlVenta = """
+            UPDATE ventas 
+            SET noFactura = ?, serie = ?, fechaFactura = ?, idCliente = ?, idEmpleado = ?
+            WHERE idVenta = ?
+        """;
+
+        try (PreparedStatement stmtVenta = conn.prepareStatement(sqlVenta)) {
+            stmtVenta.setInt(1, venta.getNoFactura());
+            stmtVenta.setString(2, venta.getSerie());
+            stmtVenta.setDate(3, java.sql.Date.valueOf(venta.getFechaFactura()));
+            stmtVenta.setInt(4, venta.getIdCliente());
+            stmtVenta.setInt(5, venta.getIdEmpleado());
+            stmtVenta.setInt(6, venta.getIdVenta());
+            if (stmtVenta.executeUpdate() == 0) {
+                conn.rollback();
+                return false;
+            }
+        }
+
+        // 2️⃣ Procesar detalles de la venta
+        if (venta.getDetalles() != null && !venta.getDetalles().isEmpty()) {
+
+            String sqlDetallePrevio = """
+                SELECT idProducto, cantidad 
+                FROM ventas_detalle 
+                WHERE idVenta_detalle = ?
+            """;
+
+            String sqlActualizarDetalle = """
+                UPDATE ventas_detalle 
+                SET idProducto = ?, cantidad = ?, precio_unitario = ?
+                WHERE idVenta = ? AND idVenta_detalle = ?
+            """;
+
+            String sqlActualizarExistencia = """
+                UPDATE productos 
+                SET existencia = existencia + ? 
+                WHERE idProducto = ?
+            """;
+
+            try (
+                PreparedStatement stmtPrevio = conn.prepareStatement(sqlDetallePrevio);
+                PreparedStatement stmtDetalle = conn.prepareStatement(sqlActualizarDetalle);
+                PreparedStatement stmtStock = conn.prepareStatement(sqlActualizarExistencia)
+            ) {
+
+                for (VentaDetalle detalle : venta.getDetalles()) {
+                    int idVentaDetalle = detalle.getIdVentaDetalle();
+                    int nuevoIdProducto = detalle.getIdProducto();
+                    int nuevaCantidad = Integer.parseInt(detalle.getCantidad());
+                    double nuevoPrecio = detalle.getPrecioUnitario();
+
+                    // 🔹 Obtener el estado previo del detalle
+                    int idProductoAnterior = 0;
+                    int cantidadAnterior = 0;
+
+                    stmtPrevio.setInt(1, idVentaDetalle);
+                    try (ResultSet rs = stmtPrevio.executeQuery()) {
+                        if (rs.next()) {
+                            idProductoAnterior = rs.getInt("idProducto");
+                            cantidadAnterior = rs.getInt("cantidad");
+                        } else {
+                            // Si no existe, significa que es un nuevo detalle (opcional)
+                            idProductoAnterior = nuevoIdProducto;
+                            cantidadAnterior = 0;
+                        }
+                    }
+
+                    // 🔹 Caso A: Cambió el producto
+                    if (idProductoAnterior != nuevoIdProducto) {
+                        // 1. Devolver existencia al producto anterior
+                        stmtStock.setInt(1, cantidadAnterior);  // +cantidad anterior
+                        stmtStock.setInt(2, idProductoAnterior);
+                        stmtStock.executeUpdate();
+
+                        // 2. Descontar del nuevo producto
+                        stmtStock.setInt(1, -nuevaCantidad);
+                        stmtStock.setInt(2, nuevoIdProducto);
+                        stmtStock.executeUpdate();
+
+                    } else {
+                        // 🔹 Caso B: Mismo producto, pero cambió cantidad
+                        int diferencia = nuevaCantidad - cantidadAnterior;
+
+                        if (diferencia != 0) {
+                            // Si diferencia > 0 → vendió más → restar stock
+                            // Si diferencia < 0 → vendió menos → devolver stock
+                            stmtStock.setInt(1, -diferencia);
+                            stmtStock.setInt(2, nuevoIdProducto);
+                            stmtStock.executeUpdate();
+                        }
+                    }
+
+                    // 🔹 Actualizar la fila del detalle
+                    stmtDetalle.setInt(1, nuevoIdProducto);
+                    stmtDetalle.setInt(2, nuevaCantidad);
+                    stmtDetalle.setDouble(3, nuevoPrecio);
+                    stmtDetalle.setInt(4, venta.getIdVenta());
+                    stmtDetalle.setInt(5, idVentaDetalle);
+                    int updated = stmtDetalle.executeUpdate();
+
+                    if (updated == 0) {
+                        throw new SQLException("No se encontró el detalle con idVentaDetalle=" + idVentaDetalle);
+                    }
+                }
+            }
+        }
+
+        conn.commit();
+        return true;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+
+    } finally {
+        if (conn != null) {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+    
+    
+    
+    /*
     public boolean actualizar(Venta venta) {
     Connection conn = null;
     try {
@@ -452,7 +600,7 @@ public class VentaDAO {
             }
         }
     }
-}
+}  */
     
     /**
      * Elimina una venta y sus detalles

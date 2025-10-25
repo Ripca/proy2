@@ -6,9 +6,11 @@
     Compra compra = (Compra) request.getAttribute("compra");
     List<Proveedor> proveedores = (List<Proveedor>) request.getAttribute("proveedores");
     List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+    List<CompraDetalle> detalles = (List<CompraDetalle>) request.getAttribute("detalles");
 
     if (proveedores == null) proveedores = new java.util.ArrayList<>();
     if (productos == null) productos = new java.util.ArrayList<>();
+    if (detalles == null) detalles = new java.util.ArrayList<>();
 
     boolean esEdicion = compra != null;
     String titulo = esEdicion ? "Editar Compra" : "Nueva Compra";
@@ -40,7 +42,7 @@
             <div class="card-body">
                 <form action="CompraServlet" method="post" id="formCompra">
                     <input type="hidden" name="action" value="<%= action %>">
-                    <input type="hidden" name="idProveedor" id="hiddenIdProveedor" value="">
+                    <input type="hidden" name="idProveedor" id="hiddenIdProveedor" value="<%= esEdicion ? compra.getIdProveedor() : "" %>">
                     <% if (esEdicion) { %>
                         <input type="hidden" name="idCompra" value="<%= compra.getIdCompra() %>">
                     <% } %>
@@ -51,7 +53,8 @@
                             <label class="form-label fw-bold">Proveedor <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-truck"></i></span>
-                                <input type="text" id="txtNitProveedor" class="form-control" placeholder="Buscar por NIT" autocomplete="off">
+                                <input type="text" id="txtNitProveedor" class="form-control" placeholder="Buscar por NIT" autocomplete="off"
+                                       value="<%= esEdicion && compra.getNombreProveedor() != null ? "" : "" %>">
                                 <button type="button" class="btn btn-outline-primary" id="btnBuscarProveedor">
                                     <i class="fas fa-search"></i> Buscar
                                 </button>
@@ -65,9 +68,10 @@
                             <label class="form-label fw-bold">Nombre Proveedor</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                <input type="text" id="txtNombreProveedor" class="form-control" disabled>
+                                <input type="text" id="txtNombreProveedor" class="form-control" disabled
+                                       value="<%= esEdicion && compra.getNombreProveedor() != null ? compra.getNombreProveedor() : "" %>">
                             </div>
-                            <span id="lblIdProveedor" style="display:none;"></span>
+                            <span id="lblIdProveedor" style="display:none;"><%= esEdicion ? compra.getIdProveedor() : "" %></span>
                         </div>
                     </div>
 
@@ -76,7 +80,7 @@
                             <label class="form-label fw-bold">No. Orden <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-                                <input type="number" id="txtNoOrden" name="noOrden" class="form-control"
+                                <input type="number" id="txtNoOrden" name="noOrdenCompra" class="form-control"
                                        value="<%= esEdicion ? String.valueOf(compra.getNoOrdenCompra()) : "" %>" required>
                             </div>
                         </div>
@@ -84,7 +88,7 @@
                             <label class="form-label fw-bold">Fecha Orden <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <input type="date" id="txtFecha" name="fecha" class="form-control"
+                                <input type="date" id="txtFecha" name="fechaOrden" class="form-control"
                                        value="<%= esEdicion && compra.getFechaOrden() != null ? compra.getFechaOrden().toString() : "" %>" required>
                             </div>
                         </div>
@@ -92,7 +96,8 @@
                             <label class="form-label fw-bold">Teléfono Proveedor</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="text" id="txtTelefonoProveedor" class="form-control" disabled>
+                                <input type="text" id="txtTelefonoProveedor" class="form-control" disabled
+                                       value="<%= esEdicion && compra.getTelefonoProveedor() != null ? compra.getTelefonoProveedor() : "" %>">
                             </div>
                         </div>
                     </div>
@@ -485,6 +490,67 @@
         if (modal) modal.hide();
     }
 
+    function cargarDetallesCompra() {
+        <% if (esEdicion && detalles != null && !detalles.isEmpty()) { %>
+            const table = document.querySelector('#grvProductosCompra tbody');
+
+            <% for (CompraDetalle detalle : detalles) { %>
+                const fila = document.createElement('tr');
+                const cantidad = <%= detalle.getCantidad() %>;
+                const precio = <%= detalle.getPrecioCostoUnitario() %>;
+                const subtotal = cantidad * precio;
+
+                const tdId = document.createElement('td');
+                tdId.style.display = 'none';
+                tdId.textContent = '<%= detalle.getIdProducto() %>';
+
+                const tdNombre = document.createElement('td');
+                tdNombre.textContent = '<%= detalle.getNombreProducto() != null ? detalle.getNombreProducto() : "Producto" %>';
+
+                const tdCantidad = document.createElement('td');
+                const inputCantidad = document.createElement('input');
+                inputCantidad.type = 'number';
+                inputCantidad.className = 'form-control form-control-sm cantidad';
+                inputCantidad.value = cantidad;
+                inputCantidad.min = '1';
+                inputCantidad.addEventListener('change', function() {
+                    actualizarSubtotal(this);
+                });
+                tdCantidad.appendChild(inputCantidad);
+
+                const tdPrecio = document.createElement('td');
+                tdPrecio.textContent = 'Q. ' + precio.toFixed(2);
+
+                const tdSubtotal = document.createElement('td');
+                tdSubtotal.className = 'subtotal';
+                tdSubtotal.textContent = 'Q. ' + subtotal.toFixed(2);
+
+                const tdAccion = document.createElement('td');
+                const btnEliminar = document.createElement('button');
+                btnEliminar.type = 'button';
+                btnEliminar.className = 'btn btn-sm btn-danger';
+                btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+                btnEliminar.addEventListener('click', function() { eliminarFilaProducto(this); });
+                tdAccion.appendChild(btnEliminar);
+
+                const tdExistencias = document.createElement('td');
+                tdExistencias.textContent = '-';
+
+                fila.appendChild(tdId);
+                fila.appendChild(tdNombre);
+                fila.appendChild(tdCantidad);
+                fila.appendChild(tdExistencias);
+                fila.appendChild(tdPrecio);
+                fila.appendChild(tdSubtotal);
+                fila.appendChild(tdAccion);
+
+                table.appendChild(fila);
+            <% } %>
+
+            actualizarTotales();
+        <% } %>
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('btnBuscarProveedor').addEventListener('click', buscarProveedor);
         document.getElementById('btnBuscarProducto').addEventListener('click', buscarProducto);
@@ -516,7 +582,15 @@
                 alert('Debe agregar al menos un producto');
                 return;
             }
-            filas.forEach((fila) => {
+
+            let detalleIndex = 0;
+            <% if (esEdicion && detalles != null && !detalles.isEmpty()) { %>
+                const detallesOriginales = <%= detalles.size() %>;
+            <% } else { %>
+                const detallesOriginales = 0;
+            <% } %>
+
+            filas.forEach((fila, index) => {
                 const idProducto = fila.cells[0].textContent;
                 const cantidad = fila.querySelector('.cantidad').value;
                 const precioCosto = fila.cells[4].textContent.replace('Q. ', '');
@@ -538,10 +612,24 @@
                 input3.name = 'precioCostoUnitario';
                 input3.value = precioCosto;
                 this.appendChild(input3);
+
+                // Si es edición y este es un detalle existente, agregar su ID
+                <% if (esEdicion && detalles != null && !detalles.isEmpty()) { %>
+                    if (index < detallesOriginales) {
+                        const detalleIds = [<%= detalles.stream().map(d -> d.getIdCompraDetalle()).map(String::valueOf).collect(java.util.stream.Collectors.joining(",")) %>];
+                        const input4 = document.createElement('input');
+                        input4.type = 'hidden';
+                        input4.name = 'idCompraDetalle';
+                        input4.value = detalleIds[index];
+                        this.appendChild(input4);
+                    }
+                <% } %>
             });
             this.submit();
         });
 
+        // Cargar detalles si es edición
+        cargarDetallesCompra();
         actualizarTotales();
     });
 </script>
