@@ -125,13 +125,6 @@
                         </a>
                     </div>
 
-                    <div class="col-lg-3 col-md-6 mb-3">
-                        <a href="ReporteListServlet" class="btn btn-outline-primary w-100 py-3">
-                            <i class="fas fa-chart-bar fa-2x d-block mb-2"></i>
-                            Reportes
-                        </a>
-                    </div>
-
                     
                     
                 </div>

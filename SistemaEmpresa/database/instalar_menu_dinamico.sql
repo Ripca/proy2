@@ -34,7 +34,7 @@ INSERT INTO MenuItems (titulo, url, icono, padre_id, orden, activo) VALUES
 ('Compras', NULL, 'fas fa-truck', NULL, 3, TRUE),
 
 -- 4. Reportes (Nivel 1)
-('Reportes', NULL, 'fas fa-chart-bar', NULL, 4, TRUE);
+('Reportes', 'ReporteListServlet', 'fas fa-chart-bar', NULL, 4, TRUE);
 
 -- Insertar elementos de segundo nivel
 INSERT INTO MenuItems (titulo, url, icono, padre_id, orden, activo) VALUES

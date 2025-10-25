@@ -45,7 +45,7 @@ public class ReporteServlet extends HttpServlet {
             String titulo = "Reporte - Sistema Empresa";
 
             if ("inventario".equals(tipoReporte)) {
-                reportName = "miReporte.jrxml";
+                reportName = "reporte2.jrxml";
                 fileName = "reporte_inventario.pdf";
                 titulo = "Reporte de Inventario de Productos";
             } else if ("productos".equals(tipoReporte)) {
