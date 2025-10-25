@@ -56,9 +56,6 @@
                             <a href="MarcaServlet?action=edit&id=<%= marca.getIdMarca() %>" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <a href="MarcaServlet?action=delete&id=<%= marca.getIdMarca() %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
                         </td>
                     </tr>
                     <%

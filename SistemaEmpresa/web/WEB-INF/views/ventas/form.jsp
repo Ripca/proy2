@@ -138,12 +138,11 @@
                                         <% if (esEdicion && venta.tieneDetalles()) {
                                             for (int i = 0; i < venta.getDetalles().size(); i++) {
                                                 VentaDetalle detalle = venta.getDetalles().get(i);
+                                                System.out.println("DEBUG JSP - Detalle " + i + " idVentaDetalle: " + detalle.getIdVentaDetalle());
                                         %>
                                         <tr>
-                                            <td style="display:none;">
-                                                <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
-                                            </td>
                                             <td>
+                                                <input type="hidden" name="idVentaDetalle" value="<%= detalle.getIdVentaDetalle() %>">
                                                 <select class="form-select" name="idProducto" onchange="calcularSubtotal(this)" required>
                                                     <option value="">Seleccionar...</option>
                                                     <% for (Producto producto : productos) { %>

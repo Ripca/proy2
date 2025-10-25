@@ -236,6 +236,10 @@ public class VentaServlet extends HttpServlet {
         String[] preciosUnitarios = request.getParameterValues("precioUnitario");
         String[] idVentaDetalles = request.getParameterValues("idVentaDetalle");
 
+        // Debug: Imprimir los valores recibidos
+        System.out.println("DEBUG - idVentaDetalles recibidos: " + java.util.Arrays.toString(idVentaDetalles));
+        System.out.println("DEBUG - idProductos recibidos: " + java.util.Arrays.toString(idProductos));
+
         List<VentaDetalle> detalles = new ArrayList<>();
         if (idProductos != null) {
             for (int i = 0; i < idProductos.length; i++) {
@@ -251,7 +255,9 @@ public class VentaServlet extends HttpServlet {
 
                 // Si existe idVentaDetalle, es un detalle existente que se está editando
                 if (idVentaDetalles != null && i < idVentaDetalles.length && !idVentaDetalles[i].isEmpty()) {
-                    detalle.setIdVentaDetalle(Integer.parseInt(idVentaDetalles[i]));
+                    int idVentaDetalle = Integer.parseInt(idVentaDetalles[i]);
+                    detalle.setIdVentaDetalle(idVentaDetalle);
+                    System.out.println("DEBUG - Detalle " + i + " con idVentaDetalle: " + idVentaDetalle);
                 }
 
                 detalles.add(detalle);
