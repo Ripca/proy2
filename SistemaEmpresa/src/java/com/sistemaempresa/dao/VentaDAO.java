@@ -413,26 +413,32 @@ public class VentaDAO {
         if (venta.getDetalles() != null && !venta.getDetalles().isEmpty()) {
 
             String sqlDetallePrevio = """
-                SELECT idProducto, cantidad 
-                FROM ventas_detalle 
+                SELECT idProducto, cantidad
+                FROM ventas_detalle
                 WHERE idVenta_detalle = ?
             """;
 
             String sqlActualizarDetalle = """
-                UPDATE ventas_detalle 
+                UPDATE ventas_detalle
                 SET idProducto = ?, cantidad = ?, precio_unitario = ?
                 WHERE idVenta = ? AND idVenta_detalle = ?
             """;
 
+            String sqlInsertarDetalle = """
+                INSERT INTO ventas_detalle (idVenta, idProducto, cantidad, precio_unitario)
+                VALUES (?, ?, ?, ?)
+            """;
+
             String sqlActualizarExistencia = """
-                UPDATE productos 
-                SET existencia = existencia + ? 
+                UPDATE productos
+                SET existencia = existencia + ?
                 WHERE idProducto = ?
             """;
 
             try (
                 PreparedStatement stmtPrevio = conn.prepareStatement(sqlDetallePrevio);
                 PreparedStatement stmtDetalle = conn.prepareStatement(sqlActualizarDetalle);
+                PreparedStatement stmtInsertar = conn.prepareStatement(sqlInsertarDetalle);
                 PreparedStatement stmtStock = conn.prepareStatement(sqlActualizarExistencia)
             ) {
 
@@ -442,57 +448,79 @@ public class VentaDAO {
                     int nuevaCantidad = Integer.parseInt(detalle.getCantidad());
                     double nuevoPrecio = detalle.getPrecioUnitario();
 
-                    // 🔹 Obtener el estado previo del detalle
-                    int idProductoAnterior = 0;
-                    int cantidadAnterior = 0;
+                    // 🔹 Verificar si es un detalle nuevo (sin idVentaDetalle o con valor 0)
+                    if (idVentaDetalle == 0) {
+                        // ✅ NUEVO DETALLE: Insertar
+                        System.out.println("DEBUG - Insertando nuevo detalle: idProducto=" + nuevoIdProducto + ", cantidad=" + nuevaCantidad);
+                        stmtInsertar.setInt(1, venta.getIdVenta());
+                        stmtInsertar.setInt(2, nuevoIdProducto);
+                        stmtInsertar.setInt(3, nuevaCantidad);
+                        stmtInsertar.setDouble(4, nuevoPrecio);
+                        int inserted = stmtInsertar.executeUpdate();
 
-                    stmtPrevio.setInt(1, idVentaDetalle);
-                    try (ResultSet rs = stmtPrevio.executeQuery()) {
-                        if (rs.next()) {
-                            idProductoAnterior = rs.getInt("idProducto");
-                            cantidadAnterior = rs.getInt("cantidad");
-                        } else {
-                            // Si no existe, significa que es un nuevo detalle (opcional)
-                            idProductoAnterior = nuevoIdProducto;
-                            cantidadAnterior = 0;
+                        if (inserted == 0) {
+                            throw new SQLException("Error al insertar nuevo detalle de venta");
                         }
-                    }
 
-                    // 🔹 Caso A: Cambió el producto
-                    if (idProductoAnterior != nuevoIdProducto) {
-                        // 1. Devolver existencia al producto anterior
-                        stmtStock.setInt(1, cantidadAnterior);  // +cantidad anterior
-                        stmtStock.setInt(2, idProductoAnterior);
-                        stmtStock.executeUpdate();
-
-                        // 2. Descontar del nuevo producto
+                        // Descontar del stock del nuevo producto
                         stmtStock.setInt(1, -nuevaCantidad);
                         stmtStock.setInt(2, nuevoIdProducto);
                         stmtStock.executeUpdate();
 
                     } else {
-                        // 🔹 Caso B: Mismo producto, pero cambió cantidad
-                        int diferencia = nuevaCantidad - cantidadAnterior;
+                        // ✅ DETALLE EXISTENTE: Actualizar
+                        System.out.println("DEBUG - Actualizando detalle existente: idVentaDetalle=" + idVentaDetalle);
 
-                        if (diferencia != 0) {
-                            // Si diferencia > 0 → vendió más → restar stock
-                            // Si diferencia < 0 → vendió menos → devolver stock
-                            stmtStock.setInt(1, -diferencia);
+                        // 🔹 Obtener el estado previo del detalle
+                        int idProductoAnterior = 0;
+                        int cantidadAnterior = 0;
+
+                        stmtPrevio.setInt(1, idVentaDetalle);
+                        try (ResultSet rs = stmtPrevio.executeQuery()) {
+                            if (rs.next()) {
+                                idProductoAnterior = rs.getInt("idProducto");
+                                cantidadAnterior = rs.getInt("cantidad");
+                            } else {
+                                throw new SQLException("No se encontró el detalle con idVentaDetalle=" + idVentaDetalle);
+                            }
+                        }
+
+                        // 🔹 Caso A: Cambió el producto
+                        if (idProductoAnterior != nuevoIdProducto) {
+                            // 1. Devolver existencia al producto anterior
+                            stmtStock.setInt(1, cantidadAnterior);  // +cantidad anterior
+                            stmtStock.setInt(2, idProductoAnterior);
+                            stmtStock.executeUpdate();
+
+                            // 2. Descontar del nuevo producto
+                            stmtStock.setInt(1, -nuevaCantidad);
                             stmtStock.setInt(2, nuevoIdProducto);
                             stmtStock.executeUpdate();
+
+                        } else {
+                            // 🔹 Caso B: Mismo producto, pero cambió cantidad
+                            int diferencia = nuevaCantidad - cantidadAnterior;
+
+                            if (diferencia != 0) {
+                                // Si diferencia > 0 → vendió más → restar stock
+                                // Si diferencia < 0 → vendió menos → devolver stock
+                                stmtStock.setInt(1, -diferencia);
+                                stmtStock.setInt(2, nuevoIdProducto);
+                                stmtStock.executeUpdate();
+                            }
                         }
-                    }
 
-                    // 🔹 Actualizar la fila del detalle
-                    stmtDetalle.setInt(1, nuevoIdProducto);
-                    stmtDetalle.setInt(2, nuevaCantidad);
-                    stmtDetalle.setDouble(3, nuevoPrecio);
-                    stmtDetalle.setInt(4, venta.getIdVenta());
-                    stmtDetalle.setInt(5, idVentaDetalle);
-                    int updated = stmtDetalle.executeUpdate();
+                        // 🔹 Actualizar la fila del detalle
+                        stmtDetalle.setInt(1, nuevoIdProducto);
+                        stmtDetalle.setInt(2, nuevaCantidad);
+                        stmtDetalle.setDouble(3, nuevoPrecio);
+                        stmtDetalle.setInt(4, venta.getIdVenta());
+                        stmtDetalle.setInt(5, idVentaDetalle);
+                        int updated = stmtDetalle.executeUpdate();
 
-                    if (updated == 0) {
-                        throw new SQLException("No se encontró el detalle con idVentaDetalle=" + idVentaDetalle);
+                        if (updated == 0) {
+                            throw new SQLException("No se encontró el detalle con idVentaDetalle=" + idVentaDetalle);
+                        }
                     }
                 }
             }

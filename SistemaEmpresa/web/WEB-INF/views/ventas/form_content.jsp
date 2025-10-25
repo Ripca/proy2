@@ -313,9 +313,30 @@
         const fila = document.createElement('tr');
         const subtotal = producto.precio_venta * 1;
 
+        // IMPORTANTE: Primera celda con campos ocultos para el servidor
         const tdId = document.createElement('td');
         tdId.style.display = 'none';
-        tdId.textContent = producto.idProducto;
+
+        // Input oculto para idProducto (REQUERIDO para el servidor)
+        const inputIdProducto = document.createElement('input');
+        inputIdProducto.type = 'hidden';
+        inputIdProducto.name = 'idProducto';
+        inputIdProducto.value = producto.idProducto;
+        tdId.appendChild(inputIdProducto);
+
+        // Input oculto para cantidad (REQUERIDO para el servidor)
+        const inputCantidadOculta = document.createElement('input');
+        inputCantidadOculta.type = 'hidden';
+        inputCantidadOculta.name = 'cantidad';
+        inputCantidadOculta.value = '1'; // Valor inicial
+        tdId.appendChild(inputCantidadOculta);
+
+        // Input oculto para precioUnitario (REQUERIDO para el servidor)
+        const inputPrecioOculto = document.createElement('input');
+        inputPrecioOculto.type = 'hidden';
+        inputPrecioOculto.name = 'precioUnitario';
+        inputPrecioOculto.value = producto.precio_venta;
+        tdId.appendChild(inputPrecioOculto);
 
         const tdNombre = document.createElement('td');
         tdNombre.textContent = producto.producto;
@@ -324,6 +345,7 @@
         const inputCantidad = document.createElement('input');
         inputCantidad.type = 'number';
         inputCantidad.className = 'form-control form-control-sm cantidad';
+        inputCantidad.name = 'cantidad';
         inputCantidad.value = '1';
         inputCantidad.min = '1';
         inputCantidad.max = producto.existencia || 999999;
@@ -335,6 +357,8 @@
                 alert('La cantidad no puede ser mayor a las existencias disponibles (' + existencia + ')');
                 this.value = existencia;
             }
+            // Actualizar el input oculto también
+            inputCantidadOculta.value = this.value;
             actualizarSubtotal(this);
         });
         tdCantidad.appendChild(inputCantidad);
@@ -344,6 +368,13 @@
 
         const tdPrecio = document.createElement('td');
         tdPrecio.textContent = 'Q. ' + parseFloat(producto.precio_venta).toFixed(2);
+
+        // Input oculto para precioUnitario en la celda de precio
+        const inputPrecioVisible = document.createElement('input');
+        inputPrecioVisible.type = 'hidden';
+        inputPrecioVisible.name = 'precioUnitario';
+        inputPrecioVisible.value = producto.precio_venta;
+        tdPrecio.appendChild(inputPrecioVisible);
 
         const tdSubtotal = document.createElement('td');
         tdSubtotal.className = 'subtotal';
@@ -366,6 +397,7 @@
         fila.appendChild(tdAccion);
 
         table.appendChild(fila);
+        console.log('DEBUG: Producto agregado - idProducto: ' + producto.idProducto + ', precio: ' + producto.precio_venta);
         actualizarTotales();
     }
 
