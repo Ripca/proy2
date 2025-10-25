@@ -39,12 +39,11 @@ public class PuestoServlet extends HttpServlet {
                 mostrarFormularioNuevo(request, response);
                 break;
             case "edit":
-                // Operación no permitida - información sensible
-                response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden editar.");
+                mostrarFormularioEditar(request, response);
                 break;
             case "delete":
                 // Operación no permitida - información sensible
-                response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden eliminar.");
+                response.sendRedirect("PuestoServlet?action=list&error=No permitido");
                 break;
             default:
                 listarPuestos(request, response);
@@ -57,12 +56,11 @@ public class PuestoServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String action = request.getParameter("action");
-        
+
         if ("save".equals(action)) {
             guardarPuesto(request, response);
         } else if ("update".equals(action)) {
-            // Operación no permitida - información sensible
-            response.sendRedirect("PuestoServlet?action=list&error=Operación no permitida. Los puestos no se pueden actualizar.");
+            actualizarPuesto(request, response);
         } else {
             doGet(request, response);
         }

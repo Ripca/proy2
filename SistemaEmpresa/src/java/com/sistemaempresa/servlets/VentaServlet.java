@@ -239,30 +239,58 @@ public class VentaServlet extends HttpServlet {
         // Debug: Imprimir los valores recibidos
         System.out.println("DEBUG - idVentaDetalles recibidos: " + java.util.Arrays.toString(idVentaDetalles));
         System.out.println("DEBUG - idProductos recibidos: " + java.util.Arrays.toString(idProductos));
+        System.out.println("DEBUG - cantidades recibidas: " + java.util.Arrays.toString(cantidades));
+        System.out.println("DEBUG - preciosUnitarios recibidos: " + java.util.Arrays.toString(preciosUnitarios));
 
         List<VentaDetalle> detalles = new ArrayList<>();
-        if (idProductos != null) {
+        if (idProductos != null && idProductos.length > 0) {
             for (int i = 0; i < idProductos.length; i++) {
-                int idProducto = Integer.parseInt(idProductos[i]);
-                String cantidad = cantidades[i];
-                double precioUnitario = Double.parseDouble(preciosUnitarios[i]);
+                // Validar y limpiar valores
+                String idProductoStr = idProductos[i] != null ? idProductos[i].trim() : "";
+                String cantidadStr = cantidades != null && i < cantidades.length ? cantidades[i].trim() : "";
+                String precioStr = preciosUnitarios != null && i < preciosUnitarios.length ? preciosUnitarios[i].trim() : "";
 
-                VentaDetalle detalle = new VentaDetalle();
-                detalle.setIdVenta(idVenta);
-                detalle.setIdProducto(idProducto);
-                detalle.setCantidad(cantidad);
-                detalle.setPrecioUnitario(precioUnitario);
-
-                // Si existe idVentaDetalle, es un detalle existente que se está editando
-                if (idVentaDetalles != null && i < idVentaDetalles.length && !idVentaDetalles[i].isEmpty()) {
-                    int idVentaDetalle = Integer.parseInt(idVentaDetalles[i]);
-                    detalle.setIdVentaDetalle(idVentaDetalle);
-                    System.out.println("DEBUG - Detalle " + i + " con idVentaDetalle: " + idVentaDetalle);
+                // Saltar filas vacías
+                if (idProductoStr.isEmpty() || cantidadStr.isEmpty() || precioStr.isEmpty()) {
+                    System.out.println("DEBUG - Saltando fila " + i + " por valores vacíos");
+                    continue;
                 }
 
-                detalles.add(detalle);
+                try {
+                    int idProducto = Integer.parseInt(idProductoStr);
+                    String cantidad = cantidadStr;
+                    double precioUnitario = Double.parseDouble(precioStr);
+
+                    VentaDetalle detalle = new VentaDetalle();
+                    detalle.setIdVenta(idVenta);
+                    detalle.setIdProducto(idProducto);
+                    detalle.setCantidad(cantidad);
+                    detalle.setPrecioUnitario(precioUnitario);
+
+                    // Si existe idVentaDetalle, es un detalle existente que se está editando
+                    if (idVentaDetalles != null && i < idVentaDetalles.length) {
+                        String idVentaDetalleStr = idVentaDetalles[i] != null ? idVentaDetalles[i].trim() : "";
+                        if (!idVentaDetalleStr.isEmpty()) {
+                            int idVentaDetalle = Integer.parseInt(idVentaDetalleStr);
+                            detalle.setIdVentaDetalle(idVentaDetalle);
+                            System.out.println("DEBUG - Detalle " + i + " con idVentaDetalle: " + idVentaDetalle);
+                        }
+                    }
+
+                    detalles.add(detalle);
+                    System.out.println("DEBUG - Detalle " + i + " agregado: idProducto=" + idProducto + ", cantidad=" + cantidad + ", precio=" + precioUnitario);
+                } catch (NumberFormatException e) {
+                    System.out.println("DEBUG - Error parseando detalle " + i + ": " + e.getMessage());
+                    System.out.println("DEBUG - Valores: idProducto='" + idProductoStr + "', cantidad='" + cantidadStr + "', precio='" + precioStr + "'");
+                    throw e;
+                }
             }
         }
+
+        if (detalles.isEmpty()) {
+            throw new Exception("No hay detalles válidos para la venta");
+        }
+
         venta.setDetalles(detalles);
         
         if (ventaDAO.actualizar(venta)) {

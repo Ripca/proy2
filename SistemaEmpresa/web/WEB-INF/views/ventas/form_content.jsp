@@ -604,13 +604,20 @@
             });
 
             filas.forEach((fila) => {
+                // Obtener el idProducto del input oculto en la primera celda
+                const idProductoInput = fila.querySelector('input[name="idProducto"]');
+                if (!idProductoInput || !idProductoInput.value || idProductoInput.value.trim() === '') {
+                    console.warn('DEBUG: Fila sin idProducto válido, saltando');
+                    return; // Saltar esta fila si no tiene idProducto
+                }
+
                 // Obtener el idVentaDetalle si existe (para edición)
                 const idVentaDetalleInput = fila.querySelector('input[name="idVentaDetalle"]');
-                if (idVentaDetalleInput) {
+                if (idVentaDetalleInput && idVentaDetalleInput.value && idVentaDetalleInput.value.trim() !== '') {
                     const inputIdVentaDetalle = document.createElement('input');
                     inputIdVentaDetalle.type = 'hidden';
                     inputIdVentaDetalle.name = 'idVentaDetalle';
-                    inputIdVentaDetalle.value = idVentaDetalleInput.value;
+                    inputIdVentaDetalle.value = idVentaDetalleInput.value.trim();
                     this.appendChild(inputIdVentaDetalle);
                     console.log('DEBUG: Agregando idVentaDetalle: ' + inputIdVentaDetalle.value);
                 }
@@ -618,18 +625,24 @@
                 const input1 = document.createElement('input');
                 input1.type = 'hidden';
                 input1.name = 'idProducto';
-                input1.value = fila.cells[0].textContent;
+                input1.value = idProductoInput.value.trim();
                 this.appendChild(input1);
+
+                const cantidadInput = fila.querySelector('input[name="cantidad"]');
                 const input2 = document.createElement('input');
                 input2.type = 'hidden';
                 input2.name = 'cantidad';
-                input2.value = fila.querySelector('.cantidad').value;
+                input2.value = cantidadInput ? cantidadInput.value.trim() : '';
                 this.appendChild(input2);
+
+                const precioUnitarioInput = fila.querySelector('input[name="precioUnitario"]');
                 const input3 = document.createElement('input');
                 input3.type = 'hidden';
                 input3.name = 'precioUnitario';
-                input3.value = fila.cells[4].textContent.replace('Q. ', '');
+                input3.value = precioUnitarioInput ? precioUnitarioInput.value.trim() : '';
                 this.appendChild(input3);
+
+                console.log('DEBUG: Fila procesada - idProducto: ' + input1.value + ', cantidad: ' + input2.value + ', precio: ' + input3.value);
             });
             this.submit();
         });
