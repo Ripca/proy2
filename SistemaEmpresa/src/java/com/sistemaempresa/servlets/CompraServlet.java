@@ -136,16 +136,18 @@ public class CompraServlet extends HttpServlet {
 
         try {
             // Obtener datos de la compra desde el formulario
-            int noOrdenCompra = Integer.parseInt(request.getParameter("noOrden"));
-            LocalDate fechaOrden = LocalDate.parse(request.getParameter("fecha"));
+            int noOrdenCompra = Integer.parseInt(request.getParameter("noOrdenCompra"));
 
-            // Obtener idProveedor del campo oculto lblIdProveedor
-            String idProveedorStr = request.getParameter("idProveedor");
-            if (idProveedorStr == null || idProveedorStr.isEmpty()) {
-                // Si no viene en idProveedor, intentar obtenerlo del lblIdProveedor
-                idProveedorStr = request.getParameter("lblIdProveedor");
+            // El parámetro se llama "fechaOrden", no "fecha"
+            String fechaStr = request.getParameter("fechaOrden");
+            if (fechaStr == null || fechaStr.trim().isEmpty()) {
+                response.sendRedirect("CompraServlet?error=Debe ingresar la fecha de la orden");
+                return;
             }
+            LocalDate fechaOrden = LocalDate.parse(fechaStr);
 
+            // Obtener idProveedor del campo oculto
+            String idProveedorStr = request.getParameter("idProveedor");
             if (idProveedorStr == null || idProveedorStr.isEmpty()) {
                 response.sendRedirect("CompraServlet?error=Debe seleccionar un proveedor");
                 return;
@@ -160,14 +162,24 @@ public class CompraServlet extends HttpServlet {
             String[] cantidades = request.getParameterValues("cantidad");
             String[] precios = request.getParameterValues("precioCostoUnitario");
 
+            System.out.println("DEBUG - Guardando compra: noOrden=" + noOrdenCompra + ", fecha=" + fechaOrden + ", idProveedor=" + idProveedor);
+            System.out.println("DEBUG - idProductos: " + java.util.Arrays.toString(productosIds));
+            System.out.println("DEBUG - cantidades: " + java.util.Arrays.toString(cantidades));
+            System.out.println("DEBUG - precios: " + java.util.Arrays.toString(precios));
+
             if (productosIds != null && cantidades != null && precios != null) {
                 for (int i = 0; i < productosIds.length; i++) {
-                    if (!productosIds[i].isEmpty() && !cantidades[i].isEmpty() && !precios[i].isEmpty()) {
+                    String idProductoStr = productosIds[i] != null ? productosIds[i].trim() : "";
+                    String cantidadStr = cantidades != null && i < cantidades.length ? cantidades[i].trim() : "";
+                    String precioStr = precios != null && i < precios.length ? precios[i].trim() : "";
+
+                    if (!idProductoStr.isEmpty() && !cantidadStr.isEmpty() && !precioStr.isEmpty()) {
                         CompraDetalle detalle = new CompraDetalle();
-                        detalle.setIdProducto(Integer.parseInt(productosIds[i]));
-                        detalle.setCantidad(Integer.parseInt(cantidades[i]));
-                        detalle.setPrecioCostoUnitario(Double.parseDouble(precios[i]));
+                        detalle.setIdProducto(Integer.parseInt(idProductoStr));
+                        detalle.setCantidad(Integer.parseInt(cantidadStr));
+                        detalle.setPrecioCostoUnitario(Double.parseDouble(precioStr));
                         compra.agregarDetalle(detalle);
+                        System.out.println("DEBUG - Detalle agregado: idProducto=" + idProductoStr + ", cantidad=" + cantidadStr + ", precio=" + precioStr);
                     }
                 }
             }

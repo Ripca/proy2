@@ -254,30 +254,170 @@ public class CompraDAO {
     }
     
     /**
-     * Actualiza una compra existente
+     * Actualiza una compra existente y sus detalles
      */
     public boolean actualizar(Compra compra) {
-        String sql = """
-            UPDATE compras 
-            SET no_orden_compra = ?, fecha_orden = ?, idProveedor = ?
-            WHERE idCompra = ?
-        """;
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, compra.getNoOrdenCompra());
-            stmt.setDate(2, java.sql.Date.valueOf(compra.getFechaOrden()));
-            stmt.setInt(3, compra.getIdProveedor());
-            stmt.setInt(4, compra.getIdCompra());
-            
-            return stmt.executeUpdate() > 0;
-            
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Iniciar transacción
+
+            // 1️⃣ Actualizar tabla principal 'compras'
+            String sqlCompra = """
+                UPDATE compras
+                SET no_orden_compra = ?, fecha_orden = ?, idProveedor = ?
+                WHERE idCompra = ?
+            """;
+
+            try (PreparedStatement stmtCompra = conn.prepareStatement(sqlCompra)) {
+                stmtCompra.setInt(1, compra.getNoOrdenCompra());
+                stmtCompra.setDate(2, java.sql.Date.valueOf(compra.getFechaOrden()));
+                stmtCompra.setInt(3, compra.getIdProveedor());
+                stmtCompra.setInt(4, compra.getIdCompra());
+                if (stmtCompra.executeUpdate() == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            // 2️⃣ Procesar detalles de la compra
+            if (compra.getDetalles() != null && !compra.getDetalles().isEmpty()) {
+
+                String sqlDetallePrevio = """
+                    SELECT idProducto, cantidad
+                    FROM compras_detalle
+                    WHERE idCompra_detalle = ?
+                """;
+
+                String sqlActualizarDetalle = """
+                    UPDATE compras_detalle
+                    SET idProducto = ?, cantidad = ?, precio_costo_unitario = ?
+                    WHERE idCompra = ? AND idCompra_detalle = ?
+                """;
+
+                String sqlInsertarDetalle = """
+                    INSERT INTO compras_detalle (idCompra, idProducto, cantidad, precio_costo_unitario)
+                    VALUES (?, ?, ?, ?)
+                """;
+
+                String sqlActualizarExistencia = """
+                    UPDATE productos
+                    SET existencia = existencia + ?
+                    WHERE idProducto = ?
+                """;
+
+                try (
+                    PreparedStatement stmtPrevio = conn.prepareStatement(sqlDetallePrevio);
+                    PreparedStatement stmtDetalle = conn.prepareStatement(sqlActualizarDetalle);
+                    PreparedStatement stmtInsertar = conn.prepareStatement(sqlInsertarDetalle);
+                    PreparedStatement stmtStock = conn.prepareStatement(sqlActualizarExistencia)
+                ) {
+
+                    for (CompraDetalle detalle : compra.getDetalles()) {
+                        int idCompraDetalle = detalle.getIdCompraDetalle();
+                        int nuevoIdProducto = detalle.getIdProducto();
+                        int nuevaCantidad = detalle.getCantidad();
+                        double nuevoPrecio = detalle.getPrecioCostoUnitario();
+
+                        // 🔹 Verificar si es un detalle nuevo (sin idCompraDetalle o con valor 0)
+                        if (idCompraDetalle == 0) {
+                            // ✅ NUEVO DETALLE: Insertar
+                            System.out.println("DEBUG - Insertando nuevo detalle de compra: idProducto=" + nuevoIdProducto + ", cantidad=" + nuevaCantidad);
+                            stmtInsertar.setInt(1, compra.getIdCompra());
+                            stmtInsertar.setInt(2, nuevoIdProducto);
+                            stmtInsertar.setInt(3, nuevaCantidad);
+                            stmtInsertar.setDouble(4, nuevoPrecio);
+                            int inserted = stmtInsertar.executeUpdate();
+
+                            if (inserted == 0) {
+                                throw new SQLException("Error al insertar nuevo detalle de compra");
+                            }
+
+                            // Sumar al stock del nuevo producto (en compras se SUMA)
+                            stmtStock.setInt(1, nuevaCantidad);
+                            stmtStock.setInt(2, nuevoIdProducto);
+                            stmtStock.executeUpdate();
+
+                        } else {
+                            // ✅ DETALLE EXISTENTE: Actualizar
+                            System.out.println("DEBUG - Actualizando detalle existente de compra: idCompraDetalle=" + idCompraDetalle);
+
+                            // 🔹 Obtener el estado previo del detalle
+                            int idProductoAnterior = 0;
+                            int cantidadAnterior = 0;
+
+                            stmtPrevio.setInt(1, idCompraDetalle);
+                            try (ResultSet rs = stmtPrevio.executeQuery()) {
+                                if (rs.next()) {
+                                    idProductoAnterior = rs.getInt("idProducto");
+                                    cantidadAnterior = rs.getInt("cantidad");
+                                } else {
+                                    throw new SQLException("No se encontró el detalle con idCompraDetalle=" + idCompraDetalle);
+                                }
+                            }
+
+                            // 🔹 Caso A: Cambió el producto
+                            if (idProductoAnterior != nuevoIdProducto) {
+                                // 1. Devolver existencia al producto anterior
+                                stmtStock.setInt(1, -cantidadAnterior);  // -cantidad anterior
+                                stmtStock.setInt(2, idProductoAnterior);
+                                stmtStock.executeUpdate();
+
+                                // 2. Sumar al nuevo producto
+                                stmtStock.setInt(1, nuevaCantidad);
+                                stmtStock.setInt(2, nuevoIdProducto);
+                                stmtStock.executeUpdate();
+
+                            } else {
+                                // 🔹 Caso B: Mismo producto, pero cambió cantidad
+                                int diferencia = nuevaCantidad - cantidadAnterior;
+
+                                if (diferencia != 0) {
+                                    // Si diferencia > 0 → compró más → sumar stock
+                                    // Si diferencia < 0 → compró menos → restar stock
+                                    stmtStock.setInt(1, diferencia);
+                                    stmtStock.setInt(2, nuevoIdProducto);
+                                    stmtStock.executeUpdate();
+                                }
+                            }
+
+                            // 🔹 Actualizar la fila del detalle
+                            stmtDetalle.setInt(1, nuevoIdProducto);
+                            stmtDetalle.setInt(2, nuevaCantidad);
+                            stmtDetalle.setDouble(3, nuevoPrecio);
+                            stmtDetalle.setInt(4, compra.getIdCompra());
+                            stmtDetalle.setInt(5, idCompraDetalle);
+                            int updated = stmtDetalle.executeUpdate();
+
+                            if (updated == 0) {
+                                throw new SQLException("No se encontró el detalle con idCompraDetalle=" + idCompraDetalle);
+                            }
+                        }
+                    }
+                }
+            }
+
+            conn.commit();
+            return true;
+
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        
-        return false;
     }
     
     /**
