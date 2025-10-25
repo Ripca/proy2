@@ -16,13 +16,9 @@ public class ReporteListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // Configurar atributos para la plantilla
-        request.setAttribute("pageTitle", "Reportes");
-        request.setAttribute("pageIcon", "fas fa-chart-bar");
-        
-        // Redirigir a la página de reportes
-        request.getRequestDispatcher("/WEB-INF/views/reportes/list.jsp").forward(request, response);
+
+        // Redirigir a la página de reportes con plantilla
+        request.getRequestDispatcher("/WEB-INF/views/reportes/list_template.jsp").forward(request, response);
     }
     
     @Override
