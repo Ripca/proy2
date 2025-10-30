@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * Clase para manejar la conexión a la base de datos MySQL
  */
 public class DatabaseConnection {
-    
+    /*
     // Variables de entorno para configuración de base de datos
     private static final String DB_HOST = System.getenv("DB_HOST") != null ?
         System.getenv("DB_HOST") : "localhost";
@@ -22,6 +22,28 @@ public class DatabaseConnection {
     private static final String PASSWORD = System.getenv("DB_PASSWORD") != null ?
         System.getenv("DB_PASSWORD") : "admin";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    */
+    
+    // Variables de entorno para configuración de base de datos
+// Configuración de base de datos
+
+    private static final String DB_HOST = "db-empresa-sistema-prod.ccdcum6qax8h.us-east-1.rds.amazonaws.com";
+private static final String DB_PORT = "3306";
+private static final String DB_NAME = "sistema_empresa";
+private static final String URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+private static final String USERNAME = "root";
+private static final String PASSWORD = "adminadmin";
+private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    
+   /* private static final String DB_HOST = "localhost";
+    private static final String DB_PORT = "3306";
+private static final String DB_NAME = "sistema_empresa";
+private static final String URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+private static final String USERNAME = "root";
+private static final String PASSWORD = "admin";
+private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; */
+
+
     
     static {
         try {

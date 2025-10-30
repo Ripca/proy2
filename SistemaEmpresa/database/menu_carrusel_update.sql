@@ -3,7 +3,7 @@
 -- Sistema Empresa - Actualización de Base de Datos
 -- =====================================================
 
-USE sistema_empresa;
+USE sistema-empresa;
 
 -- =====================================================
 -- TABLA PARA MENÚS DINÁMICOS

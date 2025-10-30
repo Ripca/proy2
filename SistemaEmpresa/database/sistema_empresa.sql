@@ -1,9 +1,9 @@
 -- Script de creación de base de datos para Sistema Empresa
 -- Basado en el diagrama ER proporcionado
 
-DROP DATABASE IF EXISTS sistema_empresa;
-CREATE DATABASE sistema_empresa;
-USE sistema_empresa;
+DROP DATABASE IF EXISTS sistema-empresa;
+CREATE DATABASE sistema-empresa;
+USE sistema-empresa;
 
 -- Tabla de Puestos
 CREATE TABLE Puestos (

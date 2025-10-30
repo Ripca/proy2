@@ -8,7 +8,7 @@ El sistema utiliza las siguientes variables de entorno para la configuración de
 
 1. **DB_URL** - URL completa de conexión a MySQL
    - Formato: `jdbc:mysql://[host]:[puerto]/[nombre_bd]`
-   - Default: `jdbc:mysql://localhost:3306/sistema_empresa`
+   - Default: `jdbc:mysql://localhost:3306/sistema-empresa`
 
 2. **DB_USERNAME** - Usuario de la base de datos
    - Default: `root`
@@ -21,12 +21,12 @@ El sistema utiliza las siguientes variables de entorno para la configuración de
 ### Windows (PowerShell)
 ```powershell
 # Configurar variables de entorno temporalmente (solo para la sesión actual)
-$env:DB_URL = "jdbc:mysql://localhost:3306/sistema_empresa"
+$env:DB_URL = "jdbc:mysql://localhost:3306/sistema-empresa"
 $env:DB_USERNAME = "root"
 $env:DB_PASSWORD = "tu_password_aqui"
 
 # Configurar variables de entorno permanentemente
-[Environment]::SetEnvironmentVariable("DB_URL", "jdbc:mysql://localhost:3306/sistema_empresa", "User")
+[Environment]::SetEnvironmentVariable("DB_URL", "jdbc:mysql://localhost:3306/sistema-empresa", "User")
 [Environment]::SetEnvironmentVariable("DB_USERNAME", "root", "User")
 [Environment]::SetEnvironmentVariable("DB_PASSWORD", "tu_password_aqui", "User")
 ```
@@ -34,12 +34,12 @@ $env:DB_PASSWORD = "tu_password_aqui"
 ### Windows (CMD)
 ```cmd
 # Configurar variables de entorno temporalmente
-set DB_URL=jdbc:mysql://localhost:3306/sistema_empresa
+set DB_URL=jdbc:mysql://localhost:3306/sistema-empresa
 set DB_USERNAME=root
 set DB_PASSWORD=tu_password_aqui
 
 # Configurar variables de entorno permanentemente
-setx DB_URL "jdbc:mysql://localhost:3306/sistema_empresa"
+setx DB_URL "jdbc:mysql://localhost:3306/sistema-empresa"
 setx DB_USERNAME "root"
 setx DB_PASSWORD "tu_password_aqui"
 ```
@@ -47,12 +47,12 @@ setx DB_PASSWORD "tu_password_aqui"
 ### Linux/macOS (Bash)
 ```bash
 # Configurar variables de entorno temporalmente
-export DB_URL="jdbc:mysql://localhost:3306/sistema_empresa"
+export DB_URL="jdbc:mysql://localhost:3306/sistema-empresa"
 export DB_USERNAME="root"
 export DB_PASSWORD="tu_password_aqui"
 
 # Configurar variables de entorno permanentemente (agregar al ~/.bashrc o ~/.profile)
-echo 'export DB_URL="jdbc:mysql://localhost:3306/sistema_empresa"' >> ~/.bashrc
+echo 'export DB_URL="jdbc:mysql://localhost:3306/sistema-empresa"' >> ~/.bashrc
 echo 'export DB_USERNAME="root"' >> ~/.bashrc
 echo 'export DB_PASSWORD="tu_password_aqui"' >> ~/.bashrc
 source ~/.bashrc
@@ -65,14 +65,14 @@ Agregar al archivo `setenv.bat` (Windows) o `setenv.sh` (Linux) en la carpeta `b
 
 **Windows (setenv.bat):**
 ```batch
-set CATALINA_OPTS=%CATALINA_OPTS% -DDB_URL=jdbc:mysql://localhost:3306/sistema_empresa
+set CATALINA_OPTS=%CATALINA_OPTS% -DDB_URL=jdbc:mysql://localhost:3306/sistema-empresa
 set CATALINA_OPTS=%CATALINA_OPTS% -DDB_USERNAME=root
 set CATALINA_OPTS=%CATALINA_OPTS% -DDB_PASSWORD=tu_password_aqui
 ```
 
 **Linux (setenv.sh):**
 ```bash
-export CATALINA_OPTS="$CATALINA_OPTS -DDB_URL=jdbc:mysql://localhost:3306/sistema_empresa"
+export CATALINA_OPTS="$CATALINA_OPTS -DDB_URL=jdbc:mysql://localhost:3306/sistema-empresa"
 export CATALINA_OPTS="$CATALINA_OPTS -DDB_USERNAME=root"
 export CATALINA_OPTS="$CATALINA_OPTS -DDB_PASSWORD=tu_password_aqui"
 ```
@@ -85,13 +85,13 @@ Configurar las variables de entorno a nivel del sistema operativo antes de inici
 ### NetBeans
 1. Click derecho en el proyecto → Properties
 2. Run → VM Options
-3. Agregar: `-DDB_URL=jdbc:mysql://localhost:3306/sistema_empresa -DDB_USERNAME=root -DDB_PASSWORD=tu_password_aqui`
+3. Agregar: `-DDB_URL=jdbc:mysql://localhost:3306/sistema-empresa -DDB_USERNAME=root -DDB_PASSWORD=tu_password_aqui`
 
 ### Eclipse
 1. Run → Run Configurations
 2. Seleccionar tu aplicación → Environment tab
 3. Agregar las variables:
-   - DB_URL = jdbc:mysql://localhost:3306/sistema_empresa
+   - DB_URL = jdbc:mysql://localhost:3306/sistema-empresa
    - DB_USERNAME = root
    - DB_PASSWORD = tu_password_aqui
 
@@ -104,21 +104,21 @@ Configurar las variables de entorno a nivel del sistema operativo antes de inici
 
 ### Desarrollo Local
 ```
-DB_URL=jdbc:mysql://localhost:3306/sistema_empresa
+DB_URL=jdbc:mysql://localhost:3306/sistema-empresa
 DB_USERNAME=root
 DB_PASSWORD=admin
 ```
 
 ### Servidor de Producción
 ```
-DB_URL=jdbc:mysql://servidor-prod:3306/sistema_empresa_prod
+DB_URL=jdbc:mysql://servidor-prod:3306/sistema-empresa_prod
 DB_USERNAME=app_user
 DB_PASSWORD=password_seguro_123
 ```
 
 ### Servidor de Pruebas
 ```
-DB_URL=jdbc:mysql://servidor-test:3306/sistema_empresa_test
+DB_URL=jdbc:mysql://servidor-test:3306/sistema-empresa_test
 DB_USERNAME=test_user
 DB_PASSWORD=test_password
 ```

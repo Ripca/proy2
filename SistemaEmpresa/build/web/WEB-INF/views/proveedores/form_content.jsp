@@ -68,15 +68,7 @@
                                 <div class="form-text">Número de teléfono de contacto</div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       value="<%= esEdicion && proveedor.getEmail() != null ? proveedor.getEmail() : "" %>" 
-                                       maxlength="100">
-                                <div class="form-text">Correo electrónico del proveedor</div>
-                            </div>
-                        </div>
+
                     </div>
 
                     <div class="mb-3">
