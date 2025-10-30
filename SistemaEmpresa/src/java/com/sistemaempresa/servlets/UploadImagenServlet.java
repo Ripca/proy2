@@ -1,0 +1,91 @@
+package com.sistemaempresa.servlets;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+
+/**
+ * Servlet para subir imágenes de productos
+ */
+@WebServlet("/UploadImagenServlet")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,
+    maxFileSize = 1024 * 1024 * 5,
+    maxRequestSize = 1024 * 1024 * 5 * 5
+)
+public class UploadImagenServlet extends HttpServlet {
+    
+    private static final String UPLOAD_DIR = "assets/productos";
+    private static final String[] TIPOS_PERMITIDOS = {"image/png", "image/jpeg", "image/jpg"};
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        response.setContentType("application/json;charset=UTF-8");
+        
+        try {
+            // Obtener el archivo del formulario
+            Part filePart = request.getPart("imagen");
+            
+            if (filePart == null || filePart.getSize() == 0) {
+                response.getWriter().write("{\"success\": false, \"message\": \"No se seleccionó archivo\"}");
+                return;
+            }
+            
+            // Validar tipo de archivo
+            String contentType = filePart.getContentType();
+            boolean tipoValido = false;
+            for (String tipo : TIPOS_PERMITIDOS) {
+                if (contentType.equals(tipo)) {
+                    tipoValido = true;
+                    break;
+                }
+            }
+            
+            if (!tipoValido) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Solo se permiten archivos PNG, JPEG o JPG\"}");
+                return;
+            }
+            
+            // Validar tamaño (máximo 5MB)
+            if (filePart.getSize() > 1024 * 1024 * 5) {
+                response.getWriter().write("{\"success\": false, \"message\": \"El archivo es demasiado grande (máximo 5MB)\"}");
+                return;
+            }
+            
+            // Crear directorio si no existe
+            String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            
+            // Generar nombre único para el archivo
+            String nombreOriginal = filePart.getSubmittedFileName();
+            String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
+            String nombreArchivo = UUID.randomUUID().toString() + extension;
+            
+            // Guardar archivo
+            String rutaArchivo = uploadPath + File.separator + nombreArchivo;
+            filePart.write(rutaArchivo);
+            
+            // Retornar ruta relativa
+            String rutaRelativa = UPLOAD_DIR + "/" + nombreArchivo;
+            
+            response.getWriter().write("{\"success\": true, \"imagen\": \"" + rutaRelativa + "\"}");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("{\"success\": false, \"message\": \"Error al subir archivo: " + e.getMessage() + "\"}");
+        }
+    }
+}
+

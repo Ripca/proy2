@@ -41,12 +41,12 @@ public class MenuItemDAO {
         List<MenuItem> todosLosItems = obtenerTodos();
         Map<Integer, MenuItem> itemMap = new HashMap<>();
         List<MenuItem> menuRaiz = new ArrayList<>();
-        
+
         // Crear mapa de items por ID
         for (MenuItem item : todosLosItems) {
             itemMap.put(item.getIdMenuItem(), item);
         }
-        
+
         // Construir estructura de árbol
         for (MenuItem item : todosLosItems) {
             if (item.getPadreId() == null) {
@@ -60,10 +60,67 @@ public class MenuItemDAO {
                 }
             }
         }
-        
+
         // Ordenar elementos raíz y sus hijos recursivamente
         ordenarMenuRecursivo(menuRaiz);
-        
+
+        return menuRaiz;
+    }
+
+    /**
+     * Obtiene el menú estructurado filtrado por rol del usuario
+     */
+    public List<MenuItem> obtenerMenuEstructuradoPorRol(int idUsuario) {
+        // Obtener el rol del usuario
+        UsuarioRolDAO usuarioRolDAO = new UsuarioRolDAO();
+        int idRol = usuarioRolDAO.obtenerIdRolPorUsuario(idUsuario);
+
+        if (idRol == -1) {
+            // Si no tiene rol asignado, retorna menú vacío
+            return new ArrayList<>();
+        }
+
+        // Obtener menús permitidos para el rol
+        RolMenuDAO rolMenuDAO = new RolMenuDAO();
+        List<Integer> menusPorRol = rolMenuDAO.obtenerMenusPorRol(idRol);
+
+        // Obtener todos los menús
+        List<MenuItem> todosLosItems = obtenerTodos();
+
+        // Filtrar menús según el rol
+        List<MenuItem> itemsFiltrados = new ArrayList<>();
+        for (MenuItem item : todosLosItems) {
+            if (menusPorRol.contains(item.getIdMenuItem())) {
+                itemsFiltrados.add(item);
+            }
+        }
+
+        // Construir estructura de árbol con items filtrados
+        Map<Integer, MenuItem> itemMap = new HashMap<>();
+        List<MenuItem> menuRaiz = new ArrayList<>();
+
+        // Crear mapa de items filtrados por ID
+        for (MenuItem item : itemsFiltrados) {
+            itemMap.put(item.getIdMenuItem(), item);
+        }
+
+        // Construir estructura de árbol
+        for (MenuItem item : itemsFiltrados) {
+            if (item.getPadreId() == null) {
+                // Es un elemento raíz
+                menuRaiz.add(item);
+            } else {
+                // Es un elemento hijo
+                MenuItem padre = itemMap.get(item.getPadreId());
+                if (padre != null) {
+                    padre.agregarHijo(item);
+                }
+            }
+        }
+
+        // Ordenar elementos raíz y sus hijos recursivamente
+        ordenarMenuRecursivo(menuRaiz);
+
         return menuRaiz;
     }
     

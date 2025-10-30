@@ -32,7 +32,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="ProductoServlet" method="post" id="formProducto">
+                <form action="ProductoServlet" method="post" id="formProducto" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="<%= action %>">
                     <% if (esEdicion) { %>
                         <input type="hidden" name="idProducto" value="<%= producto.getIdProducto() %>">
@@ -115,12 +115,34 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="imagen" class="form-label">URL de Imagen</label>
-                        <input type="url" class="form-control" id="imagen" name="imagen"
-                               value="<%= esEdicion && producto.getImagen() != null ? producto.getImagen() : "" %>"
-                               maxlength="200"
-                               placeholder="https://ejemplo.com/imagen.jpg">
-                        <div class="form-text">URL de la imagen del producto (opcional)</div>
+                        <label for="imagenFile" class="form-label">Imagen del Producto</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="imagenFile" name="imagenFile"
+                                   accept=".png,.jpg,.jpeg" onchange="previewImagen(event)">
+                            <button class="btn btn-outline-secondary" type="button" id="btnLimpiar"
+                                    onclick="limpiarImagen()" style="display: none;">
+                                <i class="fas fa-trash"></i> Limpiar
+                            </button>
+                        </div>
+                        <div class="form-text">Solo PNG, JPEG o JPG (máximo 5MB)</div>
+
+                        <!-- Input oculto para guardar la ruta de la imagen -->
+                        <input type="hidden" id="imagen" name="imagen"
+                               value="<%= esEdicion && producto.getImagen() != null ? producto.getImagen() : "" %>">
+
+                        <!-- Preview de la imagen -->
+                        <div id="previewContainer" class="mt-3" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                        </div>
+
+                        <!-- Mostrar imagen actual si existe -->
+                        <% if (esEdicion && producto.getImagen() != null && !producto.getImagen().isEmpty()) { %>
+                            <div class="mt-3">
+                                <p class="text-muted">Imagen actual:</p>
+                                <img src="<%= producto.getImagen() %>" alt="Imagen actual"
+                                     style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                            </div>
+                        <% } %>
                     </div>
 
                     <!-- Botones -->
@@ -139,32 +161,101 @@
 </div>
 
 <script>
+    // Preview de imagen
+    function previewImagen(event) {
+        const file = event.target.files[0];
+
+        if (file) {
+            // Validar tipo de archivo
+            const tiposPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!tiposPermitidos.includes(file.type)) {
+                showAlert('error', 'Error', 'Solo se permiten archivos PNG, JPEG o JPG');
+                event.target.value = '';
+                return;
+            }
+
+            // Validar tamaño (máximo 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('error', 'Error', 'El archivo es demasiado grande (máximo 5MB)');
+                event.target.value = '';
+                return;
+            }
+
+            // Mostrar preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('previewContainer').style.display = 'block';
+                document.getElementById('btnLimpiar').style.display = 'inline-block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Limpiar imagen
+    function limpiarImagen() {
+        document.getElementById('imagenFile').value = '';
+        document.getElementById('previewContainer').style.display = 'none';
+        document.getElementById('btnLimpiar').style.display = 'none';
+    }
+
     // Validación del formulario
     document.getElementById('formProducto').addEventListener('submit', function(e) {
         const producto = document.getElementById('producto').value.trim();
         const precioCosto = parseFloat(document.getElementById('precioCosto').value);
         const precioVenta = parseFloat(document.getElementById('precioVenta').value);
-        console.log('productos hola');
-        
+        const imagenFile = document.getElementById('imagenFile').files[0];
+
         if (!producto) {
             e.preventDefault();
             showAlert('error', 'Error', 'El nombre del producto es obligatorio.');
             return false;
         }
-        
+
         if (precioCosto <= 0 || precioVenta <= 0) {
             e.preventDefault();
             showAlert('error', 'Error', 'Los precios deben ser mayores a cero.');
             return false;
         }
-        
+
         if (precioVenta <= precioCosto) {
             e.preventDefault();
             showAlert('warning', 'Advertencia', 'El precio de venta debería ser mayor al precio de costo.');
             return false;
         }
+
+        // Si hay archivo de imagen, subirlo antes de enviar el formulario
+        if (imagenFile) {
+            e.preventDefault();
+            subirImagen(imagenFile);
+        }
     });
-    
+
+    // Subir imagen
+    function subirImagen(file) {
+        const formData = new FormData();
+        formData.append('imagen', file);
+
+        fetch('UploadImagenServlet', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Guardar la ruta de la imagen en el input oculto
+                document.getElementById('imagen').value = data.imagen;
+                // Enviar el formulario
+                document.getElementById('formProducto').submit();
+            } else {
+                showAlert('error', 'Error', data.message);
+            }
+        })
+        .catch(error => {
+            showAlert('error', 'Error', 'Error al subir la imagen: ' + error);
+        });
+    }
+
     // Auto-focus en el primer campo
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('producto').focus();

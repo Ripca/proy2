@@ -37,6 +37,7 @@
             <table class="table table-striped table-hover data-table">
                 <thead class="table-dark">
                     <tr>
+                        <th>Imagen</th>
                         <th>ID</th>
                         <th>Producto</th>
                         <th>Marca</th>
@@ -53,6 +54,14 @@
                             for (Producto producto : productos) {
                     %>
                     <tr>
+                        <td>
+                            <% if (producto.getImagen() != null && !producto.getImagen().isEmpty()) { %>
+                                <img src="<%= producto.getImagen() %>" alt="<%= producto.getProducto() %>"
+                                     style="max-width: 50px; max-height: 50px; border-radius: 3px;">
+                            <% } else { %>
+                                <span class="text-muted">Sin imagen</span>
+                            <% } %>
+                        </td>
                         <td><%= producto.getIdProducto() %></td>
                         <td>
                             <strong><%= producto.getProducto() %></strong>

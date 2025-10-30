@@ -1,12 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.sistemaempresa.models.MenuItem" %>
+<%@ page import="com.sistemaempresa.models.Usuario" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.sistemaempresa.dao.MenuItemDAO" %>
 
 <%
-    // Obtener el menú estructurado
-    MenuItemDAO menuDAO = new MenuItemDAO();
-    List<MenuItem> menuItems = menuDAO.obtenerMenuEstructurado();
+    // Obtener el usuario de la sesión
+    Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+    List<MenuItem> menuItems = new ArrayList<>();
+
+    if (usuarioSesion != null) {
+        // Obtener el menú estructurado filtrado por rol del usuario
+        MenuItemDAO menuDAO = new MenuItemDAO();
+        menuItems = menuDAO.obtenerMenuEstructuradoPorRol(usuarioSesion.getIdUsuario());
+    }
+
     request.setAttribute("menuItems", menuItems);
 %>
 
