@@ -316,13 +316,24 @@
         const urlParams = new URLSearchParams(window.location.search);
         const success = urlParams.get('success');
         const error = urlParams.get('error');
-        
+        const logout = urlParams.get('logout');
+        const sessionExpired = urlParams.get('session');
+
         if (success) {
             showAlert('success', '¡Éxito!', success);
         }
         if (error) {
             showAlert('error', 'Error', error);
         }
+        if (logout === 'true') {
+            showAlert('info', 'Sesión Cerrada', 'Ha cerrado sesión correctamente');
+        }
+        if (sessionExpired === 'expired') {
+            showAlert('warning', 'Sesión Expirada', 'Su sesión ha expirado. Por favor, inicie sesión nuevamente');
+        }
     </script>
+
+    <!-- Token Validator - Valida el token en múltiples pestañas -->
+    <script src="<%= request.getContextPath() %>/assets/js/token-validator.js"></script>
 </body>
 </html>

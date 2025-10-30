@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             if (userData != null) {
                 // Generar token JWT
                 String token = JWTUtil.generateToken(userData.usuario, userData.idUsuario, userData.idEmpleado);
-                
+
                 // Crear sesión
                 HttpSession session = request.getSession();
                 session.setAttribute("usuario", userData.usuario);
@@ -45,12 +46,19 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("idEmpleado", userData.idEmpleado);
                 session.setAttribute("nombreCompleto", userData.nombreCompleto);
                 session.setAttribute("token", token);
-                
+
+                // Guardar token en cookie para persistencia entre pestañas
+                Cookie tokenCookie = new Cookie("authToken", token);
+                tokenCookie.setHttpOnly(true);
+                tokenCookie.setPath(request.getContextPath() + "/");
+                tokenCookie.setMaxAge(86400); // 24 horas
+                response.addCookie(tokenCookie);
+
                 // Redirigir al dashboard
                 response.sendRedirect("DashboardServlet");
-                
+
             } else {
-                response.sendRedirect("index.html?error=Credenciales incorrectas");
+                response.sendRedirect("index.jsp?error=Credenciales incorrectas");
             }
             
         } catch (Exception e) {
@@ -71,7 +79,16 @@ public class LoginServlet extends HttpServlet {
             if (session != null) {
                 session.invalidate();
             }
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+
+            // Limpiar cookie de token
+            Cookie tokenCookie = new Cookie("authToken", "");
+            tokenCookie.setHttpOnly(true);
+            tokenCookie.setPath(request.getContextPath() + "/");
+            tokenCookie.setMaxAge(0); // Eliminar cookie
+            response.addCookie(tokenCookie);
+
+            // Redirigir al login con mensaje de logout
+            response.sendRedirect(request.getContextPath() + "/index.jsp?logout=true");
         } else {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         }
