@@ -76,10 +76,10 @@ public class UploadImagenServlet extends HttpServlet {
             // Guardar archivo
             String rutaArchivo = uploadPath + File.separator + nombreArchivo;
             filePart.write(rutaArchivo);
-            
-            // Retornar ruta relativa
-            String rutaRelativa = UPLOAD_DIR + "/" + nombreArchivo;
-            
+
+            // Retornar ruta relativa desde el contexto de la aplicación
+            String rutaRelativa = request.getContextPath() + "/" + UPLOAD_DIR + "/" + nombreArchivo;
+
             response.getWriter().write("{\"success\": true, \"imagen\": \"" + rutaRelativa + "\"}");
             
         } catch (Exception e) {
