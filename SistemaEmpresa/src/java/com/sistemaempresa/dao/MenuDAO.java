@@ -61,6 +61,86 @@ public class MenuDAO {
     }
 
     /**
+     * Obtiene menús jerárquicos filtrados por rol del usuario
+     * @param idUsuario ID del usuario
+     * @return Lista de menús principales con submenús filtrados por rol
+     */
+    public List<Menu> obtenerMenusJerarquicosPorRol(int idUsuario) {
+        List<Menu> menusPrincipales = new ArrayList<>();
+
+        // Primero obtener el rol del usuario
+        String sqlRol = """
+            SELECT ur.idRol
+            FROM usuario_rol ur
+            WHERE ur.idUsuario = ? AND ur.estado = 1
+            LIMIT 1
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmtRol = conn.prepareStatement(sqlRol)) {
+
+            stmtRol.setInt(1, idUsuario);
+            ResultSet rsRol = stmtRol.executeQuery();
+
+            if (!rsRol.next()) {
+                // Si no tiene rol asignado, retorna lista vacía
+                return menusPrincipales;
+            }
+
+            int idRol = rsRol.getInt("idRol");
+
+            // Obtener menús permitidos para este rol
+            String sqlMenus = """
+                SELECT DISTINCT
+                    m1.id_menu, m1.nombre, m1.icono, m1.url, m1.id_padre, m1.orden, m1.estado,
+                    m2.nombre as nombre_padre
+                FROM menus m1
+                LEFT JOIN menus m2 ON m1.id_padre = m2.id_menu
+                INNER JOIN rol_menu rm ON m1.id_menu = rm.idMenu
+                WHERE rm.idRol = ? AND m1.estado = 1 AND rm.estado = 1
+                ORDER BY m1.id_padre, m1.orden
+            """;
+
+            try (PreparedStatement stmtMenus = conn.prepareStatement(sqlMenus)) {
+                stmtMenus.setInt(1, idRol);
+                ResultSet rsMenus = stmtMenus.executeQuery();
+
+                Map<Integer, Menu> mapaMenus = new HashMap<>();
+
+                while (rsMenus.next()) {
+                    Menu menu = new Menu();
+                    menu.setIdMenu(rsMenus.getInt("id_menu"));
+                    menu.setNombre(rsMenus.getString("nombre"));
+                    menu.setIcono(rsMenus.getString("icono"));
+                    menu.setUrl(rsMenus.getString("url"));
+                    menu.setIdPadre(rsMenus.getObject("id_padre", Integer.class));
+                    menu.setOrden(rsMenus.getInt("orden"));
+                    menu.setEstado(rsMenus.getBoolean("estado"));
+                    menu.setNombrePadre(rsMenus.getString("nombre_padre"));
+
+                    mapaMenus.put(menu.getIdMenu(), menu);
+
+                    // Si es menú principal, agregarlo a la lista
+                    if (menu.esMenuPrincipal()) {
+                        menusPrincipales.add(menu);
+                    }
+                }
+
+                // Construir estructura jerárquica multinivel
+                construirArbolJerarquico(mapaMenus, menusPrincipales);
+
+                // Ordenar menús principales
+                menusPrincipales.sort(Comparator.comparingInt(Menu::getOrden));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return menusPrincipales;
+    }
+
+    /**
      * Construye la estructura jerárquica multinivel del árbol de menús
      */
     private void construirArbolJerarquico(Map<Integer, Menu> mapaMenus, List<Menu> menusPrincipales) {

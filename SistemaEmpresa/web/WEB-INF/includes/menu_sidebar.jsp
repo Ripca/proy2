@@ -1,12 +1,31 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.sistemaempresa.models.Menu" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.sistemaempresa.dao.MenuDAO" %>
 
 <%
-    // Obtener el menú estructurado jerárquico
+    // Obtener el menú estructurado jerárquico filtrado por rol del usuario
     MenuDAO menuDAO = new MenuDAO();
-    List<Menu> menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
+    List<Menu> menusJerarquicos = new ArrayList<>();
+
+    // Obtener el ID del usuario de la sesión
+    Object idUsuarioObj = session.getAttribute("idUsuario");
+
+    if (idUsuarioObj != null) {
+        try {
+            int idUsuario = Integer.parseInt(idUsuarioObj.toString());
+            // Obtener menús filtrados por rol del usuario
+            menusJerarquicos = menuDAO.obtenerMenusJerarquicosPorRol(idUsuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Si hay error, obtener todos los menús
+            menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
+        }
+    } else {
+        // Si no hay usuario en sesión, obtener todos los menús
+        menusJerarquicos = menuDAO.obtenerMenusJerarquicos();
+    }
 %>
 
 <!-- Menú dinámico jerárquico -->

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +16,11 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Servlet para operaciones CRUD de Producto
  */
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,
+    maxFileSize = 1024 * 1024 * 5,
+    maxRequestSize = 1024 * 1024 * 5 * 5
+)
 public class ProductoServlet extends HttpServlet {
     
     private ProductoDAO productoDAO;
@@ -113,52 +119,98 @@ public class ProductoServlet extends HttpServlet {
     
     private void guardarProducto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Producto producto = new Producto();
             producto.setProducto(request.getParameter("producto"));
-            producto.setIdMarca(Integer.parseInt(request.getParameter("idMarca")));
+
+            // Validar que idMarca no esté vacío
+            String idMarcaStr = request.getParameter("idMarca");
+            if (idMarcaStr != null && !idMarcaStr.isEmpty()) {
+                producto.setIdMarca(Integer.parseInt(idMarcaStr));
+            } else {
+                producto.setIdMarca(0);
+            }
+
             producto.setDescripcion(request.getParameter("descripcion"));
-            producto.setImagen(request.getParameter("imagen"));
+
+            // Obtener la imagen del input oculto (ya fue subida por AJAX)
+            String imagen = request.getParameter("imagen");
+            if (imagen != null && !imagen.isEmpty()) {
+                producto.setImagen(imagen);
+            }
+
             producto.setPrecioCosto(new BigDecimal(request.getParameter("precioCosto")));
             producto.setPrecioVenta(new BigDecimal(request.getParameter("precioVenta")));
-            producto.setExistencia(Integer.parseInt(request.getParameter("existencia")));
-            
+
+            String existenciaStr = request.getParameter("existencia");
+            if (existenciaStr != null && !existenciaStr.isEmpty()) {
+                producto.setExistencia(Integer.parseInt(existenciaStr));
+            } else {
+                producto.setExistencia(0);
+            }
+
             if (productoDAO.insertar(producto)) {
                 response.sendRedirect("ProductoServlet?action=list&success=Producto guardado correctamente");
             } else {
                 response.sendRedirect("ProductoServlet?action=new&error=Error al guardar producto");
             }
-            
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            response.sendRedirect("ProductoServlet?action=new&error=Error: Verifica los valores numéricos");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("ProductoServlet?action=new&error=Error en los datos");
+            response.sendRedirect("ProductoServlet?action=new&error=Error en los datos: " + e.getMessage());
         }
     }
     
     private void actualizarProducto(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Producto producto = new Producto();
             producto.setIdProducto(Integer.parseInt(request.getParameter("idProducto")));
             producto.setProducto(request.getParameter("producto"));
-            producto.setIdMarca(Integer.parseInt(request.getParameter("idMarca")));
+
+            // Validar que idMarca no esté vacío
+            String idMarcaStr = request.getParameter("idMarca");
+            if (idMarcaStr != null && !idMarcaStr.isEmpty()) {
+                producto.setIdMarca(Integer.parseInt(idMarcaStr));
+            } else {
+                producto.setIdMarca(0);
+            }
+
             producto.setDescripcion(request.getParameter("descripcion"));
-            producto.setImagen(request.getParameter("imagen"));
+
+            // Obtener la imagen del input oculto (ya fue subida por AJAX)
+            String imagen = request.getParameter("imagen");
+            if (imagen != null && !imagen.isEmpty()) {
+                producto.setImagen(imagen);
+            }
+
             producto.setPrecioCosto(new BigDecimal(request.getParameter("precioCosto")));
             producto.setPrecioVenta(new BigDecimal(request.getParameter("precioVenta")));
-            producto.setExistencia(Integer.parseInt(request.getParameter("existencia")));
-            
+
+            String existenciaStr = request.getParameter("existencia");
+            if (existenciaStr != null && !existenciaStr.isEmpty()) {
+                producto.setExistencia(Integer.parseInt(existenciaStr));
+            } else {
+                producto.setExistencia(0);
+            }
+
             if (productoDAO.actualizar(producto)) {
                 response.sendRedirect("ProductoServlet?action=list&success=Producto actualizado correctamente");
             } else {
                 response.sendRedirect("ProductoServlet?action=edit&id=" + producto.getIdProducto() + "&error=Error al actualizar producto");
             }
-            
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            response.sendRedirect("ProductoServlet?action=edit&id=" + request.getParameter("idProducto") + "&error=Error: Verifica los valores numéricos");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("ProductoServlet?action=list&error=Error en los datos");
+            response.sendRedirect("ProductoServlet?action=list&error=Error en los datos: " + e.getMessage());
         }
     }
     
