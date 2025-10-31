@@ -63,12 +63,18 @@ public class UploadImagenServlet extends HttpServlet {
                 return;
             }
             
+            // Obtener la ruta real del directorio web
+            String realPath = getServletContext().getRealPath("/");
+            System.out.println("Real path del contexto: " + realPath);
+
             // Crear directorio si no existe
-            String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+            String uploadPath = realPath + File.separator + UPLOAD_DIR + File.separator;
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 boolean dirCreated = uploadDir.mkdirs();
                 System.out.println("Directorio creado: " + dirCreated + " en: " + uploadPath);
+            } else {
+                System.out.println("Directorio ya existe: " + uploadPath);
             }
 
             // Generar nombre único para el archivo
@@ -77,11 +83,13 @@ public class UploadImagenServlet extends HttpServlet {
             String nombreArchivo = UUID.randomUUID().toString() + extension;
 
             // Guardar archivo usando InputStream y FileOutputStream
-            String rutaArchivo = uploadPath + File.separator + nombreArchivo;
+            String rutaArchivo = uploadPath + nombreArchivo;
+            System.out.println("Intentando guardar archivo en: " + rutaArchivo);
+
             try (InputStream input = filePart.getInputStream();
                  FileOutputStream output = new FileOutputStream(rutaArchivo)) {
 
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     output.write(buffer, 0, bytesRead);
@@ -92,6 +100,7 @@ public class UploadImagenServlet extends HttpServlet {
             // Verificar que el archivo se guardó correctamente
             File archivoGuardado = new File(rutaArchivo);
             if (!archivoGuardado.exists() || archivoGuardado.length() == 0) {
+                System.out.println("ERROR: El archivo no se guardó. Existe: " + archivoGuardado.exists() + ", Tamaño: " + archivoGuardado.length());
                 response.getWriter().write("{\"success\": false, \"message\": \"Error: El archivo no se guardó correctamente en: " + rutaArchivo + "\"}");
                 return;
             }
