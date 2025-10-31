@@ -67,8 +67,17 @@ public class UploadImagenServlet extends HttpServlet {
             String realPath = getServletContext().getRealPath("/");
             System.out.println("Real path del contexto: " + realPath);
 
-            // Crear directorio si no existe
-            String uploadPath = realPath + File.separator + UPLOAD_DIR + File.separator;
+            // Reemplazar "build/web" por "web" si es necesario
+            String uploadPath;
+            if (realPath.contains("build" + File.separator + "web")) {
+                uploadPath = realPath.replace("build" + File.separator + "web", "web");
+            } else {
+                uploadPath = realPath;
+            }
+
+            uploadPath = uploadPath + File.separator + UPLOAD_DIR + File.separator;
+            System.out.println("Ruta final de upload: " + uploadPath);
+
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 boolean dirCreated = uploadDir.mkdirs();
