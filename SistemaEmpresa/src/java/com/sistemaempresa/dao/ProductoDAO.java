@@ -13,8 +13,8 @@ public class ProductoDAO {
     
     public List<Producto> obtenerTodos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT p.*, m.marca as nombreMarca FROM Productos p " +
-                    "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
+        String sql = "SELECT p.*, m.marca as nombreMarca FROM productos p " +
+                    "LEFT JOIN marcas m ON p.idMarca = m.idMarca " +
                     "ORDER BY p.producto";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -34,8 +34,8 @@ public class ProductoDAO {
     }
     
     public Producto obtenerPorId(int idProducto) {
-        String sql = "SELECT p.*, m.marca as nombreMarca FROM Productos p " +
-                    "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
+        String sql = "SELECT p.*, m.marca as nombreMarca FROM productos p " +
+                    "LEFT JOIN marcas m ON p.idMarca = m.idMarca " +
                     "WHERE p.idProducto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -56,7 +56,7 @@ public class ProductoDAO {
     }
     
     public boolean insertar(Producto producto) {
-        String sql = "INSERT INTO Productos (producto, idMarca, descripcion, imagen, " +
+        String sql = "INSERT INTO productos (producto, idMarca, descripcion, imagen, " +
                     "precio_costo, precio_venta, existencia) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -88,7 +88,7 @@ public class ProductoDAO {
     }
     
     public boolean actualizar(Producto producto) {
-        String sql = "UPDATE Productos SET producto = ?, idMarca = ?, descripcion = ?, imagen = ?, " +
+        String sql = "UPDATE productos SET producto = ?, idMarca = ?, descripcion = ?, imagen = ?, " +
                     "precio_costo = ?, precio_venta = ?, existencia = ? WHERE idProducto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -113,7 +113,7 @@ public class ProductoDAO {
     }
     
     public boolean eliminar(int idProducto) {
-        String sql = "DELETE FROM Productos WHERE idProducto = ?";
+        String sql = "DELETE FROM productos WHERE idProducto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -130,8 +130,8 @@ public class ProductoDAO {
     
 public List<Producto> buscar(String termino) {
     List<Producto> productos = new ArrayList<>();
-    String sql = "SELECT p.*, m.marca AS nombreMarca FROM Productos p " +
-                 "LEFT JOIN Marcas m ON p.idMarca = m.idMarca " +
+    String sql = "SELECT p.*, m.marca AS nombreMarca FROM productos p " +
+                 "LEFT JOIN marcas m ON p.idMarca = m.idMarca " +
                  "WHERE p.idProducto = ? " +
                  "ORDER BY p.producto";
 
@@ -164,7 +164,7 @@ public List<Producto> buscar(String termino) {
      * @return true si se actualizó correctamente
      */
     public boolean actualizarExistencia(int idProducto, int cantidad) {
-        String sql = "UPDATE Productos SET existencia = existencia + ? WHERE idProducto = ?";
+        String sql = "UPDATE productos SET existencia = existencia + ? WHERE idProducto = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -17,8 +17,8 @@ public class EmpleadoDAO {
      */
     public List<Empleado> obtenerTodos() {
         List<Empleado> empleados = new ArrayList<>();
-        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM Empleados e " +
-                    "LEFT JOIN Puestos p ON e.idPuesto = p.idPuesto " +
+        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM empleados e " +
+                    "LEFT JOIN puestos p ON e.idPuesto = p.idPuesto " +
                     "ORDER BY e.nombres, e.apellidos";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -43,8 +43,8 @@ public class EmpleadoDAO {
      * @return empleado encontrado o null
      */
     public Empleado obtenerPorId(int idEmpleado) {
-        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM Empleados e " +
-                    "LEFT JOIN Puestos p ON e.idPuesto = p.idPuesto " +
+        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM empleados e " +
+                    "LEFT JOIN puestos p ON e.idPuesto = p.idPuesto " +
                     "WHERE e.idEmpleado = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -70,7 +70,7 @@ public class EmpleadoDAO {
      * @return true si se insertó correctamente
      */
     public boolean insertar(Empleado empleado) {
-        String sql = "INSERT INTO Empleados (nombres, apellidos, direccion, telefono, DPI, genero, " +
+        String sql = "INSERT INTO empleados (nombres, apellidos, direccion, telefono, DPI, genero, " +
                     "fecha_nacimiento, idPuesto, fecha_inicio_labores) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -112,7 +112,7 @@ public class EmpleadoDAO {
      * @return true si se actualizó correctamente
      */
     public boolean actualizar(Empleado empleado) {
-        String sql = "UPDATE Empleados SET nombres = ?, apellidos = ?, direccion = ?, telefono = ?, " +
+        String sql = "UPDATE empleados SET nombres = ?, apellidos = ?, direccion = ?, telefono = ?, " +
                     "DPI = ?, genero = ?, fecha_nacimiento = ?, idPuesto = ?, fecha_inicio_labores = ? " +
                     "WHERE idEmpleado = ?";
         
@@ -147,7 +147,7 @@ public class EmpleadoDAO {
      * @return true si se eliminó correctamente
      */
     public boolean eliminar(int idEmpleado) {
-        String sql = "DELETE FROM Empleados WHERE idEmpleado = ?";
+        String sql = "DELETE FROM empleados WHERE idEmpleado = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -169,8 +169,8 @@ public class EmpleadoDAO {
      */
     public List<Empleado> buscar(String termino) {
         List<Empleado> empleados = new ArrayList<>();
-        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM Empleados e " +
-                    "LEFT JOIN Puestos p ON e.idPuesto = p.idPuesto " +
+        String sql = "SELECT e.*, p.puesto as nombrePuesto FROM empleados e " +
+                    "LEFT JOIN puestos p ON e.idPuesto = p.idPuesto " +
                     "WHERE e.nombres LIKE ? OR e.apellidos LIKE ? OR e.DPI LIKE ? " +
                     "ORDER BY e.nombres, e.apellidos";
         

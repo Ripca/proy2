@@ -13,7 +13,7 @@ public class PuestoDAO {
     
     public List<Puesto> obtenerTodos() {
         List<Puesto> puestos = new ArrayList<>();
-        String sql = "SELECT * FROM Puestos ORDER BY puesto";
+        String sql = "SELECT * FROM puestos ORDER BY puesto";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -34,7 +34,7 @@ public class PuestoDAO {
     }
     
     public Puesto obtenerPorId(int idPuesto) {
-        String sql = "SELECT * FROM Puestos WHERE idPuesto = ?";
+        String sql = "SELECT * FROM puestos WHERE idPuesto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class PuestoDAO {
     }
     
     public boolean insertar(Puesto puesto) {
-        String sql = "INSERT INTO Puestos (puesto) VALUES (?)";
+        String sql = "INSERT INTO puestos (puesto) VALUES (?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -82,7 +82,7 @@ public class PuestoDAO {
     }
     
     public boolean actualizar(Puesto puesto) {
-        String sql = "UPDATE Puestos SET puesto = ? WHERE idPuesto = ?";
+        String sql = "UPDATE puestos SET puesto = ? WHERE idPuesto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -100,7 +100,7 @@ public class PuestoDAO {
     }
     
     public boolean eliminar(int idPuesto) {
-        String sql = "DELETE FROM Puestos WHERE idPuesto = ?";
+        String sql = "DELETE FROM puestos WHERE idPuesto = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -17,7 +17,7 @@ public class ClienteDAO {
      */
     public List<Cliente> obtenerTodos() {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM Clientes ORDER BY nombres, apellidos";
+        String sql = "SELECT * FROM clientes ORDER BY nombres, apellidos";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -41,7 +41,7 @@ public class ClienteDAO {
      * @return cliente encontrado o null
      */
     public Cliente obtenerPorId(int idCliente) {
-        String sql = "SELECT * FROM Clientes WHERE idCliente = ?";
+        String sql = "SELECT * FROM clientes WHERE idCliente = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class ClienteDAO {
      * @return true si se insertó correctamente
      */
     public boolean insertar(Cliente cliente) {
-        String sql = "INSERT INTO Clientes (nombres, apellidos, NIT, genero, telefono, correo_electronico) " +
+        String sql = "INSERT INTO clientes (nombres, apellidos, NIT, genero, telefono, correo_electronico) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -102,7 +102,7 @@ public class ClienteDAO {
      * @return true si se actualizó correctamente
      */
     public boolean actualizar(Cliente cliente) {
-        String sql = "UPDATE Clientes SET nombres = ?, apellidos = ?, NIT = ?, genero = ?, " +
+        String sql = "UPDATE clientes SET nombres = ?, apellidos = ?, NIT = ?, genero = ?, " +
                     "telefono = ?, correo_electronico = ? WHERE idCliente = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -131,7 +131,7 @@ public class ClienteDAO {
      * @return true si se eliminó correctamente
      */
     public boolean eliminar(int idCliente) {
-        String sql = "DELETE FROM Clientes WHERE idCliente = ?";
+        String sql = "DELETE FROM clientes WHERE idCliente = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -153,7 +153,7 @@ public class ClienteDAO {
      */
     public List<Cliente> buscar(String termino) {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM Clientes WHERE nombres LIKE ? OR apellidos LIKE ? OR NIT LIKE ? " +
+        String sql = "SELECT * FROM clientes WHERE nombres LIKE ? OR apellidos LIKE ? OR NIT LIKE ? " +
                     "ORDER BY nombres, apellidos";
 
         try (Connection conn = DatabaseConnection.getConnection();

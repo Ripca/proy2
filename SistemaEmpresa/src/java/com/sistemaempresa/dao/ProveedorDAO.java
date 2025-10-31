@@ -13,7 +13,7 @@ public class ProveedorDAO {
     
     public List<Proveedor> obtenerTodos() {
         List<Proveedor> proveedores = new ArrayList<>();
-        String sql = "SELECT * FROM Proveedores ORDER BY proveedor";
+        String sql = "SELECT * FROM proveedores ORDER BY proveedor";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -32,7 +32,7 @@ public class ProveedorDAO {
     }
     
     public Proveedor obtenerPorId(int idProveedor) {
-        String sql = "SELECT * FROM Proveedores WHERE idProveedor = ?";
+        String sql = "SELECT * FROM proveedores WHERE idProveedor = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -52,7 +52,7 @@ public class ProveedorDAO {
     }
     
     public boolean insertar(Proveedor proveedor) {
-        String sql = "INSERT INTO Proveedores (proveedor, nit, direccion, telefono) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO proveedores (proveedor, nit, direccion, telefono) VALUES (?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -80,7 +80,7 @@ public class ProveedorDAO {
     }
     
     public boolean actualizar(Proveedor proveedor) {
-        String sql = "UPDATE Proveedores SET proveedor = ?, nit = ?, direccion = ?, telefono = ? WHERE idProveedor = ?";
+        String sql = "UPDATE proveedores SET proveedor = ?, nit = ?, direccion = ?, telefono = ? WHERE idProveedor = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class ProveedorDAO {
     }
     
     public boolean eliminar(int idProveedor) {
-        String sql = "DELETE FROM Proveedores WHERE idProveedor = ?";
+        String sql = "DELETE FROM proveedores WHERE idProveedor = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -118,7 +118,7 @@ public class ProveedorDAO {
     
     public List<Proveedor> buscar(String termino) {
         List<Proveedor> proveedores = new ArrayList<>();
-        String sql = "SELECT * FROM Proveedores WHERE proveedor LIKE ? OR nit LIKE ? ORDER BY proveedor";
+        String sql = "SELECT * FROM proveedores WHERE proveedor LIKE ? OR nit LIKE ? ORDER BY proveedor";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -147,7 +147,7 @@ public class ProveedorDAO {
      * @return Proveedor encontrado o null
      */
     public Proveedor obtenerPorNit(String nit) {
-        String sql = "SELECT * FROM Proveedores WHERE nit = ?";
+        String sql = "SELECT * FROM proveedores WHERE nit = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

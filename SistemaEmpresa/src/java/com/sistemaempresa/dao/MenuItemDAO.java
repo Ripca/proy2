@@ -16,7 +16,7 @@ public class MenuItemDAO {
      */
     public List<MenuItem> obtenerTodos() {
         List<MenuItem> menuItems = new ArrayList<>();
-        String sql = "SELECT * FROM MenuItems WHERE activo = TRUE ORDER BY padre_id, orden";
+        String sql = "SELECT * FROM menuitems WHERE activo = TRUE ORDER BY padre_id, orden";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -142,7 +142,7 @@ public class MenuItemDAO {
      */
     public List<MenuItem> obtenerHijos(int padreId) {
         List<MenuItem> hijos = new ArrayList<>();
-        String sql = "SELECT * FROM MenuItems WHERE padre_id = ? AND activo = TRUE ORDER BY orden";
+        String sql = "SELECT * FROM menuitems WHERE padre_id = ? AND activo = TRUE ORDER BY orden";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -168,7 +168,7 @@ public class MenuItemDAO {
      */
     public List<MenuItem> obtenerElementosRaiz() {
         List<MenuItem> raiz = new ArrayList<>();
-        String sql = "SELECT * FROM MenuItems WHERE padre_id IS NULL AND activo = TRUE ORDER BY orden";
+        String sql = "SELECT * FROM menuitems WHERE padre_id IS NULL AND activo = TRUE ORDER BY orden";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -190,7 +190,7 @@ public class MenuItemDAO {
      * Inserta un nuevo elemento del menú
      */
     public boolean insertar(MenuItem menuItem) {
-        String sql = "INSERT INTO MenuItems (titulo, url, icono, padre_id, orden, activo) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO menuitems (titulo, url, icono, padre_id, orden, activo) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

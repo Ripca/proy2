@@ -13,7 +13,7 @@ public class MarcaDAO {
     
     public List<Marca> obtenerTodos() {
         List<Marca> marcas = new ArrayList<>();
-        String sql = "SELECT * FROM Marcas ORDER BY marca";
+        String sql = "SELECT * FROM marcas ORDER BY marca";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -34,7 +34,7 @@ public class MarcaDAO {
     }
     
     public Marca obtenerPorId(int idMarca) {
-        String sql = "SELECT * FROM Marcas WHERE idMarca = ?";
+        String sql = "SELECT * FROM marcas WHERE idMarca = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class MarcaDAO {
     }
     
     public boolean insertar(Marca marca) {
-        String sql = "INSERT INTO Marcas (marca) VALUES (?)";
+        String sql = "INSERT INTO marcas (marca) VALUES (?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -82,7 +82,7 @@ public class MarcaDAO {
     }
     
     public boolean actualizar(Marca marca) {
-        String sql = "UPDATE Marcas SET marca = ? WHERE idMarca = ?";
+        String sql = "UPDATE marcas SET marca = ? WHERE idMarca = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -100,7 +100,7 @@ public class MarcaDAO {
     }
     
     public boolean eliminar(int idMarca) {
-        String sql = "DELETE FROM Marcas WHERE idMarca = ?";
+        String sql = "DELETE FROM marcas WHERE idMarca = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

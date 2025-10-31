@@ -87,10 +87,10 @@ public class LoginServlet extends HttpServlet {
             tokenCookie.setMaxAge(0); // Eliminar cookie
             response.addCookie(tokenCookie);
 
-            // Redirigir al login con mensaje de logout
-            response.sendRedirect(request.getContextPath() + "/index.jsp?logout=true");
+            // Redirigir a la raíz de la aplicación
+            response.sendRedirect(request.getContextPath() + "/");
         } else {
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/");
         }
     }
     

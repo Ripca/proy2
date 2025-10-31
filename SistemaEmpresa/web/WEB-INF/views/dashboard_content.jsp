@@ -89,49 +89,7 @@
     </div>
 </div>
 
-<!-- Accesos Rápidos -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-rocket"></i> Accesos Rápidos
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 mb-3">
-                        <a href="ClienteServlet?action=new" class="btn btn-outline-primary w-100 py-3">
-                            <i class="fas fa-user-plus fa-2x d-block mb-2"></i>
-                            Nuevo Cliente
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-3">
-                        <a href="ProductoServlet?action=new" class="btn btn-outline-success w-100 py-3">
-                            <i class="fas fa-plus-square fa-2x d-block mb-2"></i>
-                            Nuevo Producto
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-3">
-                        <a href="VentaServlet?action=new" class="btn btn-outline-info w-100 py-3">
-                            <i class="fas fa-shopping-cart fa-2x d-block mb-2"></i>
-                            Nueva Venta
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-3">
-                        <a href="CompraServlet?action=new" class="btn btn-outline-warning w-100 py-3">
-                            <i class="fas fa-shopping-bag fa-2x d-block mb-2"></i>
-                            Nueva Compra
-                        </a>
-                    </div>
 
-                    
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Carrusel de Imágenes -->
 <%
