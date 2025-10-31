@@ -1,7 +1,9 @@
 package com.sistemaempresa.servlets;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -65,17 +67,36 @@ public class UploadImagenServlet extends HttpServlet {
             String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
+                boolean dirCreated = uploadDir.mkdirs();
+                System.out.println("Directorio creado: " + dirCreated + " en: " + uploadPath);
             }
-            
+
             // Generar nombre único para el archivo
             String nombreOriginal = filePart.getSubmittedFileName();
             String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
             String nombreArchivo = UUID.randomUUID().toString() + extension;
-            
-            // Guardar archivo
+
+            // Guardar archivo usando InputStream y FileOutputStream
             String rutaArchivo = uploadPath + File.separator + nombreArchivo;
-            filePart.write(rutaArchivo);
+            try (InputStream input = filePart.getInputStream();
+                 FileOutputStream output = new FileOutputStream(rutaArchivo)) {
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+                output.flush();
+            }
+
+            // Verificar que el archivo se guardó correctamente
+            File archivoGuardado = new File(rutaArchivo);
+            if (!archivoGuardado.exists() || archivoGuardado.length() == 0) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Error: El archivo no se guardó correctamente en: " + rutaArchivo + "\"}");
+                return;
+            }
+
+            System.out.println("Archivo guardado exitosamente en: " + rutaArchivo + " (Tamaño: " + archivoGuardado.length() + " bytes)");
 
             // Retornar ruta con "web/" incluido para guardar en BD
             String rutaRelativa = "web/" + UPLOAD_DIR + "/" + nombreArchivo;
