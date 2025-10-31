@@ -136,10 +136,16 @@
                         </div>
 
                         <!-- Mostrar imagen actual si existe -->
-                        <% if (esEdicion && producto.getImagen() != null && !producto.getImagen().isEmpty()) { %>
+                        <% if (esEdicion && producto.getImagen() != null && !producto.getImagen().isEmpty()) {
+                            String rutaImagenActual = producto.getImagen();
+                            // Convertir "web/assets/..." a "/SistemaEmpresa/assets/..."
+                            if (rutaImagenActual.startsWith("web/")) {
+                                rutaImagenActual = request.getContextPath() + "/" + rutaImagenActual.substring(4);
+                            }
+                        %>
                             <div class="mt-3">
                                 <p class="text-muted">Imagen actual:</p>
-                                <img src="<%= producto.getImagen() %>" alt="Imagen actual"
+                                <img src="<%= rutaImagenActual %>" alt="Imagen actual"
                                      style="max-width: 200px; max-height: 200px; border-radius: 5px;">
                             </div>
                         <% } %>

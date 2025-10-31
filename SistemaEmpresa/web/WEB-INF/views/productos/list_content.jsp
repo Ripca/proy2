@@ -55,8 +55,14 @@
                     %>
                     <tr>
                         <td>
-                            <% if (producto.getImagen() != null && !producto.getImagen().isEmpty()) { %>
-                                <img src="<%= producto.getImagen() %>" alt="<%= producto.getProducto() %>"
+                            <% if (producto.getImagen() != null && !producto.getImagen().isEmpty()) {
+                                String rutaImagen = producto.getImagen();
+                                // Convertir "web/assets/..." a "/SistemaEmpresa/assets/..."
+                                if (rutaImagen.startsWith("web/")) {
+                                    rutaImagen = request.getContextPath() + "/" + rutaImagen.substring(4);
+                                }
+                            %>
+                                <img src="<%= rutaImagen %>" alt="<%= producto.getProducto() %>"
                                      style="max-width: 50px; max-height: 50px; border-radius: 3px;">
                             <% } else { %>
                                 <span class="text-muted">Sin imagen</span>
