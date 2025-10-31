@@ -422,35 +422,65 @@ public class CompraDAO {
     
     /**
      * Elimina una compra y sus detalles
+     * Devuelve las existencias de los productos al eliminar
      */
     public boolean eliminar(int idCompra) {
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false);
-            
-            // Eliminar detalles primero
+
+            // 1. Obtener los detalles de la compra para devolver existencias
+            String sqlObtenerDetalles = """
+                SELECT idProducto, cantidad
+                FROM compras_detalle
+                WHERE idCompra = ?
+            """;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlObtenerDetalles)) {
+                stmt.setInt(1, idCompra);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        int idProducto = rs.getInt("idProducto");
+                        int cantidad = rs.getInt("cantidad");
+
+                        // Devolver existencias (restar la cantidad comprada)
+                        String sqlActualizarExistencia = """
+                            UPDATE productos
+                            SET existencia = existencia - ?
+                            WHERE idProducto = ?
+                        """;
+                        try (PreparedStatement stmtExistencia = conn.prepareStatement(sqlActualizarExistencia)) {
+                            stmtExistencia.setInt(1, cantidad);
+                            stmtExistencia.setInt(2, idProducto);
+                            stmtExistencia.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // 2. Eliminar detalles
             String sqlDetalles = "DELETE FROM compras_detalle WHERE idCompra = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlDetalles)) {
                 stmt.setInt(1, idCompra);
                 stmt.executeUpdate();
             }
-            
-            // Eliminar compra
+
+            // 3. Eliminar compra
             String sqlCompra = "DELETE FROM compras WHERE idCompra = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlCompra)) {
                 stmt.setInt(1, idCompra);
                 int filasAfectadas = stmt.executeUpdate();
-                
+
                 if (filasAfectadas > 0) {
                     conn.commit();
                     return true;
                 }
             }
-            
+
             conn.rollback();
             return false;
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             try {

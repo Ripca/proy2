@@ -274,15 +274,9 @@
         inputCantidad.name = 'cantidad';
         inputCantidad.value = '1';
         inputCantidad.min = '1';
-        inputCantidad.max = producto.existencia || 999999;
+        inputCantidad.max = 999999;
         inputCantidad.dataset.existencia = producto.existencia || 0;
         inputCantidad.addEventListener('change', function() {
-            const existencia = parseInt(this.dataset.existencia) || 0;
-            const cantidad = parseInt(this.value) || 0;
-            if (cantidad > existencia) {
-                alert('La cantidad no puede ser mayor a las existencias disponibles (' + existencia + ')');
-                this.value = existencia;
-            }
             actualizarSubtotal(this);
         });
         tdCantidad.appendChild(inputCantidad);
