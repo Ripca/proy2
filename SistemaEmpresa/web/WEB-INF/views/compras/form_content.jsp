@@ -246,23 +246,19 @@
         const fila = document.createElement('tr');
         const subtotal = producto.precio_costo * 1;
 
-        // IMPORTANTE: Primera celda con campos ocultos para el servidor
-        const tdId = document.createElement('td');
-        tdId.style.display = 'none';
-
         // Input oculto para idProducto (REQUERIDO para el servidor)
         const inputIdProducto = document.createElement('input');
         inputIdProducto.type = 'hidden';
         inputIdProducto.name = 'idProducto';
         inputIdProducto.value = producto.id_producto;
-        tdId.appendChild(inputIdProducto);
+        fila.appendChild(inputIdProducto);
 
         // Input oculto para precioCostoUnitario (REQUERIDO para el servidor)
         const inputPrecioOculto = document.createElement('input');
         inputPrecioOculto.type = 'hidden';
         inputPrecioOculto.name = 'precioCostoUnitario';
         inputPrecioOculto.value = producto.precio_costo;
-        tdId.appendChild(inputPrecioOculto);
+        fila.appendChild(inputPrecioOculto);
 
         const tdNombre = document.createElement('td');
         tdNombre.textContent = producto.producto;
@@ -299,7 +295,6 @@
         btnEliminar.addEventListener('click', function() { eliminarFilaProducto(this); });
         tdAccion.appendChild(btnEliminar);
 
-        fila.appendChild(tdId);
         fila.appendChild(tdNombre);
         fila.appendChild(tdCantidad);
         fila.appendChild(tdExistencia);
