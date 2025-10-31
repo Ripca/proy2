@@ -128,7 +128,7 @@
                         <table id="grvProductosCompra" class="table table-hover table-bordered">
                             <thead class="table-dark">
                                 <tr>
-                                    <th style="display:none;">Id Producto</th>
+                                    <th style="width: 80px;">ID</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
                                     <th>Existencias</th>
@@ -250,7 +250,7 @@
         const inputIdProducto = document.createElement('input');
         inputIdProducto.type = 'hidden';
         inputIdProducto.name = 'idProducto';
-        inputIdProducto.value = producto.id_producto;
+        inputIdProducto.value = producto.idProducto;
         fila.appendChild(inputIdProducto);
 
         // Input oculto para precioCostoUnitario (REQUERIDO para el servidor)
@@ -259,6 +259,10 @@
         inputPrecioOculto.name = 'precioCostoUnitario';
         inputPrecioOculto.value = producto.precio_costo;
         fila.appendChild(inputPrecioOculto);
+
+        // Mostrar ID del producto en la tabla
+        const tdId = document.createElement('td');
+        tdId.textContent = producto.idProducto;
 
         const tdNombre = document.createElement('td');
         tdNombre.textContent = producto.producto;
@@ -295,6 +299,7 @@
         btnEliminar.addEventListener('click', function() { eliminarFilaProducto(this); });
         tdAccion.appendChild(btnEliminar);
 
+        fila.appendChild(tdId);
         fila.appendChild(tdNombre);
         fila.appendChild(tdCantidad);
         fila.appendChild(tdExistencia);
@@ -303,7 +308,7 @@
         fila.appendChild(tdAccion);
 
         table.appendChild(fila);
-        console.log('DEBUG: Producto agregado - idProducto: ' + producto.id_producto + ', precio: ' + producto.precio_costo);
+        console.log('DEBUG: Producto agregado - idProducto: ' + producto.idProducto + ', precio: ' + producto.precio_costo);
         actualizarTotales();
     }
 
@@ -509,31 +514,32 @@
                 const cantidad = <%= detalle.getCantidad() %>;
                 const precio = <%= detalle.getPrecioCostoUnitario() %>;
                 const subtotal = cantidad * precio;
-
-                // IMPORTANTE: Primera celda con campos ocultos para el servidor
-                const tdId = document.createElement('td');
-                tdId.style.display = 'none';
+                const idProducto = '<%= detalle.getIdProducto() %>';
 
                 // Input oculto para idCompraDetalle (para identificar detalles existentes)
                 const inputIdCompraDetalle = document.createElement('input');
                 inputIdCompraDetalle.type = 'hidden';
                 inputIdCompraDetalle.name = 'idCompraDetalle';
                 inputIdCompraDetalle.value = '<%= detalle.getIdCompraDetalle() %>';
-                tdId.appendChild(inputIdCompraDetalle);
+                fila.appendChild(inputIdCompraDetalle);
 
                 // Input oculto para idProducto
                 const inputIdProducto = document.createElement('input');
                 inputIdProducto.type = 'hidden';
                 inputIdProducto.name = 'idProducto';
-                inputIdProducto.value = '<%= detalle.getIdProducto() %>';
-                tdId.appendChild(inputIdProducto);
+                inputIdProducto.value = idProducto;
+                fila.appendChild(inputIdProducto);
 
                 // Input oculto para precioCostoUnitario
                 const inputPrecio = document.createElement('input');
                 inputPrecio.type = 'hidden';
                 inputPrecio.name = 'precioCostoUnitario';
                 inputPrecio.value = precio;
-                tdId.appendChild(inputPrecio);
+                fila.appendChild(inputPrecio);
+
+                // Mostrar ID del producto en la tabla
+                const tdIdProducto = document.createElement('td');
+                tdIdProducto.textContent = idProducto;
 
                 const tdNombre = document.createElement('td');
                 tdNombre.textContent = '<%= detalle.getNombreProducto() != null ? detalle.getNombreProducto() : "Producto" %>';
@@ -568,7 +574,7 @@
                 const tdExistencias = document.createElement('td');
                 tdExistencias.textContent = '-';
 
-                fila.appendChild(tdId);
+                fila.appendChild(tdIdProducto);
                 fila.appendChild(tdNombre);
                 fila.appendChild(tdCantidad);
                 fila.appendChild(tdExistencias);
