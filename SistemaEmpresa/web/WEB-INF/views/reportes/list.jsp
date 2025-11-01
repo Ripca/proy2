@@ -185,7 +185,7 @@
             });
 
             // Redirigir a ReporteServlet con el tipo de reporte
-            window.location.href = 'ReporteServlet?tipo=' + tipo;
+            window.location.href = 'jasper-report?tipo=' + tipo;
 
             // Cerrar el modal después de 2 segundos
             setTimeout(() => {

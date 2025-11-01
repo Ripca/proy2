@@ -17,129 +17,107 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.view.JasperViewer;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 
-@WebServlet("/ReporteServlet")
+@WebServlet(
+  name = "ReporteServlet",
+  description = "Servlet que administra la lógica necesaria para JasperReports",
+  urlPatterns = {"/jasper-report"}
+)
 public class ReporteServlet extends HttpServlet {
-    
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String[] reportesDisponibles = {"inventario", "ventas", "compras", "empleados", "clientes"}; // Listado de reportes disponibles
+    String tipoReporte = request.getParameter("tipo");
+    String plantillaReporte = null; // plantilla.jrxml
+    String tituloReporte = null; // Reporte - Sistema Empresa
+    String nombreArchivo = null; // reporte.pdf
+    SimpleDateFormat formatoFechaReporte = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+    SimpleDateFormat formatoFechaTitulo = new SimpleDateFormat("dd/MM/yyyy");
+    Connection conn = null;
+    Date now = new Date(); // Obtener fecha
 
-        String tipoReporte = request.getParameter("tipo");
-        System.out.println("=== INICIANDO REPORTE ===");
-        System.out.println("Tipo: " + tipoReporte);
+    if (Arrays.stream(reportesDisponibles).anyMatch(tipoReporte::equals)) {
+      System.out.println("=== INICIANDO REPORTE ===");
+      System.out.println("Tipo: " + tipoReporte);
+      String fechaReporte = formatoFechaReporte.format(now);
 
-        Connection conn = null;
-        try {
-            // 1. Obtener conexión
-            conn = DatabaseConnection.getConnection();
-            System.out.println("Conexión BD: " + (conn != null ? "OK" : "ERROR"));
+      // 1. Determinar qué reporte generar
+      plantillaReporte = tipoReporte + ".jrxml";
+      nombreArchivo = "reporte_" + tipoReporte + "_" + fechaReporte + ".pdf";
+      tituloReporte = "REPORTE DE " + tipoReporte.toUpperCase() + " AL " + formatoFechaTitulo.format(now);
 
-            if (conn == null) {
-                response.getWriter().println("Error: No hay conexión a BD");
-                return;
-            }
+      try {
+      // 2. Obtener conexión
+      conn = DatabaseConnection.getConnection();
+      System.out.println("Conexión BD: " + (conn != null ? "OK" : "ERROR"));
 
-            // 2. Determinar qué reporte generar
-            String reportName = "miReporte.jrxml";
-            String fileName = "reporte.pdf";
-            String titulo = "Reporte - Sistema Empresa";
+      if (conn == null) {
+        response.getWriter().println("Error: No hay conexión a BD");
 
-            if ("inventario".equals(tipoReporte)) {
-                reportName = "reporte2.jrxml";
-                fileName = "reporte_inventario.pdf";
-                titulo = "Reporte de Inventario de Productos";
-            } else if ("productos".equals(tipoReporte)) {
-                // TODO: Crear reporte de productos
-                reportName = "miReporte.jrxml";
-                fileName = "reporte_productos.pdf";
-                titulo = "Reporte de Productos";
-            } else if ("empleados".equals(tipoReporte)) {
-                // TODO: Crear reporte de empleados
-                reportName = "miReporte.jrxml";
-                fileName = "reporte_empleados.pdf";
-                titulo = "Reporte de Empleados";
-            } else if ("clientes".equals(tipoReporte)) {
-                // TODO: Crear reporte de clientes
-                reportName = "miReporte.jrxml";
-                fileName = "reporte_clientes.pdf";
-                titulo = "Reporte de Clientes";
-            } else if ("factura_venta".equals(tipoReporte)) {
-                // TODO: Crear reporte de factura de venta
-                reportName = "miReporte.jrxml";
-                fileName = "factura_venta.pdf";
-                titulo = "Factura de Venta";
-            } else if ("factura_compra".equals(tipoReporte)) {
-                // TODO: Crear reporte de factura de compra
-                reportName = "miReporte.jrxml";
-                fileName = "factura_compra.pdf";
-                titulo = "Factura de Compra";
-            } else if ("ventas".equals(tipoReporte)) {
-                reportName = "miReporte.jrxml";
-                fileName = "reporte_ventas.pdf";
-                titulo = "Reporte de Ventas";
-            } else if ("compras".equals(tipoReporte)) {
-                reportName = "miReporte.jrxml";
-                fileName = "reporte_compras.pdf";
-                titulo = "Reporte de Compras";
-            }
+        return;
+      }
 
-            // 3. Cargar el reporte
-            InputStream reportStream = getClass()
-                .getResourceAsStream(reportName);
+      // 3. Cargar el reporte
+      InputStream reportStream = getClass().getResourceAsStream(plantillaReporte);
 
-            System.out.println("Report stream: " + (reportStream != null ? "OK" : "NULL"));
+      System.out.println("Report stream: " + (reportStream != null ? "OK" : "NULL"));
 
-            if (reportStream == null) {
-                response.setContentType("text/html");
-                response.getWriter().println("<h3>Error: Archivo JRXML no encontrado</h3>");
-                response.getWriter().println("<p>Buscando en: " + getClass().getPackage().getName() + "/" + reportName + "</p>");
-                return;
-            }
+      if (reportStream == null) {
+        response.setContentType("text/html");
+        response.getWriter().println("<h3>Error: Archivo JRXML no encontrado</h3>");
+        response.getWriter().println("<p>Buscando en: " + getClass().getPackage().getName() + "/" + plantillaReporte + "</p>");
+        return;
+      }
 
-            // 4. Parámetros
-            HashMap<String, Object> parametros = new HashMap<>();
-            parametros.put("titulo", titulo);
+      // 4. Parámetros
+      HashMap<String, Object> parametros = new HashMap<>();
+      parametros.put("TITULO_REPORTE", tituloReporte);
 
-            // 5. Compilar el reporte JRXML a JasperReport
-            System.out.println("Compilando JRXML...");
-            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
-            System.out.println("JRXML compilado OK");
+      // 5. Compilar el reporte JRXML a JasperReport
+      System.out.println("Compilando JRXML...");
+      JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+      System.out.println("JRXML compilado OK");
 
-            // 6. Generar reporte
-            System.out.println("Generando JasperPrint...");
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, conn);
-            System.out.println("JasperPrint generado OK");
+      // 6. Generar reporte
+      System.out.println("Generando JasperPrint...");
+      JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, conn);
+      System.out.println("JasperPrint generado OK");
 
-            // 7. Configurar respuesta
-            response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+      // 7. Configurar respuesta HTML
+      response.setContentType("application/pdf");
+      response.setHeader("Content-Disposition", "attachment; filename=" + nombreArchivo);
 
-            // 8. Exportar a PDF
-            OutputStream out = response.getOutputStream();
-            JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-            out.flush();
+      // 8. Exportar a PDF
+      OutputStream out = response.getOutputStream();
+      JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+      out.flush();
 
-            System.out.println("=== REPORTE GENERADO EXITOSAMENTE ===");
+      System.out.println("=== REPORTE GENERADO EXITOSAMENTE ===");
 
-        } catch (Exception e) {
-            System.out.println("=== ERROR EN REPORTE ===");
-            e.printStackTrace();
+    } catch (Exception e) {
+        System.out.println("=== ERROR EN REPORTE ===");
+        e.printStackTrace();
 
-            response.setContentType("text/html");
-            response.getWriter().println("<h3>Error generando reporte:</h3>");
-            response.getWriter().println("<pre>");
-            e.printStackTrace(response.getWriter());
-            response.getWriter().println("</pre>");
-        } finally {
-            if (conn != null) {
-                try { conn.close(); } catch (Exception e) {}
-            }
-        }
+        response.setContentType("text/html");
+        response.getWriter().println("<h3>Error generando reporte:</h3>");
+        response.getWriter().println("<pre>");
+        e.printStackTrace(response.getWriter());
+        response.getWriter().println("</pre>");
+    } finally {
+      if (conn != null) {
+        try { conn.close(); } catch (Exception e) {}
+      }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+    } else {
+      System.out.println("** REPORTE NO DISPONIBLE **");
     }
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    doGet(request, response);
+  }
 }

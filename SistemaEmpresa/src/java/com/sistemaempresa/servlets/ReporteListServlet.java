@@ -10,7 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Servlet para mostrar la página de reportes disponibles
  */
-@WebServlet("/ReporteListServlet")
+@WebServlet(
+  name = "ReporteListServlet",
+  description = "Servlet que maneja las rutas URL para el controlador de reportes (ReporteServlet)",
+  urlPatterns = {"/reportes"}
+)
 public class ReporteListServlet extends HttpServlet {
     
     @Override
