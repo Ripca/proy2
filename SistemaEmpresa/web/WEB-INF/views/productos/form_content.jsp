@@ -142,6 +142,8 @@
                             if (rutaImagenActual.startsWith("web/")) {
                                 rutaImagenActual = request.getContextPath() + "/" + rutaImagenActual.substring(4);
                             }
+                            // Agregar timestamp para evitar caché del navegador
+                            rutaImagenActual = rutaImagenActual + "?t=" + System.currentTimeMillis();
                         %>
                             <div class="mt-3">
                                 <p class="text-muted">Imagen actual:</p>

@@ -61,6 +61,8 @@
                                 if (rutaImagen.startsWith("web/")) {
                                     rutaImagen = request.getContextPath() + "/" + rutaImagen.substring(4);
                                 }
+                                // Agregar timestamp para evitar caché del navegador
+                                rutaImagen = rutaImagen + "?t=" + System.currentTimeMillis();
                             %>
                                 <img src="<%= rutaImagen %>" alt="<%= producto.getProducto() %>"
                                      style="max-width: 50px; max-height: 50px; border-radius: 3px;">
