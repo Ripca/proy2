@@ -4,6 +4,8 @@
 
 <%
     List<Producto> productos = (List<Producto>) request.getAttribute("productos");
+    String success = request.getParameter("success");
+    String error = request.getParameter("error");
 %>
 
 <!-- Header de la página -->
@@ -121,3 +123,16 @@
         %>
     </div>
 </div>
+
+<script>
+    // Mostrar mensaje de éxito o error si existe
+    <% if (success != null && !success.isEmpty()) { %>
+        showAlert('success', 'Éxito', '<%= success %>');
+        // Limpiar el parámetro de la URL
+        window.history.replaceState({}, document.title, 'ProductoServlet?action=list');
+    <% } %>
+
+    <% if (error != null && !error.isEmpty()) { %>
+        showAlert('error', 'Error', '<%= error %>');
+    <% } %>
+</script>

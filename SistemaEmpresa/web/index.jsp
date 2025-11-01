@@ -112,12 +112,26 @@
 
         .error-message {
             color: #721c24;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            padding: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            padding: 14px 16px;
             background: #f8d7da;
             border-radius: 4px;
             border-left: 4px solid #dc3545;
+            animation: slideDown 0.3s ease-out;
+            display: flex;
+            align-items: center;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-footer {
@@ -141,6 +155,16 @@
 
             <!-- Body -->
             <div class="login-body">
+                <!-- Mostrar mensajes de error si existen -->
+                <%
+                    String error = request.getParameter("error");
+                    if (error != null && !error.isEmpty()) {
+                %>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                    </div>
+                <% } %>
+
                 <form action="LoginServlet" method="post" id="loginForm">
                     <div class="form-group">
                         <label for="usuario" class="form-label">Usuario</label>
@@ -158,16 +182,6 @@
                         <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                     </button>
                 </form>
-
-                <!-- Mostrar mensajes de error si existen -->
-                <%
-                    String error = request.getParameter("error");
-                    if (error != null && !error.isEmpty()) {
-                %>
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle me-2"></i><%= error %>
-                    </div>
-                <% } %>
             </div>
 
             <!-- Footer -->
@@ -190,7 +204,28 @@
                 alert('Por favor complete todos los campos');
             }
         });
+
+        // Hacer desaparecer el mensaje de error después de 5 segundos
+        const errorMessage = document.querySelector('.error-message');
+        if (errorMessage) {
+            setTimeout(() => {
+                errorMessage.style.animation = 'slideUp 0.3s ease-out forwards';
+            }, 5000);
+        }
     </script>
+
+    <style>
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
 </body>
 </html>
 

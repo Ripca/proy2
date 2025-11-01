@@ -274,13 +274,22 @@
         
         // Inicializar DataTables
         $(document).ready(function() {
+            // Destruir DataTable si ya existe
+            if ($.fn.DataTable.isDataTable('.data-table')) {
+                $('.data-table').DataTable().destroy();
+            }
+
+            // Inicializar DataTable
             $('.data-table').DataTable({
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                 },
                 responsive: true,
                 pageLength: 10,
-                order: [[0, 'desc']]
+                order: [[0, 'desc']],
+                // Forzar recarga de datos
+                bRetrieve: true,
+                bDestroy: true
             });
         });
         

@@ -151,7 +151,7 @@ public class ProductoServlet extends HttpServlet {
             }
 
             if (productoDAO.insertar(producto)) {
-                response.sendRedirect("ProductoServlet?action=list&success=Producto guardado correctamente");
+                response.sendRedirect("ProductoServlet?action=list&success=Producto guardado correctamente&t=" + System.currentTimeMillis());
             } else {
                 response.sendRedirect("ProductoServlet?action=new&error=Error al guardar producto");
             }
@@ -200,7 +200,7 @@ public class ProductoServlet extends HttpServlet {
             }
 
             if (productoDAO.actualizar(producto)) {
-                response.sendRedirect("ProductoServlet?action=list&success=Producto actualizado correctamente");
+                response.sendRedirect("ProductoServlet?action=list&success=Producto actualizado correctamente&t=" + System.currentTimeMillis());
             } else {
                 response.sendRedirect("ProductoServlet?action=edit&id=" + producto.getIdProducto() + "&error=Error al actualizar producto");
             }

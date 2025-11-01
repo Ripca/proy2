@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,24 +18,29 @@ import jakarta.servlet.http.HttpSession;
 /**
  * Servlet para manejar el login de usuarios
  */
+@WebServlet(
+    name = "LoginServlet",
+    description = "Servlet que maneja la autenticación de usuarios",
+    urlPatterns = {"/LoginServlet", "/login"}
+)
 public class LoginServlet extends HttpServlet {
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String usuario = request.getParameter("usuario");
         String password = request.getParameter("password");
-        
+
         if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
-            response.sendRedirect("index.html?error=Datos incompletos");
+            response.sendRedirect(request.getContextPath() + "/?error=Datos incompletos");
             return;
         }
-        
+
         try {
             // Validar credenciales en base de datos
             UserData userData = validateUser(usuario, password);
-            
+
             if (userData != null) {
                 // Generar token JWT
                 String token = JWTUtil.generateToken(userData.usuario, userData.idUsuario, userData.idEmpleado);
@@ -55,15 +61,15 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(tokenCookie);
 
                 // Redirigir al dashboard
-                response.sendRedirect("DashboardServlet");
+                response.sendRedirect(request.getContextPath() + "/DashboardServlet");
 
             } else {
-                response.sendRedirect("index.jsp?error=Credenciales incorrectas");
+                response.sendRedirect(request.getContextPath() + "/?error=Credenciales incorrectas");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("index.html?error=Error del sistema");
+            response.sendRedirect(request.getContextPath() + "/?error=Error del sistema");
         }
     }
     
